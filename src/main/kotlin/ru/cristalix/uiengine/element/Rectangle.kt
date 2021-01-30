@@ -1,35 +1,11 @@
 package ru.cristalix.uiengine.element
 
-import ru.cristalix.uiengine.utility.Color
 import ru.cristalix.uiengine.utility.Texture
 import ru.cristalix.uiengine.utility.V3
 
-interface Rectangle : Element {
-
-    var size: V3
-    var texture: Texture
-
-}
-
-class RectangleData(
-    scale: V3,
-    offset: V3,
-    align: V3,
-    origin: V3,
-    color: Color,
-    override var size: V3,
-    override var texture: Texture
-) : ElementData(
-    scale,
-    offset,
-    align,
-    origin,
-    color
-), Rectangle
-
-class RectangleView(
+class Rectangle(
     private val rectangle: Rectangle
-) : ElementView<RectangleView>(rectangle), Rectangle {
+) : Element(rectangle), Rectangle {
 
     override var size: V3 = rectangle.size
         get() {

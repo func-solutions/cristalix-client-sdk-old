@@ -21,7 +21,7 @@ object UIEngine {
         origin: V3 = V3(),
         color: Color = Color.TRANSPARENT,
         texture: Texture = EmptyTexture()
-    ) : RectangleView {
+    ) : Rectangle {
         val data = RectangleData(
             size = size,
             scale = scale,
@@ -31,7 +31,7 @@ object UIEngine {
             color = color,
             texture = texture
         )
-        return RectangleView(data)
+        return Rectangle(data)
     }
 
     fun text(
@@ -43,7 +43,7 @@ object UIEngine {
         label: String = "",
         autoFit: Boolean = false,
         shadow: Boolean = false
-    ) : TextView {
+    ) : Text {
         val data = TextData(
             scale = scale,
             offset = offset,
@@ -54,7 +54,7 @@ object UIEngine {
             autoFit = autoFit,
             shadow = shadow
         )
-        return TextView(data)
+        return Text(data)
     }
 
     fun item(
@@ -64,7 +64,7 @@ object UIEngine {
         origin: V3 = V3(),
         color: Color = Color.TRANSPARENT,
         stack: ItemStack
-    ) : ItemView {
+    ) : Item {
         val data = ItemData(
             scale = scale,
             offset = offset,
@@ -73,7 +73,7 @@ object UIEngine {
             color = color,
             stack = stack
         )
-        return ItemView(data)
+        return Item(data)
     }
 
 }

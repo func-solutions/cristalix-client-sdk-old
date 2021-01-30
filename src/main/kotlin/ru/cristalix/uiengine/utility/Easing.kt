@@ -15,11 +15,13 @@ fun powBoth(n: Int): Easing = {
 
 object Easings {
 
-    var c1 = 1.70158
-    var c2 = c1 * 1.525
-    var c3 = c1 + 1
-    var c4 = 2 * PI / 3
-    var c5 = 2 * PI / 4.5
+    private const val c1 = 1.70158
+    private const val c2 = c1 * 1.525
+    private const val c3 = c1 + 1
+    private const val c4 = 2 * PI / 3
+    private const val c5 = 2 * PI / 4.5
+
+    val NONE: Easing = { it }
 
     val QUAD_IN = powIn(2)
     val QUAD_OUT = powOut(2)

@@ -4,12 +4,6 @@ import dev.xdark.clientapi.item.ItemStack
 import ru.cristalix.uiengine.utility.Color
 import ru.cristalix.uiengine.utility.V3
 
-interface Item : Element {
-
-    var stack: ItemStack
-
-}
-
 class ItemData(
     scale: V3,
     offset: V3,
@@ -25,7 +19,7 @@ class ItemData(
     color
 ), Item
 
-class ItemView(private val item: Item) : ElementView<ItemView>(item), Item {
+class Item(private val item: Item) : Element(item), Item {
 
     override var stack: ItemStack = item.stack
         get() {

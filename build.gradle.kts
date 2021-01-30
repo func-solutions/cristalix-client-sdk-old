@@ -15,4 +15,19 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("dev.xdark", "clientapi", "1.0")
+    implementation("org.lwjgl.lwjgl", "lwjgl", "2.9.3")
+    implementation("org.lwjgl.lwjgl", "lwjgl_util", "2.9.2")
+}
+
+
+tasks {
+    jar {
+
+    }
+    compileKotlin {
+        kotlinOptions.jvmTarget = "1.6"
+    }
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = "1.6"
+    }
 }
