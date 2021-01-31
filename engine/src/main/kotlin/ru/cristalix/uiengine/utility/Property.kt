@@ -1,4 +1,4 @@
-package ru.cristalix.uiengine.element
+package ru.cristalix.uiengine.utility
 
 // Positive numbers are matrices that are directly converted to GL transformations
 const val alignMatrix = 0

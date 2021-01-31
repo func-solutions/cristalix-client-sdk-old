@@ -2,11 +2,8 @@ package ru.cristalix.uiengine.element
 
 import org.lwjgl.util.vector.Matrix4f
 import org.lwjgl.util.vector.Vector3f
-import ru.cristalix.uiengine.element.Property.*
-import ru.cristalix.uiengine.utility.Color
-import ru.cristalix.uiengine.utility.Easing
-import ru.cristalix.uiengine.utility.Easings
-import ru.cristalix.uiengine.utility.V3
+import ru.cristalix.uiengine.utility.*
+import ru.cristalix.uiengine.utility.Property.*
 
 internal data class Animation(val element: Element, val property: Property) {
 
@@ -18,7 +15,7 @@ internal data class Animation(val element: Element, val property: Property) {
     var easing: Easing = Easings.NONE
 
     init {
-        this.lastValue = element.properties[property]
+        this.lastValue = element.properties[property.ordinal]
         this.targetValue = this.lastValue
     }
 
@@ -44,8 +41,8 @@ internal data class Animation(val element: Element, val property: Property) {
             value = targetValue
         }
         this.lastValue = value
-        this.element.properties[property] = value
-        return alive;
+        this.element.properties[property.ordinal] = value
+        return alive
     }
 
 }
@@ -57,17 +54,72 @@ data class AnimationContext(
     val easing: Easing
 )
 
-open class Element {
+typealias ClickHandler = ((element: Element, buttonDown: Boolean, button: MouseButton) -> Unit)?
+typealias HoverHandler = ((element: Element, hovered: Boolean) -> Unit)?
+
+abstract class Element {
 
     internal val properties: DoubleArray = DoubleArray(Property.values().size)
 
-    internal val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
+    private val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
 
     private var dirtyMatrices: MutableList<Int>? = null
 
     private var animationContext: AnimationContext? = null
 
-    internal var cachedHexColor: Int = 0
+    protected var cachedHexColor: Int = 0
+
+    var enabled: Boolean
+
+    var onClick: ClickHandler
+
+    var onHover: HoverHandler
+
+    var offset: V3
+        get() = ProxiedV3(OffsetX.ordinal, this)
+        set(value) = value.write(offset)
+
+    var scale: V3
+        get() = ProxiedV3(ScaleX.ordinal, this)
+        set(value) = value.write(scale)
+
+    var align: V3
+        get() = ProxiedV3(AlignX.ordinal, this)
+        set(value) = value.write(align)
+
+    var origin: V3
+        get() = ProxiedV3(OriginX.ordinal, this)
+        set(value) = value.write(origin)
+
+    var color: Color
+        get() = ProxiedColor(this)
+        set(value) = value.write(color)
+
+    var rotation: Rotation
+        get() = ProxiedRotation(this)
+        set(value) = value.write(rotation)
+
+    constructor(
+        scale: V3 = V3(1.0, 1.0, 1.0),
+        offset: V3 = V3(),
+        align: V3 = V3(),
+        origin: V3 = V3(),
+        color: Color = TRANSPARENT,
+        rotation: Rotation = Rotation(),
+        enabled: Boolean = true,
+        onClick: ClickHandler = null,
+        onHover: HoverHandler = null
+    ) {
+        this.scale = scale
+        this.offset = offset
+        this.align = align
+        this.origin = origin
+        this.color = color
+        this.rotation = rotation
+        this.enabled = enabled
+        this.onClick = onClick
+        this.onHover = onHover
+    }
 
     internal fun changeProperty(index: Int, value: Number) {
 
@@ -171,26 +223,6 @@ open class Element {
         if (!matrices.contains(matrix)) matrices.add(matrix)
         dirtyMatrices = matrices
     }
-
-    var offset: V3
-        get() = ProxiedV3(OffsetX.ordinal, this)
-        set(value) = value.write(offset)
-
-    var scale: V3
-        get() = ProxiedV3(ScaleX.ordinal, this)
-        set(value) = value.write(scale)
-
-    var align: V3
-        get() = ProxiedV3(AlignX.ordinal, this)
-        set(value) = value.write(align)
-
-    var origin: V3
-        get() = ProxiedV3(OriginX.ordinal, this)
-        set(value) = value.write(origin)
-
-    var color: Color
-        get() = ProxiedColor(this)
-        set(value) = value.write(color)
 
     fun animate(
         duration: Number,

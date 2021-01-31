@@ -1,9 +1,23 @@
 package ru.cristalix.uiengine.element
 
-import ru.cristalix.uiengine.element.Property.*
+import ru.cristalix.uiengine.utility.Property.*
 import ru.cristalix.uiengine.utility.Color
+import ru.cristalix.uiengine.utility.Rotation
 import ru.cristalix.uiengine.utility.V2
 import ru.cristalix.uiengine.utility.V3
+
+
+open class ProxiedV2(
+    private val offset: Int,
+    private val element: Element
+) : V2() {
+    override var x: Double
+        get() = element.properties[offset]
+        set(value) = element.changeProperty(offset, value)
+    override var y: Double
+        get() = element.properties[offset + 1]
+        set(value) = element.changeProperty(offset + 1, value)
+}
 
 class ProxiedV3(
     private val offset: Int,
@@ -20,16 +34,21 @@ class ProxiedV3(
         set(value) = element.changeProperty(offset + 2, value)
 }
 
-open class ProxiedV2(
-    private val offset: Int,
+class ProxiedRotation(
     private val element: Element
-) : V2() {
+) : Rotation() {
     override var x: Double
-        get() = element.properties[offset]
-        set(value) = element.changeProperty(offset, value)
+        get() = element.properties[RotationX.ordinal]
+        set(value) = element.changeProperty(RotationX.ordinal, value)
     override var y: Double
-        get() = element.properties[offset + 1]
-        set(value) = element.changeProperty(offset + 1, value)
+        get() = element.properties[RotationY.ordinal]
+        set(value) = element.changeProperty(RotationY.ordinal, value)
+    override var z: Double
+        get() = element.properties[RotationZ.ordinal]
+        set(value) = element.changeProperty(RotationZ.ordinal, value)
+    override var degrees: Double
+        get() = element.properties[RotationAngle.ordinal]
+        set(value) = element.changeProperty(RotationAngle.ordinal, value)
 }
 
 open class ProxiedColor(
@@ -37,19 +56,19 @@ open class ProxiedColor(
 ): Color() {
 
     override var red: Int
-        get() = element.properties[ColorR].toInt()
+        get() = element.properties[ColorR.ordinal].toInt()
         set(value) = element.changeProperty(ColorR.ordinal, value)
 
     override var green: Int
-        get() = element.properties[ColorG].toInt()
+        get() = element.properties[ColorG.ordinal].toInt()
         set(value) = element.changeProperty(ColorG.ordinal, value)
 
     override var blue: Int
-        get() = element.properties[ColorB].toInt()
+        get() = element.properties[ColorB.ordinal].toInt()
         set(value) = element.changeProperty(ColorB.ordinal, value)
 
     override var alpha: Double
-        get() = element.properties[ColorA]
+        get() = element.properties[ColorA.ordinal]
         set(value) = element.changeProperty(ColorA.ordinal, value)
 
 }

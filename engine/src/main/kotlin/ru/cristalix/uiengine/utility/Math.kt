@@ -33,3 +33,14 @@ open class V3(
     }
 }
 
+open class Rotation(
+    open var degrees: Double = 0.0,
+    x: Double = 0.0,
+    y: Double = 0.0,
+    z: Double = 1.0,
+) : V3(x, y, z) {
+    override fun write(another: V2) {
+        super.write(another)
+        if (another is Rotation) another.degrees = degrees
+    }
+}
