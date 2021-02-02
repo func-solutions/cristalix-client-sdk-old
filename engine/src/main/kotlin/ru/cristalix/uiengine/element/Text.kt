@@ -1,36 +1,45 @@
 package ru.cristalix.uiengine.element
 
+import ru.cristalix.uiengine.UIEngine
+import ru.cristalix.uiengine.utility.*
+import dev.xdark.clientapi.opengl.GlStateManager
+
+
+
+
 class Text(
-    private val text: Text,
-) : Element(text), Text {
+    scale: V3 = V3(1.0, 1.0, 1.0),
+    offset: V3 = V3(),
+    align: V3 = V3(),
+    origin: V3 = V3(),
+    color: Color = TRANSPARENT,
+    rotation: Rotation = Rotation(),
+    enabled: Boolean = true,
+    onClick: ClickHandler = null,
+    onHover: HoverHandler = null,
+    content: String,
+//    autoFit: Boolean = false,
+    var shadow: Boolean = false,
+) : Element(scale, offset, align, origin, color, rotation, enabled, onClick, onHover) {
 
-    override var label: String = text.label
+    var content: String = content
         set(value) {
-            text.label = value
             field = value
-            //updates.add(something)
+            this.changeProperty(Property.SizeX.ordinal, UIEngine.clientApi.fontRenderer().getStringWidth(value))
         }
 
-    override var autoFit: Boolean = text.autoFit
-        get() {
-            //updates.add(something)
-            return field
-        }
-        set(value) {
-            text.autoFit = value
-            field = value
-            //updates.add(something)
-        }
+    override fun render() {
 
-    override var shadow: Boolean = text.shadow
-        get() {
-            //updates.add(something)
-            return field
-        }
-        set(value) {
-            text.shadow = value
-            field = value
-            //updates.add(something)
-        }
+        val alpha: Int = cachedHexColor ushr 24
+
+        // There is a weird behaviour of vanilla fontRenderer that disables transparency if the alpha value is lower than 5.
+        // Perhaps that is yet another bodge by mojang to quickly implement some cool font-related effects.
+        // Anyways, that is quite unnoticable, so ui engine just discards these barely visible text elements.
+        if (alpha < 5) return
+
+        if (alpha != 255) GlStateManager.enableBlend()
+        val fontRenderer = UIEngine.clientApi.fontRenderer()
+        fontRenderer.drawString(this.content, 0f, if (fontRenderer.unicodeFlag) 0f else 1f, cachedHexColor, shadow)
+    }
 
 }

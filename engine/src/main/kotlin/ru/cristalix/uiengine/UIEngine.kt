@@ -1,76 +1,77 @@
 package ru.cristalix.uiengine
 
 import dev.xdark.clientapi.ClientApi
+import dev.xdark.clientapi.event.Listener
+import dev.xdark.clientapi.event.lifecycle.GameLoop
+import dev.xdark.clientapi.event.render.GuiOverlayRender
+import dev.xdark.clientapi.opengl.GLAllocation
+import org.lwjgl.input.Mouse
+import ru.cristalix.uiengine.element.Context
+import ru.cristalix.uiengine.element.Element
+import ru.cristalix.uiengine.element.Rectangle
+import ru.cristalix.uiengine.utility.MouseButton
+import ru.cristalix.uiengine.utility.V2
 
 object UIEngine {
 
-    private lateinit var clientApi: ClientApi
+    val matrixBuffer = GLAllocation.createDirectFloatBuffer(16)!!
+
+    lateinit var clientApi: ClientApi
+    private lateinit var listener: Listener
+
+    val overlayContext: Context = Context(size = V2())
+
+    var lastMouseState: BooleanArray = booleanArrayOf(false, false, false)
 
     fun initialize(clientApi: ClientApi) {
         this.clientApi = clientApi
+
+
+        val eventBus = clientApi.eventBus()
+
+        this.listener = eventBus.createListener()
+
+        eventBus.register(listener, GuiOverlayRender::class.java, { renderOverlay() }, 1)
+
+        eventBus.register(listener, GameLoop::class.java, { gameLoop() }, 1)
+
     }
 
-//    fun rectangle(
-//        size: V3 = V3(),
-//        scale: V3 = V3(),
-//        offset: V3 = V3(),
-//        align: V3 = V3(),
-//        origin: V3 = V3(),
-//        color: Color = TRANSPARENT,
-//        texture: Texture = EmptyTexture()
-//    ) : Rectangle {
-//        val data = RectangleData(
-//            size = size,
-//            scale = scale,
-//            offset = offset,
-//            align = align,
-//            origin = origin,
-//            color = color,
-//            texture = texture
-//        )
-//        return Rectangle(data)
-//    }
-//
-//    fun text(
-//        scale: V3 = V3(),
-//        offset: V3 = V3(),
-//        align: V3 = V3(),
-//        origin: V3 = V3(),
-//        color: Color = Color.TRANSPARENT,
-//        label: String = "",
-//        autoFit: Boolean = false,
-//        shadow: Boolean = false
-//    ) : Text {
-//        val data = TextData(
-//            scale = scale,
-//            offset = offset,
-//            align = align,
-//            origin = origin,
-//            color = color,
-//            label = label,
-//            autoFit = autoFit,
-//            shadow = shadow
-//        )
-//        return Text(data)
-//    }
-//
-//    fun item(
-//        scale: V3 = V3(),
-//        offset: V3 = V3(),
-//        align: V3 = V3(),
-//        origin: V3 = V3(),
-//        color: Color = Color.TRANSPARENT,
-//        stack: ItemStack
-//    ) : Item {
-//        val data = ItemData(
-//            scale = scale,
-//            offset = offset,
-//            align = align,
-//            origin = origin,
-//            color = color,
-//            stack = stack
-//        )
-//        return Item(data)
-//    }
+    private fun renderOverlay() {
+        overlayContext.transformAndRender()
+    }
+
+    fun uninitialize() {
+        this.clientApi.eventBus().unregisterAll(listener)
+        GLAllocation.freeBuffer(matrixBuffer)
+    }
+
+    private fun findLastClickable(elements: Collection<Element>): Element? {
+        var lastClickable: Element? = null
+        for (element in elements) {
+            // stdout.println(element.hovered + " " + element.passedHoverCulling + " " + (element.onClick != null))
+            if (!element.passedHoverCulling) continue
+            if (element.hovered && element.onClick != null) lastClickable = element
+            if (element is Rectangle) {
+                lastClickable = findLastClickable(element.children) ?: lastClickable
+            }
+        }
+        return lastClickable
+    }
+
+    private fun gameLoop() {
+
+        IntRange(0, 2).forEach { button ->
+
+            val oldState = lastMouseState[button]
+            val newState = Mouse.isButtonDown(button)
+            if (oldState != newState) {
+                val lastClickable = findLastClickable(overlayContext.children)
+                lastClickable?.onClick?.invoke(lastClickable, newState, MouseButton.values()[button])
+            }
+            lastMouseState[button] = newState
+        }
+
+    }
 
 }

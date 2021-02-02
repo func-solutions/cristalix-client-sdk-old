@@ -1,7 +1,10 @@
 package ru.cristalix.uiengine.element
 
+import dev.xdark.clientapi.opengl.GlStateManager
+import org.lwjgl.opengl.GL11
 import org.lwjgl.util.vector.Matrix4f
 import org.lwjgl.util.vector.Vector3f
+import ru.cristalix.uiengine.UIEngine.matrixBuffer
 import ru.cristalix.uiengine.utility.*
 import ru.cristalix.uiengine.utility.Property.*
 
@@ -31,7 +34,7 @@ internal data class Animation(val element: Element, val property: Property) {
 
     fun update(time: Long): Boolean {
         var part = (time - this.startedTime).toDouble() / this.duration
-        val alive = part <= 1.0;
+        val alive = part <= 1.0
         val value: Double
         if (alive) {
             part = this.easing(part)
@@ -61,13 +64,16 @@ abstract class Element {
 
     internal val properties: DoubleArray = DoubleArray(Property.values().size)
 
-    private val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
+    internal val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
 
     private var dirtyMatrices: MutableList<Int>? = null
 
     private var animationContext: AnimationContext? = null
 
     protected var cachedHexColor: Int = 0
+
+    internal var hovered: Boolean = false
+    internal var passedHoverCulling: Boolean = false
 
     var enabled: Boolean
 
@@ -164,7 +170,7 @@ abstract class Element {
         return Vector3f(x.toFloat(), y.toFloat(), z.toFloat())
     }
 
-    public fun updateMatrix(matrixId: Int) {
+    open fun updateMatrix(matrixId: Int) {
         val properties = this.properties
         dirtyMatrices?.remove(matrixId)
 
@@ -224,32 +230,68 @@ abstract class Element {
         dirtyMatrices = matrices
     }
 
-    fun animate(
-        duration: Number,
-        easing: Easing? = null,
-        action: Element.() -> Unit
-    ): Element {
-        // do something
-        return getThis()
+    open fun transformAndRender() {
+        if (!this.enabled) return;
+
+        GlStateManager.pushMatrix()
+        this.applyTransformations()
+
+//        if (this.beforeRender) this.beforeRender()
+
+        this.render()
+
+//        if (this.afterRender) this.afterRender()
+
+        GlStateManager.popMatrix()
     }
 
-    fun update(action: Element.() -> Unit): Element {
-        TODO("Not yet implemented")
-        return getThis()
+    open fun applyTransformations() {
+
+        if (!this.enabled) return;
+
+        this.cleanMatrices();
+
+        GlStateManager.color(
+            properties[ColorR].toFloat(),
+            properties[ColorG].toFloat(),
+            properties[ColorB].toFloat(),
+            properties[ColorA].toFloat(),
+        )
+
+        for (matrix in this.matrices) {
+            if (matrix == null) continue
+            matrix.store(matrixBuffer)
+            matrixBuffer.flip()
+            GL11.glMultMatrix(matrixBuffer)
+        }
     }
 
-    infix fun then(action: () -> Unit): Element {
-        TODO("Not yet implemented")
-        return getThis()
-    }
+//    fun animate(
+//        duration: Number,
+//        easing: Easing? = null,
+//        action: Element.() -> Unit
+//    ): Element {
+//        // do something
+//        return getThis()
+//    }
 
-    fun then(delay: Number, action: () -> Unit): Element {
-        TODO("Not yet implemented")
-        return getThis()
-    }
+//    fun update(action: Element.() -> Unit): Element {
+//        TODO("Not yet implemented")
+//        return getThis()
+//    }
+//
+//    infix fun then(action: () -> Unit): Element {
+//        TODO("Not yet implemented")
+//        return getThis()
+//    }
+//
+//    fun then(delay: Number, action: () -> Unit): Element {
+//        TODO("Not yet implemented")
+//        return getThis()
+//    }
 
-    @Suppress("UNCHECKED_CAST")
-    fun getThis() = this as Element
+    abstract fun render()
+
 
 }
 

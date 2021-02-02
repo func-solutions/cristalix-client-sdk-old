@@ -18,7 +18,7 @@ allprojects {
 
     dependencies {
         implementation(kotlin("stdlib"))
-        implementation("dev.xdark", "clientapi", "1.0")
+        implementation("dev.xdark", "clientapi", "1.0.1")
         implementation("org.lwjgl.lwjgl", "lwjgl", "2.9.3")
         implementation("org.lwjgl.lwjgl", "lwjgl_util", "2.9.2")
     }
