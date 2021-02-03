@@ -72,11 +72,6 @@ enum class Property(
 
     ;
 
-
-    constructor() {
-
-    }
-
 }
 
 

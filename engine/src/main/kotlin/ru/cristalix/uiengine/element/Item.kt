@@ -18,6 +18,9 @@ open class Item(
     var stack: ItemStack
 ) : Element(scale, offset, align, origin, color, rotation, enabled, onClick, onHover) {
 
+    override fun render() {
+        TODO("Not yet implemented")
+    }
 
 
 }
