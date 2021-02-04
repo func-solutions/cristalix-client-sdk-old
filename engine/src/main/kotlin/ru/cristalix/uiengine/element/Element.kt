@@ -105,6 +105,10 @@ abstract class Element {
         get() = ProxiedRotation(this)
         set(value) = value.write(rotation)
 
+    var size: V3
+        get() = ProxiedV3(SizeX.ordinal, this)
+        set(value) = value.write(size)
+
     constructor(
         scale: V3 = V3(1.0, 1.0, 1.0),
         offset: V3 = V3(),
@@ -160,7 +164,7 @@ abstract class Element {
 
     fun cleanMatrices() {
         val dirty = this.dirtyMatrices ?: return
-        for (matrix in dirty) {
+        for (matrix in dirty.toIntArray()) {
             this.updateMatrix(matrix)
         }
         this.dirtyMatrices = null
@@ -228,6 +232,10 @@ abstract class Element {
         val matrices = dirtyMatrices ?: ArrayList()
         if (!matrices.contains(matrix)) matrices.add(matrix)
         dirtyMatrices = matrices
+
+        if (matrix == sizeMatrix) {
+            markDirty(originMatrix)
+        }
     }
 
     open fun transformAndRender() {

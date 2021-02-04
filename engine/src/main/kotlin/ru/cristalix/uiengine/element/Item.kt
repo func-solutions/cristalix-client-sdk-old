@@ -1,26 +1,31 @@
 package ru.cristalix.uiengine.element
 
 import dev.xdark.clientapi.item.ItemStack
+import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.utility.Color
 import ru.cristalix.uiengine.utility.Rotation
 import ru.cristalix.uiengine.utility.V3
+import ru.cristalix.uiengine.utility.WHITE
 
 open class Item(
-    scale: V3,
-    offset: V3,
-    align: V3,
-    origin: V3,
-    color: Color,
-    rotation: Rotation,
-    enabled: Boolean,
-    onClick: ClickHandler,
-    onHover: HoverHandler,
-    var stack: ItemStack
+    var stack: ItemStack,
+    scale: V3 = V3(1.0, 1.0, 1.0),
+    offset: V3 = V3(0.0,0.0,0.0),
+    align: V3 = V3(0.0,0.0,0.0),
+    origin: V3 = V3(0.0,0.0,0.0),
+    color: Color = WHITE,
+    rotation: Rotation = Rotation(0.0,0.0,0.0,1.0),
+    enabled: Boolean = true,
+    onClick: ClickHandler = null,
+    onHover: HoverHandler = null
 ) : Element(scale, offset, align, origin, color, rotation, enabled, onClick, onHover) {
 
-    override fun render() {
-        TODO("Not yet implemented")
+    init {
+        this.size = V3(16.0, 16.0)
     }
 
+    override fun render() {
+        UIEngine.clientApi.renderItem().renderItemAndEffectIntoGUI(stack, 0, 0)
+    }
 
 }

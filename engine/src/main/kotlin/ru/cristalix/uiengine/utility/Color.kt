@@ -23,9 +23,7 @@ open class Color(
 
     fun toGuiHex(): Int {
 
-        return ((alpha * 255).toInt() and 0xFF) shl 24 or (
-                red * 255 shl 16) or (
-                green * 255 shl 8) or blue * 255
+        return (((alpha * 255).toInt() and 0xFF) shl 24).or(red shl 16).or(green shl 8).or(blue)
 
     }
 }

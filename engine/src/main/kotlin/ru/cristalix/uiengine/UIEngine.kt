@@ -11,6 +11,7 @@ import ru.cristalix.uiengine.element.Element
 import ru.cristalix.uiengine.element.Rectangle
 import ru.cristalix.uiengine.utility.MouseButton
 import ru.cristalix.uiengine.utility.V2
+import ru.cristalix.uiengine.utility.V3
 
 object UIEngine {
 
@@ -19,7 +20,7 @@ object UIEngine {
     lateinit var clientApi: ClientApi
     private lateinit var listener: Listener
 
-    val overlayContext: Context = Context(size = V2())
+    val overlayContext: Context = Context(size = V3())
 
     var lastMouseState: BooleanArray = booleanArrayOf(false, false, false)
 
@@ -38,6 +39,7 @@ object UIEngine {
     }
 
     private fun renderOverlay() {
+//        if (Math.random() < 0.01) println("hello")
         overlayContext.transformAndRender()
     }
 

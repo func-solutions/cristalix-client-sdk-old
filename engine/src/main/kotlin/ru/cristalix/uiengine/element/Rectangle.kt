@@ -7,10 +7,6 @@ import ru.cristalix.uiengine.utility.*
 
 open class Rectangle : Element {
 
-    var size: V2
-        get() = ProxiedV2(Property.SizeX.ordinal, this)
-        set(value) = value.write(size)
-
     var textureLocation: ResourceLocation?
 
     var textureFrom: V2
@@ -33,7 +29,7 @@ open class Rectangle : Element {
         enabled: Boolean = true,
         onClick: ClickHandler = null,
         onHover: HoverHandler = null,
-        size: V2 = V2(),
+        size: V3 = V3(),
         textureLocation: ResourceLocation? = null,
         textureFrom: V2 = V2(),
         textureSize: V2 = V2(1.0, 1.0),
@@ -80,9 +76,9 @@ open class Rectangle : Element {
     override fun render() {
 
         val api = UIEngine.clientApi
+        GlStateManager.enableBlend()
 
         if (textureLocation != null) {
-            GlStateManager.enableBlend()
 
             api.renderEngine().bindTexture(textureLocation)
 

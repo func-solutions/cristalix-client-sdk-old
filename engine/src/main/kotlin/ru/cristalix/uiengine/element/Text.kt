@@ -12,7 +12,7 @@ class Text(
     offset: V3 = V3(),
     align: V3 = V3(),
     origin: V3 = V3(),
-    color: Color = TRANSPARENT,
+    color: Color = WHITE,
     rotation: Rotation = Rotation(),
     enabled: Boolean = true,
     onClick: ClickHandler = null,
@@ -25,8 +25,12 @@ class Text(
     var content: String = content
         set(value) {
             field = value
-            this.changeProperty(Property.SizeX.ordinal, UIEngine.clientApi.fontRenderer().getStringWidth(value))
+            this.size = V3(UIEngine.clientApi.fontRenderer().getStringWidth(value).toDouble(), 9.0)
         }
+
+    init {
+        this.content = content
+    }
 
     override fun render() {
 

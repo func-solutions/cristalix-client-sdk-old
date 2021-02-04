@@ -7,8 +7,9 @@ import org.lwjgl.util.vector.Vector4f
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.utility.Property
 import ru.cristalix.uiengine.utility.V2
+import ru.cristalix.uiengine.utility.V3
 
-class Context(size: V2) : Rectangle(size = size) {
+class Context(size: V3) : Rectangle(size = size) {
 
     private val runningTasks: MutableList<Task> = ArrayList()
     private val runningAnimations: MutableList<Animation> = ArrayList()
