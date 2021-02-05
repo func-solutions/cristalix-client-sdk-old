@@ -37,6 +37,6 @@ class ExampleMod : ModMain {
     }
 
     override fun unload() {
-//        UIEngine.uninitialize()
+        UIEngine.uninitialize()
     }
 }

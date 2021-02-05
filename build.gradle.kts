@@ -30,7 +30,7 @@ allprojects {
         }
         compileKotlin {
             kotlinOptions.jvmTarget = "1.6"
-            kotlinOptions.noStdlib = true
+            kotlinOptions.noStdlib = false
             kotlinOptions.noReflect = true
             kotlinOptions.freeCompilerArgs += "-Xno-param-assertions"
             kotlinOptions.freeCompilerArgs += "-Xno-call-assertions"
@@ -40,7 +40,7 @@ allprojects {
         }
         compileTestKotlin {
             kotlinOptions.jvmTarget = "1.6"
-            kotlinOptions.noStdlib = true
+            kotlinOptions.noStdlib = false
             kotlinOptions.noReflect = true
             kotlinOptions.freeCompilerArgs += "-Xno-param-assertions"
             kotlinOptions.freeCompilerArgs += "-Xno-call-assertions"
