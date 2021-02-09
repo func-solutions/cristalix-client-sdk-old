@@ -12,7 +12,7 @@ import ru.cristalix.uiengine.utility.V3
 class Context(size: V3) : Rectangle(size = size) {
 
     private val runningTasks: MutableList<Task> = ArrayList()
-    private val runningAnimations: MutableList<Animation> = ArrayList()
+    internal val runningAnimations: MutableList<Animation> = ArrayList()
 
     fun updateAnimations() {
 

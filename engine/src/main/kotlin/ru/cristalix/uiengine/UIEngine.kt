@@ -18,7 +18,7 @@ object UIEngine {
     val matrixBuffer = GLAllocation.createDirectFloatBuffer(16)!!
 
     lateinit var clientApi: ClientApi
-    private lateinit var listener: Listener
+    lateinit var listener: Listener
 
     val overlayContext: Context = Context(size = V3())
 
@@ -59,6 +59,12 @@ object UIEngine {
             }
         }
         return lastClickable
+    }
+
+    // Avoid usage of forbidden Class class.
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun <T> registerHandler(type: Class<T>, noinline handler: T.() -> Unit, priority: Int = 1) {
+        clientApi.eventBus().register(listener, type, handler, priority)
     }
 
     private fun gameLoop() {

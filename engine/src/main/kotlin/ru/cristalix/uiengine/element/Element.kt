@@ -8,67 +8,17 @@ import ru.cristalix.uiengine.UIEngine.matrixBuffer
 import ru.cristalix.uiengine.utility.*
 import ru.cristalix.uiengine.utility.Property.*
 
-internal data class Animation(val element: Element, val property: Property) {
-
-    var startedTime: Long = 0
-    var duration: Long = 0
-    var startValue: Double = 0.0
-    var targetValue: Double = 0.0
-    var lastValue: Double = 0.0
-    var easing: Easing = Easings.NONE
-
-    init {
-        this.lastValue = element.properties[property.ordinal]
-        this.targetValue = this.lastValue
-    }
-
-    fun newTarget(value: Double, duration: Long, easing: Easing) {
-
-        this.startValue = this.lastValue
-        this.targetValue = value
-        this.startedTime = System.currentTimeMillis()
-        this.duration = duration
-        this.easing = easing
-
-    }
-
-    fun update(time: Long): Boolean {
-        var part = (time - this.startedTime).toDouble() / this.duration
-        val alive = part <= 1.0
-        val value: Double
-        if (alive) {
-            part = this.easing(part)
-            value = startValue + (targetValue - startValue) * part
-        } else {
-            this.startedTime = 0
-            value = targetValue
-        }
-        this.lastValue = value
-        this.element.properties[property.ordinal] = value
-        return alive
-    }
-
-}
-
-private var runningAnimations: MutableList<Animation> = ArrayList()
-
-data class AnimationContext(
-    val duration: Number,
-    val easing: Easing
-)
-
-typealias ClickHandler = ((element: Element, buttonDown: Boolean, button: MouseButton) -> Unit)?
-typealias HoverHandler = ((element: Element, hovered: Boolean) -> Unit)?
-
 abstract class Element {
 
     internal val properties: DoubleArray = DoubleArray(Property.values().size)
 
     internal val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
 
+    internal lateinit var context: Context
+
     private var dirtyMatrices: MutableList<Int>? = null
 
-    private var animationContext: AnimationContext? = null
+    internal var animationContext: AnimationContext? = null
 
     protected var cachedHexColor: Int = 0
 
@@ -138,7 +88,7 @@ abstract class Element {
         val animationContext = this.animationContext
         if (animationContext != null) {
             var animation: Animation? = null
-            for (existing in runningAnimations) {
+            for (existing in context.runningAnimations) {
                 if (existing.element === this && existing.property.ordinal == index) {
                     animation = existing
                     break
@@ -151,7 +101,7 @@ abstract class Element {
                 (animationContext.duration.toDouble() * 1000).toLong(),
                 animationContext.easing
             )
-            runningAnimations.add(animation)
+            context.runningAnimations.add(animation)
             return
         }
         // stdout.println('setting ' + propertyId + ' to ' + value);
@@ -274,15 +224,6 @@ abstract class Element {
         }
     }
 
-//    fun animate(
-//        duration: Number,
-//        easing: Easing? = null,
-//        action: Element.() -> Unit
-//    ): Element {
-//        // do something
-//        return getThis()
-//    }
-
 //    fun update(action: Element.() -> Unit): Element {
 //        TODO("Not yet implemented")
 //        return getThis()
@@ -302,4 +243,3 @@ abstract class Element {
 
 
 }
-

@@ -38,7 +38,10 @@ task("jarPure", Jar::class) {
     from(zipTree(proguard.extensions.getByName("file")).matching {
         exclude {
             val path = it.relativePath.pathString
-            return@exclude path.startsWith("kotlin/") || path.startsWith("META-INF/")
+//            return@exclude path.startsWith("kotlin/") || path.startsWith("META-INF/")
+            return@exclude path.endsWith(".kotlin_metadata") ||
+                    path.endsWith(".kotlin_builtins") ||
+                    path.startsWith("META-INF/")
         }
     })
     this.archiveAppendix.set("pure")

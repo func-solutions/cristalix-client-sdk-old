@@ -4,12 +4,11 @@
 -libraryjars  <java.home>/lib/rt.jar
 -useuniqueclassmembernames
 -dontusemixedcaseclassnames
--flattenpackagehierarchy ''
--repackageclasses ''
 -keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,LocalVariable*Table,*Annotation*,Synthetic,EnclosingMethod
 -keepparameternames
 -adaptresourcefilecontents **.properties,META-INF/MANIFEST.MF
 -dontpreverify
+-dontobfuscate
 
 -keep,allowobfuscation class ru.cristalix.uiengine.example.ExampleMod
 

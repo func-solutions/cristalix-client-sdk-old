@@ -51,6 +51,7 @@ open class Rectangle : Element {
         for (element in elements) {
             element.changeProperty(Property.ParentSizeX.ordinal, this.properties[Property.SizeX])
             element.changeProperty(Property.ParentSizeY.ordinal, this.properties[Property.SizeY])
+            element.context = this.context
             this.children.add(element)
         }
 
