@@ -2,10 +2,7 @@ package ru.cristalix.uiengine.element
 
 import dev.xdark.clientapi.item.ItemStack
 import ru.cristalix.uiengine.UIEngine
-import ru.cristalix.uiengine.utility.Color
-import ru.cristalix.uiengine.utility.Rotation
-import ru.cristalix.uiengine.utility.V3
-import ru.cristalix.uiengine.utility.WHITE
+import ru.cristalix.uiengine.utility.*
 
 open class Item(
     var stack: ItemStack,
@@ -16,8 +13,8 @@ open class Item(
     color: Color = WHITE,
     rotation: Rotation = Rotation(0.0,0.0,0.0,1.0),
     enabled: Boolean = true,
-    onClick: ClickHandler = null,
-    onHover: HoverHandler = null
+    onClick: ClickHandler? = null,
+    onHover: HoverHandler? = null
 ) : Element(scale, offset, align, origin, color, rotation, enabled, onClick, onHover) {
 
     init {

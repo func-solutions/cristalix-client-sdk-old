@@ -72,6 +72,10 @@ enum class Property(
 
     ;
 
+    companion object {
+        val VALUES = values()
+    }
+
 }
 
 

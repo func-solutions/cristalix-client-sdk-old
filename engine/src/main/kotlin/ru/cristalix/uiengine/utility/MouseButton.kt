@@ -4,6 +4,10 @@ enum class MouseButton {
 
     LEFT,
     RIGHT,
-    MIDDLE
+    MIDDLE;
+
+    companion object {
+        val VALUES = values()
+    }
 
 }
