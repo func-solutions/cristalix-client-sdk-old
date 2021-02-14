@@ -11,6 +11,7 @@ buildscript {
 
 dependencies {
     implementation(project(":engine"))
+    implementation(kotlin("stdlib"))
 }
 
 

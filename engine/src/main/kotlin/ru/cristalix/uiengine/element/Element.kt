@@ -70,9 +70,6 @@ abstract class Element {
         this.enabled = enabled
         this.onClick = onClick
         this.onHover = onHover
-        for (matrix in allMatrices) {
-            markDirty(matrix)
-        }
     }
 
     internal fun changeProperty(index: Int, value: Number) {

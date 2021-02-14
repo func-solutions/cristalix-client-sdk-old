@@ -26,7 +26,25 @@ allprojects {
     tasks {
         jar {
             from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+            duplicatesStrategy = DuplicatesStrategy.FAIL
+        }
+        compileKotlin {
+            kotlinOptions.jvmTarget = "1.6"
+            kotlinOptions.noStdlib = false
+            kotlinOptions.noReflect = true
+            kotlinOptions.freeCompilerArgs += "-Xno-param-assertions"
+            kotlinOptions.freeCompilerArgs += "-Xno-call-assertions"
+            kotlinOptions.freeCompilerArgs += "-Xno-receiver-assertions"
+            kotlinOptions.freeCompilerArgs += "-Xassertions=always-disable"
+//            kotlinOptions.noJdk = true
+        }
+        compileTestKotlin {
+            kotlinOptions.jvmTarget = "1.6"
+            kotlinOptions.noStdlib = false
+            kotlinOptions.noReflect = true
+            kotlinOptions.freeCompilerArgs += "-Xno-param-assertions"
+            kotlinOptions.freeCompilerArgs += "-Xno-call-assertions"
+//            kotlinOptions.noJdk = true
         }
     }
 
