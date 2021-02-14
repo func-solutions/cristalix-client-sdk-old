@@ -14,6 +14,10 @@ class Context(size: V3) : Rectangle(size = size) {
     private val runningTasks: MutableList<Task> = ArrayList()
     internal val runningAnimations: MutableList<Animation> = ArrayList()
 
+    init {
+        this.context = this
+    }
+
     fun updateAnimations() {
 
         val time = System.currentTimeMillis()

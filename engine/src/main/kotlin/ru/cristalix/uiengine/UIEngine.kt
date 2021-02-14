@@ -4,6 +4,7 @@ import dev.xdark.clientapi.ClientApi
 import dev.xdark.clientapi.event.Listener
 import dev.xdark.clientapi.event.lifecycle.GameLoop
 import dev.xdark.clientapi.event.render.GuiOverlayRender
+import dev.xdark.clientapi.event.window.WindowResize
 import dev.xdark.clientapi.opengl.GLAllocation
 import org.lwjgl.input.Mouse
 import ru.cristalix.uiengine.element.Context
@@ -31,6 +32,11 @@ object UIEngine {
         this.listener = eventBus.createListener()
         eventBus.register(listener, GuiOverlayRender::class.java, { renderOverlay() }, 1)
         eventBus.register(listener, GameLoop::class.java, { gameLoop() }, 1)
+        updateResolution()
+        eventBus.register(listener, WindowResize::class.java, { updateResolution() }, 1)
+    }
+
+    private inline fun updateResolution() {
         val resolution = clientApi.resolution()
         overlayContext.size = V3(resolution.scaledWidth_double, resolution.scaledHeight_double)
     }

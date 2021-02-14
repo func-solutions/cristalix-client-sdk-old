@@ -30,6 +30,7 @@ internal data class Animation(val element: Element, val property: Property) {
 
     fun update(time: Long): Boolean {
         var part = (time - this.startedTime).toDouble() / this.duration
+        println("prop $property part $part time $time start $startedTime duration $duration")
         val alive = part <= 1.0
         val value: Double
         if (alive) {
@@ -40,7 +41,7 @@ internal data class Animation(val element: Element, val property: Property) {
             value = targetValue
         }
         this.lastValue = value
-        this.element.properties[property.ordinal] = value
+        this.element.changeProperty(property.ordinal, value)
         return alive
     }
 
