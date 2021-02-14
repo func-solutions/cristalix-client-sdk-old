@@ -3,9 +3,5 @@
 *.iml
 
 #Gradle
-gradlew
-gradlew.bat
-gradle
 .gradle
 build
-gradle.properties

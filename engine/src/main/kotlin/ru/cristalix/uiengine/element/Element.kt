@@ -10,26 +10,17 @@ import ru.cristalix.uiengine.utility.Property.*
 
 abstract class Element {
 
-    internal val properties: DoubleArray = DoubleArray(Property.values().size)
-
+    internal val properties: DoubleArray = DoubleArray(Property.VALUES.size)
     internal val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
-
     internal lateinit var context: Context
-
     private var dirtyMatrices: MutableList<Int>? = null
-
     internal var animationContext: AnimationContext? = null
-
     protected var cachedHexColor: Int = 0
-
     internal var hovered: Boolean = false
     internal var passedHoverCulling: Boolean = false
-
     var enabled: Boolean
-
-    var onClick: ClickHandler
-
-    var onHover: HoverHandler
+    var onClick: ClickHandler?
+    var onHover: HoverHandler?
 
     var offset: V3
         get() = ProxiedV3(OffsetX.ordinal, this)
@@ -67,8 +58,8 @@ abstract class Element {
         color: Color = TRANSPARENT,
         rotation: Rotation = Rotation(),
         enabled: Boolean = true,
-        onClick: ClickHandler = null,
-        onHover: HoverHandler = null
+        onClick: ClickHandler? = null,
+        onHover: HoverHandler? = null
     ) {
         this.scale = scale
         this.offset = offset
@@ -83,7 +74,7 @@ abstract class Element {
 
     internal fun changeProperty(index: Int, value: Number) {
 
-        val property = Property.values()[index]
+        val property = Property.VALUES[index]
 
         val animationContext = this.animationContext
         if (animationContext != null) {
@@ -135,7 +126,6 @@ abstract class Element {
 
         if (matrixId >= 0) {
             val matrix: Matrix4f = Matrix4f().setIdentity() as Matrix4f
-
 
             when (matrixId) {
                 alignMatrix -> matrix.translate(

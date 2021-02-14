@@ -10,12 +10,12 @@ import ru.cristalix.uiengine.element.Context
 import ru.cristalix.uiengine.element.Element
 import ru.cristalix.uiengine.element.Rectangle
 import ru.cristalix.uiengine.utility.MouseButton
-import ru.cristalix.uiengine.utility.V2
 import ru.cristalix.uiengine.utility.V3
+import java.nio.FloatBuffer
 
 object UIEngine {
 
-    val matrixBuffer = GLAllocation.createDirectFloatBuffer(16)!!
+    val matrixBuffer: FloatBuffer = GLAllocation.createDirectFloatBuffer(16)
 
     lateinit var clientApi: ClientApi
     lateinit var listener: Listener
@@ -26,25 +26,19 @@ object UIEngine {
 
     fun initialize(clientApi: ClientApi) {
         this.clientApi = clientApi
-
-
         val eventBus = clientApi.eventBus()
-
         this.listener = eventBus.createListener()
-
         eventBus.register(listener, GuiOverlayRender::class.java, { renderOverlay() }, 1)
-
         eventBus.register(listener, GameLoop::class.java, { gameLoop() }, 1)
 
     }
 
     private fun renderOverlay() {
-//        if (Math.random() < 0.01) println("hello")
         overlayContext.transformAndRender()
     }
 
     fun uninitialize() {
-        this.clientApi.eventBus().unregisterAll(listener)
+        clientApi.eventBus().unregisterAll(listener)
         GLAllocation.freeBuffer(matrixBuffer)
     }
 
@@ -68,18 +62,16 @@ object UIEngine {
     }
 
     private fun gameLoop() {
-
-        IntRange(0, 2).forEach { button ->
-
-            val oldState = lastMouseState[button]
-            val newState = Mouse.isButtonDown(button)
+        for (button  in MouseButton.VALUES) {
+            val idx = button.ordinal
+            val oldState = lastMouseState[idx]
+            val newState = Mouse.isButtonDown(idx)
             if (oldState != newState) {
                 val lastClickable = findLastClickable(overlayContext.children)
-                lastClickable?.onClick?.invoke(lastClickable, newState, MouseButton.values()[button])
+                lastClickable?.onClick?.invoke(lastClickable, newState, button)
+                lastMouseState[idx] = newState
             }
-            lastMouseState[button] = newState
         }
-
     }
 
 }
