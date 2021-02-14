@@ -10,6 +10,7 @@ import ru.cristalix.uiengine.element.Context
 import ru.cristalix.uiengine.element.Element
 import ru.cristalix.uiengine.element.Rectangle
 import ru.cristalix.uiengine.utility.MouseButton
+import ru.cristalix.uiengine.utility.V2
 import ru.cristalix.uiengine.utility.V3
 import java.nio.FloatBuffer
 
@@ -30,7 +31,8 @@ object UIEngine {
         this.listener = eventBus.createListener()
         eventBus.register(listener, GuiOverlayRender::class.java, { renderOverlay() }, 1)
         eventBus.register(listener, GameLoop::class.java, { gameLoop() }, 1)
-
+        val resolution = clientApi.resolution()
+        overlayContext.size = V3(resolution.scaledWidth_double, resolution.scaledHeight_double)
     }
 
     private fun renderOverlay() {
