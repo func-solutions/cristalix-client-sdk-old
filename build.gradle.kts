@@ -1,12 +1,13 @@
 plugins {
     kotlin("jvm") version "1.4.21"
+    `maven-publish`
 }
 
 group = "ru.cristalix"
-version = "3.0.1"
 
 allprojects {
 
+    apply("plugin" to "maven-publish")
     apply("plugin" to "kotlin")
 
     repositories {
@@ -28,8 +29,8 @@ allprojects {
 
     tasks {
         jar {
-            from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-            duplicatesStrategy = DuplicatesStrategy.FAIL
+//            from(configurations.compileClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         }
         compileKotlin {
             kotlinOptions.jvmTarget = "1.6"
@@ -52,4 +53,40 @@ allprojects {
     }
 
 
+    afterEvaluate {
+        if (project.name == "bundler-gradle-plugin" || project.name == "engine") {
+            publishing {
+                publications {
+                    create<MavenPublication>("maven") {
+                        groupId = "ru.cristalix"
+                        artifactId = when (project.name) {
+                            "bundler-gradle-plugin" -> "bundler"
+                            "engine" -> "uiengine"
+                            else -> project.name
+                        }
+                        version = when (project.name) {
+                            "bundler-gradle-plugin" -> "2.1.3"
+                            "engine" -> "3.0.2"
+                            else -> "1.0"
+                        }
+
+                        artifact(project.tasks.jar.get())
+                    }
+                }
+                repositories {
+                    maven {
+                        setUrl("https://repo.implario.dev/public")
+                        credentials {
+                            username = System.getenv("MAVEN_USERNAME")
+                            password = System.getenv("MAVEN_PASSWORD")
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
 }
+
+

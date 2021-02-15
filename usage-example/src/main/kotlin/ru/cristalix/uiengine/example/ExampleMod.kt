@@ -15,28 +15,17 @@ class ExampleMod : ModMain {
 
     override fun load(clientApi: ClientApi) {
         UIEngine.initialize(clientApi)
-        var rect = Rectangle(
+        val rect = Rectangle(
+            origin = V3(0.5, 0.5),
+            align = V3(0.5, 0.5),
             size = V3(240.0, 240.0),
-            color = Color(alpha = 1.0, red = 0, green = 0, blue = 0),
-            children = listOf(
-                Text(
-                    content = "каргонд блин где 20 миллионов игроков",
-                    offset = V3(y = -3.0),
-                    align = V3(0.5, 1.0),
-                    origin = V3(0.5, 1.0)
-                ),
-                Item(
-                    stack = UIEngine.clientApi.itemRegistry().getItem(198).newStack(1, 0),
-                    align = V3(0.5, 0.5),
-                    origin = V3(0.5, 0.5),
-                    scale = V3(9.0, 9.0, 1.0)
-                )
-            )
+            color = Color(alpha = 0.7, red = 0, green = 0, blue = 0)
         )
 
         UIEngine.overlayContext.addChild(rect)
 
         UIEngine.registerHandler(KeyPress::class.java, {
+            println("${this.key} pressed")
             rect.animate(0.5) {
                 offset.x = 100.0 + Math.random() * 100.0
                 offset.y = 100.0 + Math.random() * 100.0
