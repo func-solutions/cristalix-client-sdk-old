@@ -36,7 +36,7 @@ object UIEngine {
         eventBus.register(listener, WindowResize::class.java, { updateResolution() }, 1)
     }
 
-    private inline fun updateResolution() {
+    private fun updateResolution() {
         val resolution = clientApi.resolution()
         overlayContext.size = V3(resolution.scaledWidth_double, resolution.scaledHeight_double)
     }

@@ -5,32 +5,24 @@ import ru.cristalix.uiengine.utility.*
 import dev.xdark.clientapi.opengl.GlStateManager
 
 
+class Text() : Element() {
 
-
-class Text(
-    scale: V3 = V3(1.0, 1.0, 1.0),
-    offset: V3 = V3(),
-    align: V3 = V3(),
-    origin: V3 = V3(),
-    color: Color = WHITE,
-    rotation: Rotation = Rotation(),
-    enabled: Boolean = true,
-    onClick: ClickHandler? = null,
-    onHover: HoverHandler? = null,
-    content: String,
-//    autoFit: Boolean = false,
-    var shadow: Boolean = false,
-) : Element(scale, offset, align, origin, color, rotation, enabled, onClick, onHover) {
-
-    var content: String = content
+    var content: String = ""
         set(value) {
             field = value
             this.size = V3(UIEngine.clientApi.fontRenderer().getStringWidth(value).toDouble(), 9.0)
         }
 
+    var shadow = false
+
     init {
-        this.content = content
+        color = WHITE
     }
+
+    constructor(setup: Text.() -> Unit) : this() {
+        setup()
+    }
+
 
     override fun render() {
 

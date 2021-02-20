@@ -66,7 +66,7 @@ allprojects {
                         }
                         version = when (project.name) {
                             "bundler-gradle-plugin" -> "2.1.3"
-                            "engine" -> "3.0.2"
+                            "engine" -> "3.1.0"
                             else -> "1.0"
                         }
 

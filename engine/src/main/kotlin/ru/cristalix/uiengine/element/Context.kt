@@ -9,7 +9,7 @@ import ru.cristalix.uiengine.utility.Property
 import ru.cristalix.uiengine.utility.V2
 import ru.cristalix.uiengine.utility.V3
 
-class Context(size: V3) : Rectangle(size = size) {
+class Context(size: V3) : Rectangle({ this.size = size }) {
 
     private val runningTasks: MutableList<Task> = ArrayList()
     internal val runningAnimations: MutableList<Animation> = ArrayList()

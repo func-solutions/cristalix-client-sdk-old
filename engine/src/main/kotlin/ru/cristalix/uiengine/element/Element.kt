@@ -8,7 +8,7 @@ import ru.cristalix.uiengine.UIEngine.matrixBuffer
 import ru.cristalix.uiengine.utility.*
 import ru.cristalix.uiengine.utility.Property.*
 
-abstract class Element {
+abstract class Element() {
 
     internal val properties: DoubleArray = DoubleArray(Property.VALUES.size)
     internal val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
@@ -18,9 +18,9 @@ abstract class Element {
     protected var cachedHexColor: Int = 0
     internal var hovered: Boolean = false
     internal var passedHoverCulling: Boolean = false
-    var enabled: Boolean
-    var onClick: ClickHandler?
-    var onHover: HoverHandler?
+    var enabled: Boolean = true
+    var onClick: ClickHandler? = null
+    var onHover: HoverHandler? = null
 
     var offset: V3
         get() = ProxiedV3(OffsetX.ordinal, this)
@@ -50,26 +50,13 @@ abstract class Element {
         get() = ProxiedV3(SizeX.ordinal, this)
         set(value) = value.write(size)
 
-    constructor(
-        scale: V3 = V3(1.0, 1.0, 1.0),
-        offset: V3 = V3(),
-        align: V3 = V3(),
-        origin: V3 = V3(),
-        color: Color = TRANSPARENT,
-        rotation: Rotation = Rotation(),
-        enabled: Boolean = true,
-        onClick: ClickHandler? = null,
-        onHover: HoverHandler? = null
-    ) {
-        this.scale = scale
-        this.offset = offset
-        this.align = align
-        this.origin = origin
-        this.color = color
-        this.rotation = rotation
-        this.enabled = enabled
-        this.onClick = onClick
-        this.onHover = onHover
+    init {
+        this.scale = V3(1.0, 1.0, 1.0)
+        this.changeProperty(RotationZ.ordinal, 1.0)
+    }
+    
+    constructor(setup: Element.() -> Unit) : this() {
+        setup()
     }
 
     internal fun changeProperty(index: Int, value: Number) {

@@ -2,12 +2,14 @@ package ru.cristalix.uiengine.element
 
 import dev.xdark.clientapi.opengl.GlStateManager
 import dev.xdark.clientapi.resource.ResourceLocation
+import org.lwjgl.util.vector.Matrix4f
+import org.lwjgl.util.vector.Vector4f
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.utility.*
 
-open class Rectangle : Element {
+open class Rectangle() : Element() {
 
-    var textureLocation: ResourceLocation?
+    var textureLocation: ResourceLocation? = null
 
     var textureFrom: V2
         get() = ProxiedV2(Property.TextureX.ordinal, this)
@@ -17,29 +19,14 @@ open class Rectangle : Element {
         get() = ProxiedV2(Property.TextureWidth.ordinal, this)
         set(value) = value.write(textureSize)
 
-    val children: MutableList<Element>
+    val children: MutableList<Element> = ArrayList()
 
-    constructor(
-        scale: V3 = V3(1.0, 1.0, 1.0),
-        offset: V3 = V3(),
-        align: V3 = V3(),
-        origin: V3 = V3(),
-        color: Color = TRANSPARENT,
-        rotation: Rotation = Rotation(),
-        enabled: Boolean = true,
-        onClick: ClickHandler? = null,
-        onHover: HoverHandler? = null,
-        size: V3 = V3(),
-        textureLocation: ResourceLocation? = null,
-        textureFrom: V2 = V2(),
-        textureSize: V2 = V2(1.0, 1.0),
-        children: Collection<Element> = ArrayList()
-    ) : super(scale, offset, align, origin, color, rotation, enabled, onClick, onHover) {
-        this.size = size
-        this.textureLocation = textureLocation
-        this.textureFrom = textureFrom
-        this.textureSize = textureSize
-        this.children = if (children is MutableList) children else ArrayList(children)
+    init {
+        this.textureSize = V2(1.0, 1.0)
+    }
+
+    constructor(setup: Rectangle.() -> Unit): this() {
+        setup()
     }
 
     fun removeChild(vararg elements: Element) {
@@ -55,6 +42,35 @@ open class Rectangle : Element {
             this.children.add(element)
         }
 
+
+    }
+
+    fun captureChildren(): Pair<V3, V3> {
+
+        for (element in children) {
+
+            val size = element.size
+
+            val width = size.x.toFloat()
+            val height = size.y.toFloat()
+
+            val bounds = arrayOf(
+                Vector4f(0f, 0f, 0f, 1f),
+                Vector4f(width, 0f, 0f, 1f),
+                Vector4f(width, height, 0f, 1f),
+                Vector4f(0f, height, 0f, 1f)
+            )
+
+            for (matrix in element.matrices) {
+                for (bound in bounds) {
+                    Matrix4f.transform(matrix, bound, bound)
+                }
+            }
+
+
+        }
+
+        TODO()
 
     }
 
