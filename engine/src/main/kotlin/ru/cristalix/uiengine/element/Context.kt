@@ -9,7 +9,7 @@ import ru.cristalix.uiengine.utility.Property
 import ru.cristalix.uiengine.utility.V2
 import ru.cristalix.uiengine.utility.V3
 
-class Context(size: V3) : Rectangle({ this.size = size }) {
+abstract class Context : RectangleElement() {
 
     private val runningTasks: MutableList<Task> = ArrayList()
     internal val runningAnimations: MutableList<Animation> = ArrayList()
@@ -51,9 +51,9 @@ class Context(size: V3) : Rectangle({ this.size = size }) {
     }
 
 
-    fun hoverCulling(element: Element): Boolean {
+    fun hoverCulling(element: AbstractElement): Boolean {
         var passed = false
-        if (element is Rectangle) {
+        if (element is RectangleElement) {
             for (child in element.children) {
                 if (hoverCulling(child)) {
                     passed = true
@@ -69,7 +69,7 @@ class Context(size: V3) : Rectangle({ this.size = size }) {
 
     }
 
-    fun updateHoverStates(element: Element, baseMatrix: Matrix4f, mouse: V2) {
+    fun updateHoverStates(element: AbstractElement, baseMatrix: Matrix4f, mouse: V2) {
 
         if (!element.passedHoverCulling) return
 
@@ -101,7 +101,7 @@ class Context(size: V3) : Rectangle({ this.size = size }) {
 
         }
 
-        if (element is Rectangle) {
+        if (element is RectangleElement) {
             for (child in element.children) {
                 updateHoverStates(child, matrix, mouse)
             }
@@ -113,12 +113,7 @@ class Context(size: V3) : Rectangle({ this.size = size }) {
     override fun transformAndRender() {
         this.updateAnimations()
 
-        val resolution = UIEngine.clientApi.resolution()
-
-        val mouse = V2(
-            (Mouse.getX() / resolution.scaleFactor).toDouble(),
-            ((Display.getHeight() - Mouse.getY()) / resolution.scaleFactor).toDouble()
-        )
+        val mouse = transformViewportAndMouse() ?: return
 
         for (element in children) {
             this.hoverCulling(element)
@@ -128,6 +123,8 @@ class Context(size: V3) : Rectangle({ this.size = size }) {
 
         super.transformAndRender()
     }
+
+    abstract fun transformViewportAndMouse(): V2?
 
 
 }

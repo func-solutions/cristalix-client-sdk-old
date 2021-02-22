@@ -20,6 +20,6 @@ gradlePlugin {
 
 dependencies {
     compileOnly(gradleApi())
-    compileOnly("com.android.tools.build:gradle:3.3.0")
-    compileOnly("com.guardsquare:proguard-gradle:7.0.0")
+    implementation("com.android.tools.build:gradle:3.3.0")
+    implementation("com.guardsquare:proguard-gradle:7.0.0")
 }

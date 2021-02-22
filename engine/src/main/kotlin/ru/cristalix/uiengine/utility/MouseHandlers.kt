@@ -1,6 +1,6 @@
 package ru.cristalix.uiengine.utility
 
-import ru.cristalix.uiengine.element.Element
+import ru.cristalix.uiengine.element.AbstractElement
 
-typealias ClickHandler = ((element: Element, buttonDown: Boolean, button: MouseButton) -> Unit)
-typealias HoverHandler = ((element: Element, hovered: Boolean) -> Unit)
+typealias ClickHandler = ((element: AbstractElement, buttonDown: Boolean, button: MouseButton) -> Unit)
+typealias HoverHandler = ((element: AbstractElement, hovered: Boolean) -> Unit)

@@ -8,7 +8,7 @@ data class AnimationContext(
     val easing: Easing
 )
 
-fun <T : Element> T.animate(
+fun <T : AbstractElement> T.animate(
     duration: Number,
     easing: Easing = Easings.NONE,
     action: T.() -> Unit

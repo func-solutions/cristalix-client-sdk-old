@@ -4,14 +4,12 @@ import dev.xdark.clientapi.ClientApi
 import dev.xdark.clientapi.event.Listener
 import dev.xdark.clientapi.event.lifecycle.GameLoop
 import dev.xdark.clientapi.event.render.GuiOverlayRender
+import dev.xdark.clientapi.event.render.RenderPass
 import dev.xdark.clientapi.event.window.WindowResize
 import dev.xdark.clientapi.opengl.GLAllocation
 import org.lwjgl.input.Mouse
-import ru.cristalix.uiengine.element.Context
-import ru.cristalix.uiengine.element.Element
-import ru.cristalix.uiengine.element.Rectangle
+import ru.cristalix.uiengine.element.*
 import ru.cristalix.uiengine.utility.MouseButton
-import ru.cristalix.uiengine.utility.V2
 import ru.cristalix.uiengine.utility.V3
 import java.nio.FloatBuffer
 
@@ -22,7 +20,9 @@ object UIEngine {
     lateinit var clientApi: ClientApi
     lateinit var listener: Listener
 
-    val overlayContext: Context = Context(size = V3())
+    val overlayContext: Context2D = Context2D(size = V3())
+
+    val worldContexts: MutableList<Context3D> = ArrayList()
 
     var lastMouseState: BooleanArray = booleanArrayOf(false, false, false)
 
@@ -34,6 +34,12 @@ object UIEngine {
         eventBus.register(listener, GameLoop::class.java, { gameLoop() }, 1)
         updateResolution()
         eventBus.register(listener, WindowResize::class.java, { updateResolution() }, 1)
+        eventBus.register(listener, RenderPass::class.java, { renderWorld(it) }, 1)
+    }
+
+    private fun renderWorld(renderPass: RenderPass) {
+        if (renderPass.pass != 2) return
+        worldContexts.forEach { it.transformAndRender() }
     }
 
     private fun updateResolution() {
@@ -50,13 +56,13 @@ object UIEngine {
         GLAllocation.freeBuffer(matrixBuffer)
     }
 
-    private fun findLastClickable(elements: Collection<Element>): Element? {
-        var lastClickable: Element? = null
+    private fun findLastClickable(elements: Collection<AbstractElement>): AbstractElement? {
+        var lastClickable: AbstractElement? = null
         for (element in elements) {
             // stdout.println(element.hovered + " " + element.passedHoverCulling + " " + (element.onClick != null))
             if (!element.passedHoverCulling) continue
             if (element.hovered && element.onClick != null) lastClickable = element
-            if (element is Rectangle) {
+            if (element is RectangleElement) {
                 lastClickable = findLastClickable(element.children) ?: lastClickable
             }
         }

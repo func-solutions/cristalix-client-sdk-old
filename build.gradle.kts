@@ -18,13 +18,13 @@ allprojects {
         maven {
             setUrl("https://repository.anfanik.me/public/")
         }
+        maven {
+            setUrl("https://libraries.minecraft.net/")
+        }
     }
 
     dependencies {
         compileOnly(kotlin("stdlib"))
-        compileOnly("dev.xdark", "clientapi", "1.0")
-        compileOnly("org.lwjgl.lwjgl", "lwjgl", "2.9.3")
-        compileOnly("org.lwjgl.lwjgl", "lwjgl_util", "2.9.2")
     }
 
     tasks {
@@ -54,7 +54,7 @@ allprojects {
 
 
     afterEvaluate {
-        if (project.name == "bundler-gradle-plugin" || project.name == "engine") {
+        if (project.name == "bundler-gradle-plugin" || project.name == "engine" || project.name == "client-api-full") {
             publishing {
                 publications {
                     create<MavenPublication>("maven") {
@@ -65,20 +65,23 @@ allprojects {
                             else -> project.name
                         }
                         version = when (project.name) {
-                            "bundler-gradle-plugin" -> "2.1.3"
-                            "engine" -> "3.1.0"
+                            "bundler-gradle-plugin" -> "2.1.5"
+                            "engine" -> "3.3.5"
+                            "client-api-full" -> "1.0.2"
                             else -> "1.0"
                         }
 
-                        artifact(project.tasks.jar.get())
+                        if (project.name == "bundler-gradle-plugin") from(project.components["java"])
+                        else artifact(project.tasks.jar.get())
+
                     }
                 }
                 repositories {
                     maven {
                         setUrl("https://repo.implario.dev/public")
                         credentials {
-                            username = System.getenv("MAVEN_USERNAME")
-                            password = System.getenv("MAVEN_PASSWORD")
+                            username = System.getenv("IMPLARIO_REPO_USER")
+                            password = System.getenv("IMPLARIO_REPO_PASSWORD")
                         }
                     }
                 }

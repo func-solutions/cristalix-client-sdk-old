@@ -5,7 +5,7 @@ import dev.xdark.clientapi.opengl.RenderHelper
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.utility.*
 
-open class Item() : Element() {
+open class ItemElement() : AbstractElement() {
 
     var stack: ItemStack? = null
 
@@ -14,7 +14,7 @@ open class Item() : Element() {
         this.size = V3(16.0, 16.0)
     }
 
-    constructor(setup: Item.() -> Unit): this() {
+    constructor(setup: ItemElement.() -> Unit): this() {
         setup()
     }
 

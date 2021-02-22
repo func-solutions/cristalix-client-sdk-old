@@ -31,6 +31,14 @@ open class V3(
         super.write(another)
         if (another is V3) another.z = z
     }
+
+    fun distanceSquared3(another: V3): Double {
+        val x = another.x - this.x
+        val y = another.y - this.y
+        val z = another.z - this.z
+        return x * x + y * y + z * z
+    }
+
 }
 
 open class Rotation(

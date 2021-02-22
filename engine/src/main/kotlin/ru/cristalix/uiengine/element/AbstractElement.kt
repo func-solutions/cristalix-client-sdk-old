@@ -8,7 +8,7 @@ import ru.cristalix.uiengine.UIEngine.matrixBuffer
 import ru.cristalix.uiengine.utility.*
 import ru.cristalix.uiengine.utility.Property.*
 
-abstract class Element() {
+abstract class AbstractElement() {
 
     internal val properties: DoubleArray = DoubleArray(Property.VALUES.size)
     internal val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
@@ -55,7 +55,7 @@ abstract class Element() {
         this.changeProperty(RotationZ.ordinal, 1.0)
     }
     
-    constructor(setup: Element.() -> Unit) : this() {
+    constructor(setup: AbstractElement.() -> Unit) : this() {
         setup()
     }
 

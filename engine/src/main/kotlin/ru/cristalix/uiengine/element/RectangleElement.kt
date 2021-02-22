@@ -7,7 +7,7 @@ import org.lwjgl.util.vector.Vector4f
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.utility.*
 
-open class Rectangle() : Element() {
+open class RectangleElement : AbstractElement() {
 
     var textureLocation: ResourceLocation? = null
 
@@ -19,21 +19,17 @@ open class Rectangle() : Element() {
         get() = ProxiedV2(Property.TextureWidth.ordinal, this)
         set(value) = value.write(textureSize)
 
-    val children: MutableList<Element> = ArrayList()
+    val children: MutableList<AbstractElement> = ArrayList()
 
     init {
         this.textureSize = V2(1.0, 1.0)
     }
 
-    constructor(setup: Rectangle.() -> Unit): this() {
-        setup()
-    }
-
-    fun removeChild(vararg elements: Element) {
+    fun removeChild(vararg elements: AbstractElement) {
         this.children.removeAll(elements)
     }
 
-    fun addChild(vararg elements: Element) {
+    fun addChild(vararg elements: AbstractElement) {
 
         for (element in elements) {
             element.changeProperty(Property.ParentSizeX.ordinal, this.properties[Property.SizeX])
@@ -124,7 +120,7 @@ open class Rectangle() : Element() {
             )
         }
 
-        children.forEach(Element::transformAndRender)
+        children.forEach(AbstractElement::transformAndRender)
 
     }
 

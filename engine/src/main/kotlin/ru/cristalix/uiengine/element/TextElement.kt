@@ -5,7 +5,7 @@ import ru.cristalix.uiengine.utility.*
 import dev.xdark.clientapi.opengl.GlStateManager
 
 
-class Text() : Element() {
+class TextElement() : AbstractElement() {
 
     var content: String = ""
         set(value) {
@@ -19,7 +19,7 @@ class Text() : Element() {
         color = WHITE
     }
 
-    constructor(setup: Text.() -> Unit) : this() {
+    constructor(setup: TextElement.() -> Unit) : this() {
         setup()
     }
 

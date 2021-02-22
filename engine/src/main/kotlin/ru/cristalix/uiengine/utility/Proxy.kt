@@ -9,7 +9,7 @@ import ru.cristalix.uiengine.utility.V3
 
 open class ProxiedV2(
     private val offset: Int,
-    private val element: Element
+    private val element: AbstractElement
 ) : V2() {
     override var x: Double
         get() = element.properties[offset]
@@ -21,7 +21,7 @@ open class ProxiedV2(
 
 class ProxiedV3(
     private val offset: Int,
-    private val element: Element
+    private val element: AbstractElement
 ) : V3() {
     override var x: Double
         get() = element.properties[offset]
@@ -35,7 +35,7 @@ class ProxiedV3(
 }
 
 class ProxiedRotation(
-    private val element: Element
+    private val element: AbstractElement
 ) : Rotation() {
     override var x: Double
         get() = element.properties[RotationX.ordinal]
@@ -52,7 +52,7 @@ class ProxiedRotation(
 }
 
 open class ProxiedColor(
-    private val element: Element
+    private val element: AbstractElement
 ): Color() {
 
     override var red: Int

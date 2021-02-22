@@ -27,7 +27,6 @@ val proguard = task("jarFlattened", proguard.gradle.ProGuardTask::class) {
     this.extensions.add("file", outJarFile)
 
     libraryjars(configurations.compileOnly.get())
-    configurations.compileOnly.get().forEach(::println)
 
     configuration(File(rootDir, "proguard.pro"))
 
