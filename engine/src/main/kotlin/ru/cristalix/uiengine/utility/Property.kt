@@ -2,10 +2,10 @@ package ru.cristalix.uiengine.utility
 
 // Positive numbers are matrices that are directly converted to GL transformations
 const val alignMatrix = 0
-const val rotationMatrix = 1
-const val offsetMatrix = 2
-const val scaleMatrix = 3
-const val originMatrix = 4
+const val offsetMatrix = 1
+const val scaleMatrix = 2
+const val originMatrix = 3
+const val rotationMatrix = 4
 
 // Amount of direct GL matrices for preallocations
 const val matrixFields = 5

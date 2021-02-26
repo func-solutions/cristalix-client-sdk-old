@@ -23,8 +23,9 @@ class Context3D(offset: V3) : Context() {
             -(player.y - player.prevY) * pt - player.prevY,
             -(player.z - player.prevZ) * pt - player.prevZ,
         )
-        GlStateManager.scale(1.0, -1.0, -1.0)
+//        GlStateManager.scale(1.0, -1.0, -1.0)
         super.applyTransformations()
+        GlStateManager.rotate(180f, 1f, 0f, 0f)
     }
 
     override fun transformViewportAndMouse(): V2? {

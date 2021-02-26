@@ -4,6 +4,7 @@ import dev.xdark.clientapi.opengl.GlStateManager
 import org.lwjgl.opengl.GL11
 import org.lwjgl.util.vector.Matrix4f
 import org.lwjgl.util.vector.Vector3f
+import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.UIEngine.matrixBuffer
 import ru.cristalix.uiengine.utility.*
 import ru.cristalix.uiengine.utility.Property.*
@@ -18,6 +19,10 @@ abstract class AbstractElement() {
     protected var cachedHexColor: Int = 0
     internal var hovered: Boolean = false
     internal var passedHoverCulling: Boolean = false
+
+    var beforeRender: (() -> Unit)? = null
+    var afterRender: (() -> Unit)? = null
+
     var enabled: Boolean = true
     var onClick: ClickHandler? = null
     var onHover: HoverHandler? = null
@@ -173,7 +178,9 @@ abstract class AbstractElement() {
 
 //        if (this.beforeRender) this.beforeRender()
 
+        this.beforeRender?.invoke()
         this.render()
+        this.afterRender?.invoke()
 
 //        if (this.afterRender) this.afterRender()
 
