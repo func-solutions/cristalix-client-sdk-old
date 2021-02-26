@@ -30,7 +30,6 @@ internal data class Animation(val element: AbstractElement, val property: Proper
 
     fun update(time: Long): Boolean {
         var part = (time - this.startedTime).toDouble() / this.duration
-        println("prop $property part $part time $time start $startedTime duration $duration")
         val alive = part <= 1.0
         val value: Double
         if (alive) {
