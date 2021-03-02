@@ -7,7 +7,7 @@ import org.lwjgl.util.vector.Vector4f
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.utility.*
 
-open class RectangleElement : AbstractElement() {
+open class RectangleElement : AbstractElement(), Parent {
 
     var textureLocation: ResourceLocation? = null
 
@@ -19,17 +19,17 @@ open class RectangleElement : AbstractElement() {
         get() = ProxiedV2(Property.TextureWidth.ordinal, this)
         set(value) = value.write(textureSize)
 
-    val children: MutableList<AbstractElement> = ArrayList()
+    override val children: MutableList<AbstractElement> = ArrayList()
 
     init {
         this.textureSize = V2(1.0, 1.0)
     }
 
-    fun removeChild(vararg elements: AbstractElement) {
+    override fun removeChild(vararg elements: AbstractElement) {
         this.children.removeAll(elements)
     }
 
-    fun addChild(vararg elements: AbstractElement) {
+    override fun addChild(vararg elements: AbstractElement) {
 
         for (element in elements) {
             element.changeProperty(Property.ParentSizeX.ordinal, this.properties[Property.SizeX])
@@ -96,6 +96,8 @@ open class RectangleElement : AbstractElement() {
             api.renderEngine().bindTexture(textureLocation)
 
             GlStateManager.enableAlpha()
+            val color = color
+            GlStateManager.color(color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha.toFloat())
 
             val precision = 0x4000_0000
 
@@ -110,6 +112,8 @@ open class RectangleElement : AbstractElement() {
                 precision.toFloat(),
                 precision.toFloat()
             )
+
+            GlStateManager.color(1f, 1f, 1f, 1f)
 
         } else {
             api.overlayRenderer().drawRect(

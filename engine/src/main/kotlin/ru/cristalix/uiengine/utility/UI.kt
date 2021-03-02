@@ -1,5 +1,6 @@
 package ru.cristalix.uiengine.utility
 
+import ru.cristalix.uiengine.element.CuboidElement
 import ru.cristalix.uiengine.element.ItemElement
 import ru.cristalix.uiengine.element.RectangleElement
 import ru.cristalix.uiengine.element.TextElement
@@ -18,6 +19,12 @@ inline fun text(setup: TextElement.() -> Unit): TextElement {
 
 inline fun item(setup: ItemElement.() -> Unit): ItemElement {
     val element = ItemElement()
+    setup(element)
+    return element
+}
+
+inline fun cube(setup: CuboidElement.() -> Unit): CuboidElement {
+    val element = CuboidElement()
     setup(element)
     return element
 }

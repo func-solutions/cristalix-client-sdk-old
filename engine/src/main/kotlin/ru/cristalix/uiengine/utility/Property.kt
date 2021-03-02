@@ -4,8 +4,8 @@ package ru.cristalix.uiengine.utility
 const val alignMatrix = 0
 const val offsetMatrix = 1
 const val scaleMatrix = 2
-const val originMatrix = 3
-const val rotationMatrix = 4
+const val rotationMatrix = 3
+const val originMatrix = 4
 
 // Amount of direct GL matrices for preallocations
 const val matrixFields = 5

@@ -8,12 +8,15 @@ import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.UIEngine.matrixBuffer
 import ru.cristalix.uiengine.utility.*
 import ru.cristalix.uiengine.utility.Property.*
+import java.lang.IllegalStateException
 
 abstract class AbstractElement() {
 
     internal val properties: DoubleArray = DoubleArray(Property.VALUES.size)
-    internal val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
-    internal lateinit var context: Context
+    val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
+
+    lateinit var context: Context
+
     private var dirtyMatrices: MutableList<Int>? = null
     internal var animationContext: AnimationContext? = null
     protected var cachedHexColor: Int = 0
