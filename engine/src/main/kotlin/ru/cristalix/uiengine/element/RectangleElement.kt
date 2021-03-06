@@ -21,6 +21,15 @@ open class RectangleElement : AbstractElement(), Parent {
 
     override val children: MutableList<AbstractElement> = ArrayList()
 
+    override var context: Context?
+        get() = super.context
+        set(value) {
+            super.context = value
+            for (child in children) {
+                child.context = value
+            }
+        }
+
     init {
         this.textureSize = V2(1.0, 1.0)
     }
@@ -35,6 +44,9 @@ open class RectangleElement : AbstractElement(), Parent {
             element.changeProperty(Property.ParentSizeX.ordinal, this.properties[Property.SizeX])
             element.changeProperty(Property.ParentSizeY.ordinal, this.properties[Property.SizeY])
             element.context = this.context
+            if (element is RectangleElement) {
+                // ToDo: Abstract contextful parents
+            }
             this.children.add(element)
         }
 

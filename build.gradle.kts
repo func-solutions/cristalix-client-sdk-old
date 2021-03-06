@@ -69,7 +69,7 @@ subprojects {
                     artifactId = artifactName
                     version = when (project.name) {
                         "bundler-gradle-plugin" -> "2.1.5"
-                        "engine" -> "3.5.3"
+                        "engine" -> "3.5.4"
                         "client-api-libs" -> "all"
                         else -> "1.0"
                     }

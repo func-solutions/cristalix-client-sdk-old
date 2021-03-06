@@ -15,7 +15,7 @@ abstract class AbstractElement() {
     internal val properties: DoubleArray = DoubleArray(Property.VALUES.size)
     val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
 
-    lateinit var context: Context
+    open var context: Context? = null
 
     private var dirtyMatrices: MutableList<Int>? = null
     internal var animationContext: AnimationContext? = null
@@ -73,6 +73,9 @@ abstract class AbstractElement() {
 
         val animationContext = this.animationContext
         if (animationContext != null) {
+
+            val context = context ?: throw IllegalStateException("Tried to animate an orphan element (no context)")
+
             var animation: Animation? = null
             for (existing in context.runningAnimations) {
                 if (existing.element === this && existing.property.ordinal == index) {
@@ -88,6 +91,7 @@ abstract class AbstractElement() {
                 animationContext.easing
             )
             context.runningAnimations.add(animation)
+
             return
         }
         // stdout.println('setting ' + propertyId + ' to ' + value);
