@@ -17,15 +17,37 @@ object UIEngine {
 
     val matrixBuffer: FloatBuffer = GLAllocation.createDirectFloatBuffer(16)
 
+    /**
+     * Instance of ClientApi.
+     * You can reference that for any purposes.
+     */
     lateinit var clientApi: ClientApi
+
+    /**
+     * This mod's listener.
+     * Cristalix client is known to have some problems when registering mutiple listeners from a single mod.
+     * Please, do not create your own listeners and stick to using this one.
+     */
     lateinit var listener: Listener
 
+    /**
+     * Ingame HUD context that renders like chat, hotbar, etc.
+     */
     val overlayContext: Context2D = Context2D(size = V3())
 
+    /**
+     * World contexts for stuff like holograms.
+     * You can add your own Context3D here.
+     * Please note that worldContexts is being cleared on respawns / world changes
+     */
     val worldContexts: MutableList<Context3D> = ArrayList()
 
-    var lastMouseState: BooleanArray = booleanArrayOf(false, false, false)
+    internal var lastMouseState: BooleanArray = booleanArrayOf(false, false, false)
 
+    /**
+     * Main cristalix UI engine entrypoint.
+     * It is recommended for every mod to call this as the first statement inside ModMain#load.
+     */
     fun initialize(clientApi: ClientApi) {
         this.clientApi = clientApi
         val eventBus = clientApi.eventBus()
@@ -51,6 +73,10 @@ object UIEngine {
         overlayContext.transformAndRender()
     }
 
+    /**
+     * Function that cleans up all of the event handlers registered by UI engine.
+     * Please make sure to call that in your ModMain#unload
+     */
     fun uninitialize() {
         clientApi.eventBus().unregisterAll(listener)
         GLAllocation.freeBuffer(matrixBuffer)
@@ -69,9 +95,12 @@ object UIEngine {
         return lastClickable
     }
 
+    /**
+     * Convinient event handler registration.
+     */
     // Avoid usage of forbidden Class class.
     @Suppress("NOTHING_TO_INLINE")
-    inline fun <T> registerHandler(type: Class<T>, noinline handler: T.() -> Unit, priority: Int = 1) {
+    inline fun <T> registerHandler(type: Class<T>, priority: Int = 1, noinline handler: T.() -> Unit) {
         clientApi.eventBus().register(listener, type, handler, priority)
     }
 
