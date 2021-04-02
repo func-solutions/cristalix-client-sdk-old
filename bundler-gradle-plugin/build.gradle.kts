@@ -23,3 +23,16 @@ dependencies {
     implementation("com.android.tools.build:gradle:3.3.0")
     implementation("com.guardsquare:proguard-gradle:7.0.0")
 }
+
+
+publishing {
+    publications {
+        create<MavenPublication>("bundler") {
+            groupId = "ru.cristalix"
+            artifactId = "bundler"
+            version = "2.1.7"
+            from(components["java"])
+        }
+    }
+}
+

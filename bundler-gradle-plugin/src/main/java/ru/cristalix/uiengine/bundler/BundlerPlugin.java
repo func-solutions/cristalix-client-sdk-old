@@ -10,6 +10,7 @@ import proguard.gradle.ProGuardTask;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.concurrent.ExecutionException;
 
 public class BundlerPlugin implements Plugin<Project> {
 
@@ -37,8 +38,11 @@ public class BundlerPlugin implements Plugin<Project> {
 				proGuardTask.printmapping(new File(project.getBuildDir(), "mapping.txt"));
 				proGuardTask.libraryjars("<java.home>/lib/rt.jar");
 
-				proGuardTask.libraryjars(new File(Arrays.stream(System.getProperty("sun.boot.class.path").split(File.pathSeparator))
-						.filter(n -> n.endsWith("rt.jar")).findFirst().get()));
+				String sunBootClassPath = System.getProperty("sun.boot.class.path");
+				if (sunBootClassPath != null) try {
+					proGuardTask.libraryjars(new File(Arrays.stream(sunBootClassPath.split(File.pathSeparator))
+							.filter(n -> n.endsWith("rt.jar")).findFirst().get()));
+				} catch (Exception ignored) {}
 
 				proGuardTask.useuniqueclassmembernames();
 				proGuardTask.dontusemixedcaseclassnames();

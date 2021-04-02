@@ -1,3 +1,3 @@
-rootProject.name = "cristalix-ui-engine"
+rootProject.name = "cristalix-client-sdk"
 
-include("engine", "bundler-gradle-plugin", "client-api-libs")
+include("ui-engine", "bundler-gradle-plugin", "client-api-libs")

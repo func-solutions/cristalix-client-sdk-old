@@ -6,6 +6,7 @@ public class BundlerExtension {
 	private String mainClass;
 	private String author = "Cristalix community";
 	private String version = "1.0";
+	private boolean obfuscate = false;
 
 	public void setName(String name) {
 		this.name = name;
@@ -39,5 +40,11 @@ public class BundlerExtension {
 		return version;
 	}
 
+	public boolean isObfuscate() {
+		return obfuscate;
+	}
 
+	public void setObfuscate(boolean obfuscate) {
+		this.obfuscate = obfuscate;
+	}
 }

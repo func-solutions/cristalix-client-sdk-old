@@ -5,6 +5,7 @@ import dev.xdark.clientapi.event.Listener
 import dev.xdark.clientapi.event.lifecycle.GameLoop
 import dev.xdark.clientapi.event.render.GuiOverlayRender
 import dev.xdark.clientapi.event.render.RenderPass
+import dev.xdark.clientapi.event.render.RenderTickPost
 import dev.xdark.clientapi.event.window.WindowResize
 import dev.xdark.clientapi.opengl.GLAllocation
 import org.lwjgl.input.Mouse
@@ -36,6 +37,11 @@ object UIEngine {
     val overlayContext: Context2D = Context2D(size = V3())
 
     /**
+     * Ingame HUD context that renders after chests, pause menu and everything else
+     */
+    val postOverlayContext: Context2D = Context2D(size = V3())
+
+    /**
      * World contexts for stuff like holograms.
      * You can add your own Context3D here.
      * Please note that worldContexts is being cleared on respawns / world changes
@@ -53,6 +59,7 @@ object UIEngine {
         val eventBus = clientApi.eventBus()
         this.listener = eventBus.createListener()
         eventBus.register(listener, GuiOverlayRender::class.java, { renderOverlay() }, 1)
+        eventBus.register(listener, RenderTickPost::class.java, { renderPost() }, 1)
         eventBus.register(listener, GameLoop::class.java, { gameLoop() }, 1)
         updateResolution()
         eventBus.register(listener, WindowResize::class.java, { updateResolution() }, 1)
@@ -67,10 +74,15 @@ object UIEngine {
     private fun updateResolution() {
         val resolution = clientApi.resolution()
         overlayContext.size = V3(resolution.scaledWidth_double, resolution.scaledHeight_double)
+        postOverlayContext.size = V3(resolution.scaledWidth_double, resolution.scaledHeight_double)
     }
 
     private fun renderOverlay() {
         overlayContext.transformAndRender()
+    }
+
+    private fun renderPost() {
+        postOverlayContext.transformAndRender()
     }
 
     /**
@@ -96,7 +108,7 @@ object UIEngine {
     }
 
     /**
-     * Convinient event handler registration.
+     * Convenient event handler registration.
      */
     // Avoid usage of forbidden Class class.
     @Suppress("NOTHING_TO_INLINE")
