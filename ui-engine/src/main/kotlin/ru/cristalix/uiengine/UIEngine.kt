@@ -9,6 +9,7 @@ import dev.xdark.clientapi.event.render.RenderTickPost
 import dev.xdark.clientapi.event.window.WindowResize
 import dev.xdark.clientapi.opengl.GLAllocation
 import org.lwjgl.input.Mouse
+import ru.cristalix.clientapi.JavaMod
 import ru.cristalix.uiengine.element.*
 import ru.cristalix.uiengine.utility.MouseButton
 import ru.cristalix.uiengine.utility.V3
@@ -54,10 +55,15 @@ object UIEngine {
      * Main cristalix UI engine entrypoint.
      * It is recommended for every mod to call this as the first statement inside ModMain#load.
      */
-    fun initialize(clientApi: ClientApi) {
-        this.clientApi = clientApi
+    fun initialize(mod: JavaMod) {
+        this.clientApi = JavaMod.clientApi
         val eventBus = clientApi.eventBus()
-        this.listener = eventBus.createListener()
+        listener = mod.listener
+
+        mod.onDisable.add {
+            GLAllocation.freeBuffer(matrixBuffer)
+        }
+
         eventBus.register(listener, GuiOverlayRender::class.java, { renderOverlay() }, 1)
         eventBus.register(listener, RenderTickPost::class.java, { renderPost() }, 1)
         eventBus.register(listener, GameLoop::class.java, { gameLoop() }, 1)
@@ -83,15 +89,6 @@ object UIEngine {
 
     private fun renderPost() {
         postOverlayContext.transformAndRender()
-    }
-
-    /**
-     * Function that cleans up all of the event handlers registered by UI engine.
-     * Please make sure to call that in your ModMain#unload
-     */
-    fun uninitialize() {
-        clientApi.eventBus().unregisterAll(listener)
-        GLAllocation.freeBuffer(matrixBuffer)
     }
 
     private fun findLastClickable(elements: Collection<AbstractElement>): AbstractElement? {

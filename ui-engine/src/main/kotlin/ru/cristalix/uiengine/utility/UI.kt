@@ -5,26 +5,10 @@ import ru.cristalix.uiengine.element.ItemElement
 import ru.cristalix.uiengine.element.RectangleElement
 import ru.cristalix.uiengine.element.TextElement
 
-inline fun rectangle(setup: RectangleElement.() -> Unit): RectangleElement {
-    val element = RectangleElement()
-    setup(element)
-    return element
-}
+inline fun rectangle(setup: RectangleElement.() -> Unit) = RectangleElement().also(setup)
 
-inline fun text(setup: TextElement.() -> Unit): TextElement {
-    val element = TextElement()
-    setup(element)
-    return element
-}
+inline fun text(setup: TextElement.() -> Unit) = TextElement().also(setup)
 
-inline fun item(setup: ItemElement.() -> Unit): ItemElement {
-    val element = ItemElement()
-    setup(element)
-    return element
-}
+inline fun item(setup: ItemElement.() -> Unit) = ItemElement().also(setup)
 
-inline fun cube(setup: CuboidElement.() -> Unit): CuboidElement {
-    val element = CuboidElement()
-    setup(element)
-    return element
-}
+inline fun cube(setup: CuboidElement.() -> Unit) =  CuboidElement().also(setup)

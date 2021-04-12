@@ -211,7 +211,7 @@ abstract class AbstractElement() {
             if (matrix == null) continue
             matrix.store(matrixBuffer)
             matrixBuffer.flip()
-            GL11.glMultMatrix(matrixBuffer)
+            GlStateManager.multMatrix(matrixBuffer)
         }
     }
 

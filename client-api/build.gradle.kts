@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api("org.lwjgl.lwjgl", "lwjgl", "2.9.3")
+//    api("org.lwjgl.lwjgl", "lwjgl", "2.9.3")
     api("org.lwjgl.lwjgl", "lwjgl_util", "2.9.3")
     api("io.netty", "netty-buffer", "4.1.58.Final")
     api("com.mojang", "authlib", "2.1.28")
@@ -14,19 +14,12 @@ dependencies {
 }
 
 
-tasks {
-    jar {
-        from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    }
-}
-
 publishing {
     publications {
         create<MavenPublication>("clientApi") {
             groupId = "ru.cristalix"
-            artifactId = "clientApi"
-            version = "LATEST-SNAPSHOT"
+            artifactId = "client-api"
+            version = "latest-SNAPSHOT"
             from(components["java"])
         }
     }

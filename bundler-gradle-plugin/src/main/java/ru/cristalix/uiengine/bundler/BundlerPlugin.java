@@ -5,6 +5,8 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.jvm.tasks.Jar;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import proguard.gradle.ProGuardTask;
 
 import java.io.File;
@@ -13,6 +15,8 @@ import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
 public class BundlerPlugin implements Plugin<Project> {
+
+	private final Logger logger = LoggerFactory.getLogger(BundlerPlugin.class);
 
 	@Override
 	public void apply(@NotNull Project project) {
@@ -32,17 +36,19 @@ public class BundlerPlugin implements Plugin<Project> {
 
 
 
-				ProGuardTask proGuardTask = (ProGuardTask) project.task(Collections.singletonMap("type", ProGuardTask.class), "jarFlattened");
+				ProGuardTask proGuardTask = (ProGuardTask) project.task(Collections.singletonMap("type", ProGuardTask.class), "bundle");
 
 				proGuardTask.target("1.6");
 				proGuardTask.printmapping(new File(project.getBuildDir(), "mapping.txt"));
-				proGuardTask.libraryjars("<java.home>/lib/rt.jar");
+//				proGuardTask.libraryjars("<java.home>/lib/rt.jar");
 
 				String sunBootClassPath = System.getProperty("sun.boot.class.path");
 				if (sunBootClassPath != null) try {
 					proGuardTask.libraryjars(new File(Arrays.stream(sunBootClassPath.split(File.pathSeparator))
 							.filter(n -> n.endsWith("rt.jar")).findFirst().get()));
-				} catch (Exception ignored) {}
+				} catch (Exception exception) {
+					logger.warn("Unable to retrieve path to rt.jar! Are you running JDK 9+?");
+				}
 
 				proGuardTask.useuniqueclassmembernames();
 				proGuardTask.dontusemixedcaseclassnames();
@@ -53,6 +59,8 @@ public class BundlerPlugin implements Plugin<Project> {
 				proGuardTask.keepparameternames();
 				proGuardTask.adaptresourcefilecontents("**.properties,META-INF/MANIFEST.MF");
 				proGuardTask.dontpreverify();
+
+				if (!extension.isObfuscate()) proGuardTask.dontobfuscate();
 
 				proGuardTask.keep(Collections.singletonMap("allowobfuscation", true), "class " + extension.getMainClass());
 				proGuardTask.keepclassmembers("enum  * {\n" +
@@ -72,33 +80,38 @@ public class BundlerPlugin implements Plugin<Project> {
 
 				jar.getArchiveAppendix().set("raw");
 
+				jar.exclude("**.kotlin_metadata");
+				jar.exclude("**.kotlin_builtins");
+
 				jar.from(modProperties);
 
 				proGuardTask.dependsOn(jar);
 
 				File inJarFile = jar.getArchiveFile().get().getAsFile();
 
-				File outJarFile = new File(inJarFile.getParentFile(), inJarFile.getName().replace("-raw", "-guarded"));
+				File outJarFile = new File(inJarFile.getParentFile(), inJarFile.getName().replace("-raw", "-bundle"));
 
 				proGuardTask.injars(inJarFile);
 				proGuardTask.outjars(outJarFile);
 
-				proGuardTask.libraryjars(project.getConfigurations().getByName("compileOnly"));
+				proGuardTask.libraryjars(project.getConfigurations().getByName("compileOnlyDependenciesMetadata"));
 
 				proGuardTask.setGroup("build");
 
-				Jar bundleTask = (Jar) project.task(Collections.singletonMap("type", Jar.class), "bundle");
-				bundleTask.dependsOn(proGuardTask);
-				bundleTask.from(project.zipTree(outJarFile).matching(
-						matcher -> matcher.exclude(it -> {
-							String path = it.getRelativePath().getPathString();
-							return path.endsWith(".kotlin_metadata") ||
-									path.endsWith(".kotlin_builtins") ||
-									path.startsWith("META-INF/");
-						})));
+				project.getTasks().getByName("assemble").dependsOn(proGuardTask);
 
-				bundleTask.getArchiveAppendix().set("bundle");
-				bundleTask.setGroup("build");
+//				Jar bundleTask = (Jar) project.task(Collections.singletonMap("type", Jar.class), "bundle");
+//				bundleTask.dependsOn(proGuardTask);
+//				bundleTask.from(project.zipTree(outJarFile).matching(
+//						matcher -> matcher.exclude(it -> {
+//							String path = it.getRelativePath().getPathString();
+//							return path.endsWith(".kotlin_metadata") ||
+//									path.endsWith(".kotlin_builtins") ||
+//									path.startsWith("META-INF/");
+//						})));
+//
+//				bundleTask.getArchiveAppendix().set("bundle");
+//				bundleTask.setGroup("build");
 			} catch (Exception ex) {
 				throw new RuntimeException(ex);
 

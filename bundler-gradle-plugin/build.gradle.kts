@@ -1,5 +1,6 @@
 plugins {
     `java-gradle-plugin`
+    id("com.gradle.plugin-publish") version "0.12.0"
 }
 
 repositories {
@@ -7,7 +8,9 @@ repositories {
     jcenter()
 }
 
-version = "2.0.2"
+pluginBundle {
+
+}
 
 gradlePlugin {
     plugins {
@@ -30,7 +33,7 @@ publishing {
         create<MavenPublication>("bundler") {
             groupId = "ru.cristalix"
             artifactId = "bundler"
-            version = "2.1.7"
+            version = "2.3.2"
             from(components["java"])
         }
     }

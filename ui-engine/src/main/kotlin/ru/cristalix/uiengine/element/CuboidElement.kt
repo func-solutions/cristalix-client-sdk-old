@@ -22,6 +22,15 @@ class CuboidElement : AbstractElement(), Parent {
 
     override val children: MutableList<AbstractElement> = ArrayList()
 
+    override var context: Context?
+        get() = super.context
+        set(value) {
+            super.context = value
+            for (child in children) {
+                child.context = value
+            }
+        }
+
     init {
         color = WHITE
     }
@@ -100,43 +109,44 @@ class CuboidElement : AbstractElement(), Parent {
             GlStateManager.enableAlpha()
             api.renderEngine().bindTexture(textureLocation)
 
-            bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX)
+            bufferBuilder
+                .begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL)
 
             // Front
-            bufferBuilder.pos(0.0, sy, 0.0).tex(u2, v3).endVertex()
-            bufferBuilder.pos(sx, sy, 0.0).tex(u3, v3).endVertex()
-            bufferBuilder.pos(sx, 0.0, 0.0).tex(u3, v2).endVertex()
-            bufferBuilder.pos(0.0, 0.0, 0.0).tex(u2, v2).endVertex()
+            bufferBuilder.pos(0.0, sy, 0.0).tex(u2, v3).color(255, 255, 255, 255).normal(0f, 0f, -1f).endVertex()
+            bufferBuilder.pos(sx, sy, 0.0).tex(u3, v3).color(255, 255, 255, 255).normal(0f, 0f, -1f).endVertex()
+            bufferBuilder.pos(sx, 0.0, 0.0).tex(u3, v2).color(255, 255, 255, 255).normal(0f, 0f, -1f).endVertex()
+            bufferBuilder.pos(0.0, 0.0, 0.0).tex(u2, v2).color(255, 255, 255, 255).normal(0f, 0f, -1f).endVertex()
 
             // Left
-            bufferBuilder.pos(0.0, sy, 0.0).tex(u2, v3).endVertex()
-            bufferBuilder.pos(0.0, 0.0, 0.0).tex(u2, v2).endVertex()
-            bufferBuilder.pos(0.0, 0.0, sz).tex(u1, v2).endVertex()
-            bufferBuilder.pos(0.0, sy, sz).tex(u1, v3).endVertex()
+            bufferBuilder.pos(0.0, sy, 0.0).tex(u2, v3).color(255, 255, 255, 255).normal(-1f, 0f, 0f).endVertex()
+            bufferBuilder.pos(0.0, 0.0, 0.0).tex(u2, v2).color(255, 255, 255, 255).normal(-1f, 0f, 0f).endVertex()
+            bufferBuilder.pos(0.0, 0.0, sz).tex(u1, v2).color(255, 255, 255, 255).normal(-1f, 0f, 0f).endVertex()
+            bufferBuilder.pos(0.0, sy, sz).tex(u1, v3).color(255, 255, 255, 255).normal(-1f, 0f, 0f).endVertex()
 
             // Right
-            bufferBuilder.pos(sx, sy, 0.0).tex(u3, v3).endVertex()
-            bufferBuilder.pos(sx, sy, sz).tex(u4, v3).endVertex()
-            bufferBuilder.pos(sx, 0.0, sz).tex(u4, v2).endVertex()
-            bufferBuilder.pos(sx, 0.0, 0.0).tex(u3, v2).endVertex()
+            bufferBuilder.pos(sx, sy, 0.0).tex(u3, v3).color(255, 255, 255, 255).normal(1f, 0f, 0f).endVertex()
+            bufferBuilder.pos(sx, sy, sz).tex(u4, v3).color(255, 255, 255, 255).normal(1f, 0f, 0f).endVertex()
+            bufferBuilder.pos(sx, 0.0, sz).tex(u4, v2).color(255, 255, 255, 255).normal(1f, 0f, 0f).endVertex()
+            bufferBuilder.pos(sx, 0.0, 0.0).tex(u3, v2).color(255, 255, 255, 255).normal(1f, 0f, 0f).endVertex()
 
             // Back
-            bufferBuilder.pos(0.0, sy, sz).tex(u6, v3).endVertex()
-            bufferBuilder.pos(0.0, 0.0, sz).tex(u6, v2).endVertex()
-            bufferBuilder.pos(sx, 0.0, sz).tex(u4, v2).endVertex()
-            bufferBuilder.pos(sx, sy, sz).tex(u4, v3).endVertex()
+            bufferBuilder.pos(0.0, sy, sz).tex(u6, v3).color(255, 255, 255, 255).normal(0f, 0f, 1f).endVertex()
+            bufferBuilder.pos(0.0, 0.0, sz).tex(u6, v2).color(255, 255, 255, 255).normal(0f, 0f, 1f).endVertex()
+            bufferBuilder.pos(sx, 0.0, sz).tex(u4, v2).color(255, 255, 255, 255).normal(0f, 0f, 1f).endVertex()
+            bufferBuilder.pos(sx, sy, sz).tex(u4, v3).color(255, 255, 255, 255).normal(0f, 0f, 1f).endVertex()
 
             // Top
-            bufferBuilder.pos(0.0, 0.0, 0.0).tex(u2, v2).endVertex()
-            bufferBuilder.pos(sx, 0.0, 0.0).tex(u3, v2).endVertex()
-            bufferBuilder.pos(sx, 0.0, sz).tex(u3, v1).endVertex()
-            bufferBuilder.pos(0.0, 0.0, sz).tex(u2, v1).endVertex()
+            bufferBuilder.pos(0.0, 0.0, 0.0).tex(u2, v2).color(255, 255, 255, 255).normal(0f, -1f, 0f).endVertex()
+            bufferBuilder.pos(sx, 0.0, 0.0).tex(u3, v2).color(255, 255, 255, 255).normal(0f, -1f, 0f).endVertex()
+            bufferBuilder.pos(sx, 0.0, sz).tex(u3, v1).color(255, 255, 255, 255).normal(0f, -1f, 0f).endVertex()
+            bufferBuilder.pos(0.0, 0.0, sz).tex(u2, v1).color(255, 255, 255, 255).normal(0f, -1f, 0f).endVertex()
 
             // Bottom
-            bufferBuilder.pos(0.0, sy, sz).tex(u3, v1).endVertex()
-            bufferBuilder.pos(sx, sy, sz).tex(u5, v1).endVertex()
-            bufferBuilder.pos(sx, sy, 0.0).tex(u5, v2).endVertex()
-            bufferBuilder.pos(0.0, sy, 0.0).tex(u3, v2).endVertex()
+            bufferBuilder.pos(0.0, sy, sz).tex(u3, v1).color(255, 255, 255, 255).normal(0f, 1f, 0f).endVertex()
+            bufferBuilder.pos(sx, sy, sz).tex(u5, v1).color(255, 255, 255, 255).normal(0f, 1f, 0f).endVertex()
+            bufferBuilder.pos(sx, sy, 0.0).tex(u5, v2).color(255, 255, 255, 255).normal(0f, 1f, 0f).endVertex()
+            bufferBuilder.pos(0.0, sy, 0.0).tex(u3, v2).color(255, 255, 255, 255).normal(0f, 1f, 0f).endVertex()
 
             tessellator.draw()
 
