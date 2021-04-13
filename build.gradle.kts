@@ -3,7 +3,9 @@ plugins {
     java
 }
 
-group = "ru.cristalix"
+allprojects {
+    group = "ru.cristalix"
+}
 
 subprojects {
 

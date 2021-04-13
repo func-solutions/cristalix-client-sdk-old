@@ -54,7 +54,6 @@ class ProxiedRotation(
 open class ProxiedColor(
     private val element: AbstractElement
 ): Color() {
-
     override var red: Int
         get() = element.properties[ColorR.ordinal].toInt()
         set(value) = element.changeProperty(ColorR.ordinal, value)
@@ -70,7 +69,6 @@ open class ProxiedColor(
     override var alpha: Double
         get() = element.properties[ColorA.ordinal]
         set(value) = element.changeProperty(ColorA.ordinal, value)
-
 }
 
 

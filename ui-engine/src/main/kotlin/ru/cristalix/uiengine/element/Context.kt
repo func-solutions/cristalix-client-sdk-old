@@ -9,6 +9,9 @@ abstract class Context : RectangleElement() {
 
     private val runningTasks: MutableList<Task> = ArrayList()
     internal val runningAnimations: MutableList<Animation> = ArrayList()
+    private val baseMatrix = Matrix4f()
+    private val hoverMatrix = Matrix4f()
+    private val invMatrix = Matrix4f()
 
     init {
         this.context = this
@@ -24,48 +27,51 @@ abstract class Context : RectangleElement() {
 
         val time = System.currentTimeMillis()
 
-        with(runningTasks.iterator()) {
-
-            while (hasNext()) {
-                val task = next()
-                if (task.cancelled) {
-                    remove()
-                    continue
-                }
-                if (time >= task.scheduledTo) {
-                    remove()
-                    try {
-                        task.action()
-                    } catch (ex: Exception) {
-                        RuntimeException("Error while executing task", ex).printStackTrace()
+        if (runningTasks.isNotEmpty()) {
+            with(runningTasks.iterator()) {
+                while (hasNext()) {
+                    val task = next()
+                    if (task.cancelled) {
+                        remove()
+                        continue
+                    }
+                    if (time >= task.scheduledTo) {
+                        remove()
+                        try {
+                            task.action()
+                        } catch (ex: Exception) {
+                            RuntimeException("Error while executing task", ex).printStackTrace()
+                        }
                     }
                 }
-
             }
         }
 
-        with(runningAnimations.iterator()) {
-            while (hasNext()) {
-                if (!next().update(time)) remove()
+        if (runningAnimations.isNotEmpty()) {
+            with(runningAnimations.iterator()) {
+                while (hasNext()) {
+                    if (!next().update(time)) remove()
+                }
             }
         }
-
     }
 
 
     fun hoverCulling(element: AbstractElement): Boolean {
         var passed = false
-        if (element is RectangleElement) {
-            for (child in element.children) {
-                if (hoverCulling(child)) {
-                    passed = true
+        if (element.onHover != null || element.onClick != null) {
+            passed = true
+        } else if (element is RectangleElement) {
+            val children = element.children
+            if (children.isNotEmpty()) {
+                for (child in children) {
+                    if (hoverCulling(child)) {
+                        passed = true
+                    }
                 }
             }
         }
 
-        if (element.onHover != null || element.onClick != null) {
-            passed = true
-        }
         element.passedHoverCulling = passed
         return passed
 
@@ -75,7 +81,7 @@ abstract class Context : RectangleElement() {
 
         if (!element.passedHoverCulling) return
 
-        val matrix = Matrix4f()
+        val matrix = hoverMatrix
         matrix.load(baseMatrix)
 
         for (m in element.matrices) {
@@ -88,7 +94,8 @@ abstract class Context : RectangleElement() {
 
             val vector = Vector4f(mouse.x.toFloat(), mouse.y.toFloat(), 0.0f, 1.0f)
 
-            val inv = Matrix4f()
+            val inv = invMatrix
+            inv.setIdentity()
             Matrix4f.invert(matrix, inv)
             Matrix4f.transform(inv, vector, vector)
 
@@ -104,8 +111,11 @@ abstract class Context : RectangleElement() {
         }
 
         if (element is RectangleElement) {
-            for (child in element.children) {
-                updateHoverStates(child, matrix, mouse)
+            val children = element.children
+            if (children.isNotEmpty()) {
+                for (child in children) {
+                    updateHoverStates(child, matrix, mouse)
+                }
             }
         }
 
@@ -117,10 +127,13 @@ abstract class Context : RectangleElement() {
 
         val mouse = transformViewportAndMouse() ?: return
 
-        for (element in children) {
-            this.hoverCulling(element)
-            val baseMatrix = Matrix4f().setIdentity() as Matrix4f
-            this.updateHoverStates(element, baseMatrix, mouse)
+        if (children.isNotEmpty()) {
+            val baseMatrix = baseMatrix
+            baseMatrix.setIdentity()
+            for (element in children) {
+                this.hoverCulling(element)
+                this.updateHoverStates(element, baseMatrix, mouse)
+            }
         }
 
         super.transformAndRender()

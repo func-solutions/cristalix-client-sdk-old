@@ -11,13 +11,11 @@ open class RectangleElement : AbstractElement(), Parent {
 
     var textureLocation: ResourceLocation? = null
 
-    var textureFrom: V2
-        get() = ProxiedV2(Property.TextureX.ordinal, this)
-        set(value) = value.write(textureFrom)
+    var textureFrom: V2 = ProxiedV2(Property.TextureX.ordinal, this)
+        set(value) = value.write(field)
 
-    var textureSize: V2
-        get() = ProxiedV2(Property.TextureWidth.ordinal, this)
-        set(value) = value.write(textureSize)
+    var textureSize: V2 = ProxiedV2(Property.TextureWidth.ordinal, this)
+        set(value) = value.write(field)
 
     override val children: MutableList<AbstractElement> = ArrayList()
 
@@ -25,8 +23,10 @@ open class RectangleElement : AbstractElement(), Parent {
         get() = super.context
         set(value) {
             super.context = value
-            for (child in children) {
-                child.context = value
+            if (children.isNotEmpty()) {
+                for (child in children) {
+                    child.context = value
+                }
             }
         }
 
@@ -39,10 +39,11 @@ open class RectangleElement : AbstractElement(), Parent {
     }
 
     override fun addChild(vararg elements: AbstractElement) {
-
+        val x = properties[Property.SizeX]
+        val y = properties[Property.SizeY]
         for (element in elements) {
-            element.changeProperty(Property.ParentSizeX.ordinal, this.properties[Property.SizeX])
-            element.changeProperty(Property.ParentSizeY.ordinal, this.properties[Property.SizeY])
+            element.changeProperty(Property.ParentSizeX.ordinal, x)
+            element.changeProperty(Property.ParentSizeY.ordinal, y)
             element.context = this.context
             if (element is RectangleElement) {
                 // ToDo: Abstract contextful parents
@@ -54,43 +55,40 @@ open class RectangleElement : AbstractElement(), Parent {
     }
 
     fun captureChildren(): Pair<V3, V3> {
-
         for (element in children) {
-
             val size = element.size
-
             val width = size.x.toFloat()
             val height = size.y.toFloat()
-
             val bounds = arrayOf(
                 Vector4f(0f, 0f, 0f, 1f),
                 Vector4f(width, 0f, 0f, 1f),
                 Vector4f(width, height, 0f, 1f),
                 Vector4f(0f, height, 0f, 1f)
             )
-
             for (matrix in element.matrices) {
                 for (bound in bounds) {
                     Matrix4f.transform(matrix, bound, bound)
                 }
             }
-
-
         }
-
         TODO()
-
     }
 
     override fun updateMatrix(matrixId: Int) {
 
         if (matrixId == sizeMatrix) {
-            for (child in children) {
-                val childProperties = child.properties
-                childProperties[Property.ParentSizeX] = properties[Property.SizeX]
-                childProperties[Property.ParentSizeY] = properties[Property.SizeY]
-                childProperties[Property.ParentSizeZ] = properties[Property.SizeZ]
-                child.updateMatrix(alignMatrix)
+            if (children.isNotEmpty()) {
+                val properties = properties
+                val x = properties[Property.SizeX]
+                val y = properties[Property.SizeY]
+                val z = properties[Property.SizeZ]
+                for (child in children) {
+                    val childProperties = child.properties
+                    childProperties[Property.ParentSizeX] = x
+                    childProperties[Property.ParentSizeY] = y
+                    childProperties[Property.ParentSizeZ] = z
+                    child.updateMatrix(alignMatrix)
+                }
             }
         }
 
@@ -99,10 +97,10 @@ open class RectangleElement : AbstractElement(), Parent {
     }
 
     override fun render() {
-
         val api = UIEngine.clientApi
         GlStateManager.enableBlend()
 
+        val properties = properties
         if (textureLocation != null) {
 
             api.renderEngine().bindTexture(textureLocation)
@@ -136,8 +134,11 @@ open class RectangleElement : AbstractElement(), Parent {
             )
         }
 
-        children.forEach(AbstractElement::transformAndRender)
-
+        if (children.isNotEmpty()) {
+            for (child in children) {
+                child.transformAndRender()
+            }
+        }
     }
 
 }

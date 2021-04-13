@@ -9,9 +9,9 @@ const val originMatrix = 4
 
 // Amount of direct GL matrices for preallocations
 const val matrixFields = 5
-const val sizeMatrix = -1;
-const val colorMatrix = -2;
-const val uvMatrix = -3;
+const val sizeMatrix = -1
+const val colorMatrix = -2
+const val uvMatrix = -3
 
 val allMatrices =
     intArrayOf(alignMatrix, rotationMatrix, offsetMatrix, scaleMatrix, originMatrix, sizeMatrix, colorMatrix, uvMatrix)

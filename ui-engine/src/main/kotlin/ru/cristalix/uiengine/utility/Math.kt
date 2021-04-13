@@ -38,7 +38,6 @@ open class V3(
         val z = another.z - this.z
         return x * x + y * y + z * z
     }
-
 }
 
 open class Rotation(
