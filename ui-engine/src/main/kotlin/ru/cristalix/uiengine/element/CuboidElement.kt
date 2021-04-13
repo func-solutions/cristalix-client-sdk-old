@@ -12,13 +12,11 @@ class CuboidElement : AbstractElement(), Parent {
 
     var textureLocation: ResourceLocation? = null
 
-    var textureFrom: V2
-        get() = ProxiedV2(Property.TextureX.ordinal, this)
-        set(value) = value.write(textureFrom)
+    var textureFrom: V2 = ProxiedV2(Property.TextureX.ordinal, this)
+        set(value) = value.write(field)
 
-    var textureSize: V2
-        get() = ProxiedV2(Property.TextureWidth.ordinal, this)
-        set(value) = value.write(textureSize)
+    var textureSize: V2 = ProxiedV2(Property.TextureWidth.ordinal, this)
+        set(value) = value.write(field)
 
     override val children: MutableList<AbstractElement> = ArrayList()
 
@@ -26,8 +24,10 @@ class CuboidElement : AbstractElement(), Parent {
         get() = super.context
         set(value) {
             super.context = value
-            for (child in children) {
-                child.context = value
+            if (children.isNotEmpty()) {
+                for (child in children) {
+                    child.context = value
+                }
             }
         }
 
@@ -40,27 +40,35 @@ class CuboidElement : AbstractElement(), Parent {
     }
 
     override fun addChild(vararg elements: AbstractElement) {
-
+        val children = this.children
+        val properties = properties
+        val context = this.context
+        val x = properties[Property.SizeX]
+        val y = properties[Property.SizeY]
+        val z = properties[Property.SizeZ]
         for (element in elements) {
-            element.changeProperty(Property.ParentSizeX.ordinal, this.properties[Property.SizeX])
-            element.changeProperty(Property.ParentSizeY.ordinal, this.properties[Property.SizeY])
-            element.changeProperty(Property.ParentSizeZ.ordinal, this.properties[Property.SizeZ])
-            element.context = this.context
-            this.children.add(element)
+            element.changeProperty(Property.ParentSizeX.ordinal, x)
+            element.changeProperty(Property.ParentSizeY.ordinal, y)
+            element.changeProperty(Property.ParentSizeZ.ordinal, z)
+            element.context = context
+            children.add(element)
         }
-
-
     }
 
     override fun updateMatrix(matrixId: Int) {
-
         if (matrixId == sizeMatrix) {
-            for (child in children) {
-                val childProperties = child.properties
-                childProperties[Property.ParentSizeX] = properties[Property.SizeX]
-                childProperties[Property.ParentSizeY] = properties[Property.SizeY]
-                childProperties[Property.ParentSizeZ] = properties[Property.SizeZ]
-                child.updateMatrix(alignMatrix)
+            if (children.isNotEmpty()) {
+                val properties = properties
+                val x = properties[Property.SizeX]
+                val y = properties[Property.SizeY]
+                val z = properties[Property.SizeZ]
+                for (child in children) {
+                    val childProperties = child.properties
+                    childProperties[Property.ParentSizeX] = x
+                    childProperties[Property.ParentSizeY] = y
+                    childProperties[Property.ParentSizeZ] = z
+                    child.updateMatrix(alignMatrix)
+                }
             }
         }
 
@@ -70,26 +78,21 @@ class CuboidElement : AbstractElement(), Parent {
 
     override fun render() {
 
-        val api = UIEngine.clientApi
+        val api = clientApi
         GlStateManager.enableBlend()
 
-        val tessellator = UIEngine.clientApi.tessellator()
+        val tessellator = api.tessellator()
         val bufferBuilder = tessellator.bufferBuilder
 
         val sx = size.x
         val sy = size.y
         val sz = size.z
 
-
-
-
+        val textureLocation = textureLocation
         if (textureLocation != null) {
-
+            val textureSize = textureSize
             val uSize = textureSize.x
             val vSize = textureSize.y
-
-
-
             val u1 = textureFrom.x / uSize
             val u2 = u1 + sz / uSize
             val u3 = u2 + sx / uSize

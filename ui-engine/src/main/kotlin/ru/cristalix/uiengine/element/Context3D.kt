@@ -13,30 +13,33 @@ class Context3D(offset: V3) : Context() {
     }
 
     var renderDistance: Double = 64.0
-
+    private val mouse = V2()
 
     override fun applyTransformations() {
-        val player = UIEngine.clientApi.minecraft().player
-        val pt = UIEngine.clientApi.minecraft().timer.renderPartialTicks
+        val mc = UIEngine.clientApi.minecraft()
+        val entity = mc.renderViewEntity
+        val pt = mc.timer.renderPartialTicks
         GlStateManager.translate(
-            -(player.x - player.prevX) * pt - player.prevX,
-            -(player.y - player.prevY) * pt - player.prevY,
-            -(player.z - player.prevZ) * pt - player.prevZ,
+            -(entity.x - entity.prevX) * pt - entity.prevX,
+            -(entity.y - entity.prevY) * pt - entity.prevY,
+            -(entity.z - entity.prevZ) * pt - entity.prevZ,
         )
 //        GlStateManager.scale(1.0, -1.0, -1.0)
         super.applyTransformations()
         GlStateManager.rotate(180f, 1f, 0f, 0f)
     }
 
-    override fun transformViewportAndMouse(): V2? {
-        val player = UIEngine.clientApi.minecraft().player
+    override fun transformViewportAndMouse(): V2 {
+        /*
+        val entity = UIEngine.clientApi.minecraft().renderViewEntity
 
-        if (V3(player.x, player.y, player.z).distanceSquared3(offset) > renderDistance * renderDistance)
+        if (V3(entity.x, entity.y, entity.z).distanceSquared3(offset) > renderDistance * renderDistance)
             return null
 
 //        GlStateManager.translate()
-
-        return V2()
+        //return V2()
+         */
+        return mouse
     }
 
 }

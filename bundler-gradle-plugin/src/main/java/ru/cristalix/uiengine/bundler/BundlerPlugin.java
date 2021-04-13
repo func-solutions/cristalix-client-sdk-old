@@ -55,18 +55,25 @@ public class BundlerPlugin implements Plugin<Project> {
 				String packageName = extension.getName().replaceAll("[^A-Za-z]", "_");
 				proGuardTask.flattenpackagehierarchy(packageName);
 				proGuardTask.repackageclasses(packageName);
-				proGuardTask.keepattributes("Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,LocalVariable*Table,*Annotation*,Synthetic,EnclosingMethod");
-				proGuardTask.keepparameternames();
+				proGuardTask.keepattributes("Signature,SourceFile,LineNumberTable,*Annotation*");
+				//proGuardTask.keepparameternames();
 				proGuardTask.adaptresourcefilecontents("**.properties,META-INF/MANIFEST.MF");
 				proGuardTask.dontpreverify();
+				proGuardTask.renamesourcefileattribute("SourceFile");
 
 				if (!extension.isObfuscate()) proGuardTask.dontobfuscate();
 
-				proGuardTask.keep(Collections.singletonMap("allowobfuscation", true), "class " + extension.getMainClass());
+				proGuardTask.keep(Collections.singletonMap("allowobfuscation", true), "class " + extension.getMainClass() + "{\n" +
+						"    public void load(dev.xdark.clientapi.ClientApi);\n" +
+						"    public void unload();\n" +
+						"}");
+
+				/*
 				proGuardTask.keepclassmembers("enum  * {\n" +
 						"    public static **[] values();\n" +
 						"    public static ** valueOf(java.lang.String);\n" +
 						"}");
+				 */
 
 				proGuardTask.assumenosideeffects("public class java.lang.Thread {\n" +
 						"    public static void dumpStack();\n" +
@@ -76,7 +83,10 @@ public class BundlerPlugin implements Plugin<Project> {
 						"    <methods>;\n" +
 						"}");
 
-				Jar jar = (Jar) project.getTasks().getByName("jar");
+				Jar jar = extension.getTask();
+				if (jar == null) {
+					jar = (Jar) project.getTasks().getByName("jar");
+				}
 
 				jar.getArchiveAppendix().set("raw");
 

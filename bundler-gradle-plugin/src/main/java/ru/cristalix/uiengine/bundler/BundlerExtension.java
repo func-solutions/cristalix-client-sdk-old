@@ -1,5 +1,7 @@
 package ru.cristalix.uiengine.bundler;
 
+import org.gradle.jvm.tasks.Jar;
+
 public class BundlerExtension {
 
 	private String name = "Unnamed mod";
@@ -7,6 +9,7 @@ public class BundlerExtension {
 	private String author = "Cristalix community";
 	private String version = "1.0";
 	private boolean obfuscate = false;
+	private Jar task;
 
 	public void setName(String name) {
 		this.name = name;
@@ -46,5 +49,13 @@ public class BundlerExtension {
 
 	public void setObfuscate(boolean obfuscate) {
 		this.obfuscate = obfuscate;
+	}
+
+	public Jar getTask() {
+		return task;
+	}
+
+	public void setTask(Jar task) {
+		this.task = task;
 	}
 }

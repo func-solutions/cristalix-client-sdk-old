@@ -1,10 +1,7 @@
 package ru.cristalix.uiengine.element
 
 import dev.xdark.clientapi.opengl.GlStateManager
-import org.lwjgl.opengl.GL11
 import org.lwjgl.util.vector.Matrix4f
-import org.lwjgl.util.vector.Vector3f
-import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.UIEngine.matrixBuffer
 import ru.cristalix.uiengine.utility.*
 import ru.cristalix.uiengine.utility.Property.*
@@ -30,33 +27,26 @@ abstract class AbstractElement() {
     var onClick: ClickHandler? = null
     var onHover: HoverHandler? = null
 
-    var offset: V3
-        get() = ProxiedV3(OffsetX.ordinal, this)
-        set(value) = value.write(offset)
+    var offset: V3 = ProxiedV3(OffsetX.ordinal, this)
+        set(value) = value.write(field)
 
-    var scale: V3
-        get() = ProxiedV3(ScaleX.ordinal, this)
-        set(value) = value.write(scale)
+    var scale: V3 = ProxiedV3(ScaleX.ordinal, this)
+        set(value) = value.write(field)
 
-    var align: V3
-        get() = ProxiedV3(AlignX.ordinal, this)
-        set(value) = value.write(align)
+    var align: V3 = ProxiedV3(AlignX.ordinal, this)
+        set(value) = value.write(field)
 
-    var origin: V3
-        get() = ProxiedV3(OriginX.ordinal, this)
-        set(value) = value.write(origin)
+    var origin: V3 = ProxiedV3(OriginX.ordinal, this)
+        set(value) = value.write(field)
 
-    var color: Color
-        get() = ProxiedColor(this)
-        set(value) = value.write(color)
+    var color: Color = ProxiedColor(this)
+        set(value) = value.write(field)
 
-    var rotation: Rotation
-        get() = ProxiedRotation(this)
-        set(value) = value.write(rotation)
+    var rotation: Rotation = ProxiedRotation(this)
+        set(value) = value.write(field)
 
-    var size: V3
-        get() = ProxiedV3(SizeX.ordinal, this)
-        set(value) = value.write(size)
+    var size: V3 = ProxiedV3(SizeX.ordinal, this)
+        set(value) = value.write(field)
 
     init {
         this.scale = V3(1.0, 1.0, 1.0)
@@ -73,9 +63,7 @@ abstract class AbstractElement() {
 
         val animationContext = this.animationContext
         if (animationContext != null) {
-
             val context = context ?: throw IllegalStateException("Tried to animate an orphan element (no context)")
-
             var animation: Animation? = null
             for (existing in context.runningAnimations) {
                 if (existing.element === this && existing.property.ordinal == index) {
@@ -84,7 +72,6 @@ abstract class AbstractElement() {
                 }
             }
             if (animation == null) animation = Animation(this, property)
-
             animation.newTarget(
                 value.toDouble(),
                 (animationContext.duration.toDouble() * 1000).toLong(),
@@ -104,18 +91,14 @@ abstract class AbstractElement() {
 
     fun cleanMatrices() {
         val dirty = this.dirtyMatrices ?: return
-        for (matrix in dirty.toIntArray()) {
+        for (matrix in dirty) {
             this.updateMatrix(matrix)
         }
         this.dirtyMatrices = null
     }
 
-    private fun vec(x: Number, y: Number, z: Number): Vector3f {
-        return Vector3f(x.toFloat(), y.toFloat(), z.toFloat())
-    }
-
     open fun updateMatrix(matrixId: Int) {
-        val properties = this.properties
+        val properties = properties
         dirtyMatrices?.remove(matrixId)
 
 
@@ -124,43 +107,35 @@ abstract class AbstractElement() {
         }
 
         if (matrixId >= 0) {
-            val matrix: Matrix4f = Matrix4f().setIdentity() as Matrix4f
+            val matrix: Matrix4f = this.matrices[matrixId] ?: Matrix4f()
+            matrix.setIdentity()
 
             when (matrixId) {
                 alignMatrix -> matrix.translate(
-                    vec(
-                        properties[AlignX] * properties[ParentSizeX],
-                        properties[AlignY] * properties[ParentSizeY],
-                        properties[AlignZ] * properties[ParentSizeZ]
-                    )
+                    properties[AlignX] * properties[ParentSizeX],
+                    properties[AlignY] * properties[ParentSizeY],
+                    properties[AlignZ] * properties[ParentSizeZ]
                 )
                 rotationMatrix -> matrix.rotate(
-                    properties[RotationAngle].toFloat(), vec(
-                        properties[RotationX],
-                        properties[RotationY],
-                        properties[RotationZ]
-                    )
+                    properties[RotationAngle].toFloat(),
+                    properties[RotationX],
+                    properties[RotationY],
+                    properties[RotationZ]
                 )
                 offsetMatrix -> matrix.translate(
-                    vec(
-                        properties[OffsetX],
-                        properties[OffsetY],
-                        properties[OffsetZ]
-                    )
+                    properties[OffsetX],
+                    properties[OffsetY],
+                    properties[OffsetZ]
                 )
                 scaleMatrix -> matrix.scale(
-                    vec(
-                        properties[ScaleX],
-                        properties[ScaleY],
-                        properties[ScaleZ]
-                    )
+                    properties[ScaleX],
+                    properties[ScaleY],
+                    properties[ScaleZ]
                 )
                 originMatrix -> matrix.translate(
-                    vec(
-                        -properties[OriginX] * properties[SizeX],
-                        -properties[OriginY] * properties[SizeY],
-                        -properties[OriginZ] * properties[SizeZ]
-                    )
+                    -properties[OriginX] * properties[SizeX],
+                    -properties[OriginY] * properties[SizeY],
+                    -properties[OriginZ] * properties[SizeZ]
                 )
             }
             this.matrices[matrixId] = matrix
@@ -196,10 +171,11 @@ abstract class AbstractElement() {
 
     open fun applyTransformations() {
 
-        if (!this.enabled) return;
+        if (!this.enabled) return
 
-        this.cleanMatrices();
+        this.cleanMatrices()
 
+        val properties = properties
         GlStateManager.color(
             properties[ColorR].toFloat(),
             properties[ColorG].toFloat(),
@@ -207,6 +183,7 @@ abstract class AbstractElement() {
             properties[ColorA].toFloat(),
         )
 
+        val matrixBuffer = matrixBuffer
         for (matrix in this.matrices) {
             if (matrix == null) continue
             matrix.store(matrixBuffer)
@@ -231,6 +208,4 @@ abstract class AbstractElement() {
 //    }
 
     abstract fun render()
-
-
 }

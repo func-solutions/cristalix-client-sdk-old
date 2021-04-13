@@ -4,8 +4,8 @@ import kotlin.math.*
 
 typealias Easing = (Double) -> Double
 
-fun powIn(n: Int): Easing = { it.pow(n) }
-fun powOut(n: Int): Easing = { 1 - (1 - it).pow(n) }
+inline fun powIn(n: Int): Easing = { it.pow(n) }
+inline fun powOut(n: Int): Easing = { 1 - (1 - it).pow(n) }
 fun powBoth(n: Int): Easing = {
     if (it < 0.5)
         2.0.pow(n - 1) * it.pow(n)
