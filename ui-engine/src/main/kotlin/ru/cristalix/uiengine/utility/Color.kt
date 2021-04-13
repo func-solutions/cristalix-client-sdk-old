@@ -14,6 +14,12 @@ open class Color(
     open var alpha: Double = 1.0
 
 ) {
+
+    constructor(hex: String) {
+        val index = if (hex[0] == '#') 1 else 0
+        TODO()
+    }
+
     open fun write(another: Color) {
         another.red = this.red
         another.green = this.green

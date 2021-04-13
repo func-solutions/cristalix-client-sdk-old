@@ -10,6 +10,7 @@ import ru.cristalix.uiengine.utility.*
 import ru.cristalix.uiengine.utility.Property.*
 import java.lang.IllegalStateException
 
+
 abstract class AbstractElement() {
 
     internal val properties: DoubleArray = DoubleArray(Property.VALUES.size)
@@ -30,20 +31,20 @@ abstract class AbstractElement() {
     var onClick: ClickHandler? = null
     var onHover: HoverHandler? = null
 
-    var offset: V3
-        get() = ProxiedV3(OffsetX.ordinal, this)
+    var offset: V
+        get() = ProxiedV(OffsetX.ordinal, this)
         set(value) = value.write(offset)
 
-    var scale: V3
-        get() = ProxiedV3(ScaleX.ordinal, this)
+    var scale: V
+        get() = ProxiedV(ScaleX.ordinal, this)
         set(value) = value.write(scale)
 
-    var align: V3
-        get() = ProxiedV3(AlignX.ordinal, this)
+    var align: V
+        get() = ProxiedV(AlignX.ordinal, this)
         set(value) = value.write(align)
 
-    var origin: V3
-        get() = ProxiedV3(OriginX.ordinal, this)
+    var origin: V
+        get() = ProxiedV(OriginX.ordinal, this)
         set(value) = value.write(origin)
 
     var color: Color
@@ -54,12 +55,19 @@ abstract class AbstractElement() {
         get() = ProxiedRotation(this)
         set(value) = value.write(rotation)
 
-    var size: V3
-        get() = ProxiedV3(SizeX.ordinal, this)
+    var size: V
+        get() = ProxiedV(SizeX.ordinal, this)
         set(value) = value.write(size)
 
+    var alignOrigin: V
+        get() = align
+        set(value) {
+            align = value
+            origin = value
+        }
+
     init {
-        this.scale = V3(1.0, 1.0, 1.0)
+        this.scale = V(1, 1, 1)
         this.changeProperty(RotationZ.ordinal, 1.0)
     }
     

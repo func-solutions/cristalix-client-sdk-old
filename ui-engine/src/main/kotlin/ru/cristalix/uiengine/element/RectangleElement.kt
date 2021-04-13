@@ -30,6 +30,8 @@ open class RectangleElement : AbstractElement(), Parent {
             }
         }
 
+    var mask: Boolean = false
+
     init {
         this.textureSize = V2(1.0, 1.0)
     }

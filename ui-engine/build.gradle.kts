@@ -6,7 +6,9 @@ apply("plugin" to "kotlin")
 
 dependencies {
     compileOnly(project(":client-api"))
+    testCompileOnly(project(":client-api"))
     compileOnly(project(":client-sdk"))
+    testCompileOnly(project(":client-sdk"))
     compileOnly(kotlin("stdlib"))
 
 }

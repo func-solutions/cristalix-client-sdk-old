@@ -1,10 +1,33 @@
 package ru.cristalix.uiengine.element
 
+import ru.cristalix.uiengine.utility.*
 import ru.cristalix.uiengine.utility.Property.*
-import ru.cristalix.uiengine.utility.Color
-import ru.cristalix.uiengine.utility.Rotation
-import ru.cristalix.uiengine.utility.V2
-import ru.cristalix.uiengine.utility.V3
+import kotlin.reflect.KProperty
+
+open class ProxiedV(
+    private val offset: Int,
+    private val element: AbstractElement
+) : V() {
+
+    inline var x: Double
+        get() = get(X)
+        set(value) = set(X, value)
+
+    inline var y: Double
+        get() = get(Y)
+        set(value) = set(Y, value)
+
+    inline var z: Double
+        get() = get(Z)
+        set(value) = set(Z, value)
+
+    override fun get(index: Int): Double =
+        element.properties[offset + index]
+
+    override fun set(index: Int, value: Number) =
+        element.changeProperty(index, value)
+
+}
 
 
 open class ProxiedV2(
@@ -53,7 +76,7 @@ class ProxiedRotation(
 
 open class ProxiedColor(
     private val element: AbstractElement
-): Color() {
+) : Color() {
 
     override var red: Int
         get() = element.properties[ColorR.ordinal].toInt()

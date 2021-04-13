@@ -16,6 +16,16 @@ const val uvMatrix = -3;
 val allMatrices =
     intArrayOf(alignMatrix, rotationMatrix, offsetMatrix, scaleMatrix, originMatrix, sizeMatrix, colorMatrix, uvMatrix)
 
+const val X = 0
+const val Y = 1
+const val Z = 2
+const val Degrees = 3
+const val Red = 0
+const val Green = 1
+const val Blue = 2
+const val Alpha = 3
+
+
 
 operator fun DoubleArray.get(property: Property): Double {
     return this[property.ordinal]
