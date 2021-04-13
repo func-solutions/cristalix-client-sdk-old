@@ -65,7 +65,6 @@ inline fun Matrix4f.rotate(angle: Float, x: Double, y: Double, z: Double) {
     rotate(angle, x.toFloat(), y.toFloat(), z.toFloat())
 }
 
-
 fun Matrix4f.scale(x: Float, y: Float, z: Float) {
     m00 *= x
     m01 *= x

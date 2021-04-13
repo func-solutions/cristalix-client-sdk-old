@@ -91,16 +91,15 @@ abstract class AbstractElement() {
 
     fun cleanMatrices() {
         val dirty = this.dirtyMatrices ?: return
+        this.dirtyMatrices = null
         for (matrix in dirty) {
             this.updateMatrix(matrix)
         }
-        this.dirtyMatrices = null
     }
 
     open fun updateMatrix(matrixId: Int) {
         val properties = properties
         dirtyMatrices?.remove(matrixId)
-
 
         if (matrixId == colorMatrix) {
             this.cachedHexColor = this.color.toGuiHex()

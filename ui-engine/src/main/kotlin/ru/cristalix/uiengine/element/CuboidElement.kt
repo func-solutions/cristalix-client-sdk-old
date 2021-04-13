@@ -73,7 +73,6 @@ class CuboidElement : AbstractElement(), Parent {
         }
 
         super.updateMatrix(matrixId)
-
     }
 
     override fun render() {
