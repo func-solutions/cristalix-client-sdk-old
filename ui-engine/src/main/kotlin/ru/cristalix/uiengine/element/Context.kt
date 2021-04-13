@@ -12,6 +12,7 @@ abstract class Context : RectangleElement() {
     private val baseMatrix = Matrix4f()
     private val hoverMatrix = Matrix4f()
     private val invMatrix = Matrix4f()
+    private val hoverVector = Vector4f()
 
     init {
         this.context = this
@@ -93,7 +94,11 @@ abstract class Context : RectangleElement() {
             val sizeX = element.properties[Property.SizeX.ordinal]
             val sizeY = element.properties[Property.SizeY.ordinal]
 
-            val vector = Vector4f(mouse.x.toFloat(), mouse.y.toFloat(), 0.0f, 1.0f)
+            val vector = hoverVector
+            vector.x = mouse.x.toFloat()
+            vector.y = mouse.y.toFloat()
+            vector.z = 0.0f
+            vector.w = 1.0f
 
             val inv = invMatrix
             inv.setIdentity()
