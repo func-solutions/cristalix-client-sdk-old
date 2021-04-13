@@ -3,7 +3,7 @@ package ru.cristalix.uiengine.utility
 import dev.xdark.clientapi.math.MathHelper
 import org.lwjgl.util.vector.Matrix4f
 
-inline fun Matrix4f.translate(x: Float, y: Float, z: Float) {
+fun Matrix4f.translate(x: Float, y: Float, z: Float) {
     m30 += m00 * x + m10 * y + m20 * z
     m31 += m01 * x + m11 * y + m21 * z
     m32 += m02 * x + m12 * y + m22 * z
@@ -14,7 +14,7 @@ inline fun Matrix4f.translate(x: Double, y: Double, z: Double) {
     translate(x.toFloat(), y.toFloat(), z.toFloat())
 }
 
-inline fun Matrix4f.rotate(angle: Float, x: Float, y: Float, z: Float) {
+fun Matrix4f.rotate(angle: Float, x: Float, y: Float, z: Float) {
     val c = MathHelper.cos(angle)
     val s = MathHelper.sin(angle)
     val oneminusc = 1.0f - c
@@ -66,19 +66,19 @@ inline fun Matrix4f.rotate(angle: Float, x: Double, y: Double, z: Double) {
 }
 
 
-inline fun Matrix4f.scale(x: Float, y: Float, z: Float) {
-    m00 = m00 * x
-    m01 = m01 * x
-    m02 = m02 * x
-    m03 = m03 * x
-    m10 = m10 * y
-    m11 = m11 * y
-    m12 = m12 * y
-    m13 = m13 * y
-    m20 = m20 * z
-    m21 = m21 * z
-    m22 = m22 * z
-    m23 = m23 * z
+fun Matrix4f.scale(x: Float, y: Float, z: Float) {
+    m00 *= x
+    m01 *= x
+    m02 *= x
+    m03 *= x
+    m10 *= y
+    m11 *= y
+    m12 *= y
+    m13 *= y
+    m20 *= z
+    m21 *= z
+    m22 *= z
+    m23 *= z
 }
 
 inline fun Matrix4f.scale(x: Double, y: Double, z: Double) {
