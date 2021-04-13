@@ -107,7 +107,8 @@ abstract class AbstractElement() {
         }
 
         if (matrixId >= 0) {
-            val matrix: Matrix4f = this.matrices[matrixId] ?: (Matrix4f().setIdentity() as Matrix4f)
+            val matrix: Matrix4f = this.matrices[matrixId] ?: Matrix4f()
+            matrix.setIdentity()
 
             when (matrixId) {
                 alignMatrix -> matrix.translate(
