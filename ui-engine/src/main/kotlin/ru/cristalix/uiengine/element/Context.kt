@@ -61,7 +61,8 @@ abstract class Context : RectangleElement() {
         var passed = false
         if (element.onHover != null || element.onClick != null) {
             passed = true
-        } else if (element is RectangleElement) {
+        }
+        if (element is RectangleElement) {
             val children = element.children
             if (children.isNotEmpty()) {
                 for (child in children) {
