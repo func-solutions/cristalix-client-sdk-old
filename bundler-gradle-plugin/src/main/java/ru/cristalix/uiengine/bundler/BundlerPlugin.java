@@ -104,7 +104,7 @@ public class BundlerPlugin implements Plugin<Project> {
 				proGuardTask.injars(inJarFile);
 				proGuardTask.outjars(outJarFile);
 
-				proGuardTask.libraryjars(project.getConfigurations().getByName("compileOnlyDependenciesMetadata"));
+				proGuardTask.libraryjars(project.getConfigurations().getByName("compileClasspath").minus(project.getConfigurations().getByName("runtimeClasspath")));
 
 				proGuardTask.setGroup("build");
 
