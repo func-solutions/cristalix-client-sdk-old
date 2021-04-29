@@ -2,27 +2,14 @@ package ru.cristalix.uiengine.element
 
 import dev.xdark.clientapi.opengl.GlStateManager
 import dev.xdark.clientapi.resource.ResourceLocation
-import dev.xdark.clientapi.texture.Texture
 import org.lwjgl.util.vector.Matrix4f
 import org.lwjgl.util.vector.Vector4f
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.utility.*
-import java.awt.image.BufferedImage
 
 open class RectangleElement : AbstractElement(), Parent {
 
-    var texture: Texture? = null
-
-    var image: BufferedImage? = null
-    set(value) {
-        field = value
-        texture = UIEngine.clientApi.renderEngine().newImageTexture(value, false, false)
-    }
     var textureLocation: ResourceLocation? = null
-    set(value) {
-        field = value
-        texture = UIEngine.clientApi.renderEngine().newSimpleTexture(value)
-    }
 
     var textureFrom: V2 = ProxiedV2(Property.TextureX.ordinal, this)
         set(value) = value.write(field)
@@ -114,10 +101,9 @@ open class RectangleElement : AbstractElement(), Parent {
         GlStateManager.enableBlend()
 
         val properties = properties
-        val texture = texture
-        if (texture != null) {
+        if (textureLocation != null) {
 
-            api.renderEngine().bindTexture(texture)
+            api.renderEngine().bindTexture(textureLocation)
 
             GlStateManager.enableAlpha()
             val color = color
