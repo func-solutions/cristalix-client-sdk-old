@@ -50,18 +50,22 @@ public class BundlerPlugin implements Plugin<Project> {
 					logger.warn("Unable to retrieve path to rt.jar! Are you running JDK 9+?");
 				}
 
-				proGuardTask.useuniqueclassmembernames();
 				proGuardTask.dontusemixedcaseclassnames();
 				String packageName = extension.getName().replaceAll("[^A-Za-z]", "_");
 				proGuardTask.flattenpackagehierarchy(packageName);
 				proGuardTask.repackageclasses(packageName);
-				proGuardTask.keepattributes("Signature,SourceFile,LineNumberTable,*Annotation*");
-				//proGuardTask.keepparameternames();
+				proGuardTask.keepattributes("Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,LocalVariable*Table,*Annotation*,Synthetic,EnclosingMethod");
+				proGuardTask.keepparameternames();
 				proGuardTask.adaptresourcefilecontents("**.properties,META-INF/MANIFEST.MF");
 				proGuardTask.dontpreverify();
-				proGuardTask.renamesourcefileattribute("SourceFile");
 
 				if (!extension.isObfuscate()) proGuardTask.dontobfuscate();
+
+				proGuardTask.keep(Collections.singletonMap("allowobfuscation", true), "class " + extension.getMainClass());
+				proGuardTask.keepclassmembers("enum  * {\n" +
+						"    public static **[] values();\n" +
+						"    public static ** valueOf(java.lang.String);\n" +
+						"}");
 
 				proGuardTask.keep(Collections.singletonMap("allowobfuscation", true), "class " + extension.getMainClass() + "{\n" +
 						"    public void load(dev.xdark.clientapi.ClientApi);\n" +
@@ -80,6 +84,17 @@ public class BundlerPlugin implements Plugin<Project> {
 						"}");
 
 				proGuardTask.assumenosideeffects("class kotlin.jvm.internal.Intrinsics {\n" +
+						"    <methods>;\n" +
+						"}");
+
+				proGuardTask.assumenosideeffects("class kotlin.jvm.internal.TypeIntrinsics {\n" +
+						"    <methods>;\n" +
+						"}");
+
+				proGuardTask.assumenosideeffects("class kotlin.jvm.internal.Reflection {\n" +
+						"    <methods>;\n" +
+						"}");
+				proGuardTask.assumenosideeffects("class java.lang.StackTraceElement {\n" +
 						"    <methods>;\n" +
 						"}");
 

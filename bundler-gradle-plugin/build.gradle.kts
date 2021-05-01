@@ -33,7 +33,7 @@ publishing {
         create<MavenPublication>("bundler") {
             groupId = "ru.cristalix"
             artifactId = "bundler"
-            version = "2.3.4"
+            version = "2.3.8-rc1"
             from(components["java"])
         }
     }
