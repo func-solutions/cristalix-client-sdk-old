@@ -52,6 +52,11 @@ object UIEngine {
     internal var lastMouseState: BooleanArray = booleanArrayOf(false, false, false)
 
     /**
+     * Returns [true] if 3d context wil be used or not
+     */
+    private fun initContext3d() = !java.lang.Boolean.getBoolean("ru.cristalix.uiengine.no3dInit")
+
+    /**
      * Main cristalix UI engine entrypoint.
      * It is recommended for every mod to call this as the first statement inside ModMain#load.
      */
@@ -69,7 +74,9 @@ object UIEngine {
         eventBus.register(listener, GameLoop::class.java, { gameLoop() }, 1)
         updateResolution()
         eventBus.register(listener, WindowResize::class.java, { updateResolution() }, 1)
-        eventBus.register(listener, RenderPass::class.java, { renderWorld(it) }, 1)
+        if (initContext3d()) {
+            eventBus.register(listener, RenderPass::class.java, { renderWorld(it) }, 1)
+        }
     }
 
     private fun renderWorld(renderPass: RenderPass) {
