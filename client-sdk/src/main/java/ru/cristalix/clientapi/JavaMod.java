@@ -34,27 +34,21 @@ public class JavaMod implements ModMain {
         });
 
         String modClass = this.getClass().getName();
-        System.out.println("Modclass is " + modClass);
 
         clientApi.eventBus().register(listener, PluginMessage.class, new Consumer<PluginMessage>() {
             @Override
             public void accept(PluginMessage pluginMessage) {
-                System.out.println("Plugin message: " + pluginMessage.getChannel() + ", " + pluginMessage.getData().readableBytes()
-                 + " " + (pluginMessage.getChannel().equals("sdkreload")));
                 if (pluginMessage.getChannel().equals("sdkreload")) {
                     ByteBuf data = pluginMessage.getData();
                     String clazz = NetUtil.readUtf8(data);
-                    System.out.println("Clazz: '" + clazz + "'");
                     if (!clazz.equals(modClass)) {
                         data.resetReaderIndex();
-                        System.out.println("miss");
                         return;
                     }
 
                     ByteBuf buffer = Unpooled.buffer();
                     NetUtil.writeUtf8(clazz, buffer);
                     clientApi.clientConnection().sendPayload("sdkconfirm", buffer);
-                    System.out.println("hit " + buffer.readableBytes());
                     unload();
                 }
             }
