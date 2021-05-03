@@ -56,19 +56,25 @@ object UIEngine {
      */
     private fun initContext3d() = !java.lang.Boolean.getBoolean("ru.cristalix.uiengine.no3dInit")
 
+    fun initialize(mod: JavaMod) {
+        initialize(mod.listener, JavaMod.clientApi)
+        mod.onDisable.add { unitialize() }
+    }
+
     /**
      * Main cristalix UI engine entrypoint.
      * It is recommended for every mod to call this as the first statement inside ModMain#load.
      */
-    fun initialize(mod: JavaMod) {
+    fun initialize(clientApi: ClientApi) {
+        JavaMod.clientApi = clientApi
+        initialize(clientApi.eventBus().createListener(), clientApi)
+    }
+
+    fun initialize(listener: Listener, clientApi: ClientApi) {
         this.clientApi = JavaMod.clientApi
+        this.listener = listener
+
         val eventBus = clientApi.eventBus()
-        listener = mod.listener
-
-        mod.onDisable.add {
-            GLAllocation.freeBuffer(matrixBuffer)
-        }
-
         eventBus.register(listener, GuiOverlayRender::class.java, { renderOverlay() }, 1)
         eventBus.register(listener, RenderTickPost::class.java, { renderPost() }, 1)
         eventBus.register(listener, GameLoop::class.java, { gameLoop() }, 1)
@@ -77,6 +83,11 @@ object UIEngine {
         if (initContext3d()) {
             eventBus.register(listener, RenderPass::class.java, { renderWorld(it) }, 1)
         }
+    }
+
+    fun unitialize() {
+        clientApi
+        GLAllocation.freeBuffer(matrixBuffer)
     }
 
     private fun renderWorld(renderPass: RenderPass) {
@@ -121,7 +132,7 @@ object UIEngine {
     }
 
     private fun gameLoop() {
-        for (button  in MouseButton.VALUES) {
+        for (button in MouseButton.VALUES) {
             val idx = button.ordinal
             val oldState = lastMouseState[idx]
             val newState = Mouse.isButtonDown(idx)
@@ -132,5 +143,5 @@ object UIEngine {
             }
         }
     }
-
 }
+

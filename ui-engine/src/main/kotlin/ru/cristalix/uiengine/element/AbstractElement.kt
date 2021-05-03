@@ -92,7 +92,7 @@ abstract class AbstractElement() {
     fun cleanMatrices() {
         val dirty = this.dirtyMatrices ?: return
         this.dirtyMatrices = null
-        for (matrix in dirty) {
+        for (matrix in dirty.toIntArray()) {
             this.updateMatrix(matrix)
         }
     }
