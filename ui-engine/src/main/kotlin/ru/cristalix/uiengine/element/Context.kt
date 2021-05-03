@@ -8,9 +8,10 @@ import ru.cristalix.uiengine.utility.V2
 abstract class Context : RectangleElement() {
 
     private val runningTasks: MutableList<Task> = ArrayList()
+    private var eventLoopBuffer: MutableList<Task>? = null
+    private var inEventLoop = false
     internal val runningAnimations: MutableList<Animation> = ArrayList()
     private val baseMatrix = Matrix4f()
-    private val hoverMatrix = Matrix4f()
     private val invMatrix = Matrix4f()
     private val hoverVector = Vector4f()
 
@@ -20,7 +21,12 @@ abstract class Context : RectangleElement() {
 
     fun schedule(delaySeconds: Number, action: () -> Unit): Task {
         val task = Task(System.currentTimeMillis() + (delaySeconds.toDouble() * 1000).toInt(), action)
-        runningTasks.add(task)
+        if (inEventLoop) {
+            if (eventLoopBuffer == null) eventLoopBuffer = ArrayList(1)
+            eventLoopBuffer!!.add(task)
+        } else {
+            runningTasks.add(task)
+        }
         return task
     }
 
@@ -29,6 +35,7 @@ abstract class Context : RectangleElement() {
         val time = System.currentTimeMillis()
 
         if (runningTasks.isNotEmpty()) {
+            inEventLoop = true
             with(runningTasks.iterator()) {
                 while (hasNext()) {
                     val task = next()
@@ -46,6 +53,9 @@ abstract class Context : RectangleElement() {
                     }
                 }
             }
+            inEventLoop = false
+            eventLoopBuffer?.apply { runningTasks.addAll(this) }
+            eventLoopBuffer = null
         }
 
         if (runningAnimations.isNotEmpty()) {
@@ -83,7 +93,8 @@ abstract class Context : RectangleElement() {
 
         if (!element.passedHoverCulling) return
 
-        val matrix = hoverMatrix
+        // ToDo: Optimize hover detection (cache this matrix inside element)
+        val matrix = Matrix4f()
         matrix.load(baseMatrix)
 
         for (m in element.matrices) {
@@ -135,8 +146,8 @@ abstract class Context : RectangleElement() {
 
         if (children.isNotEmpty()) {
             val baseMatrix = baseMatrix
-            baseMatrix.setIdentity()
             for (element in children) {
+                baseMatrix.setIdentity()
                 this.hoverCulling(element)
                 this.updateHoverStates(element, baseMatrix, mouse)
             }
