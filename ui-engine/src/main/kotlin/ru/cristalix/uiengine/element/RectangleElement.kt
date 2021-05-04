@@ -2,6 +2,7 @@ package ru.cristalix.uiengine.element
 
 import dev.xdark.clientapi.opengl.GlStateManager
 import dev.xdark.clientapi.resource.ResourceLocation
+import org.lwjgl.opengl.GL11
 import org.lwjgl.util.vector.Matrix4f
 import org.lwjgl.util.vector.Vector4f
 import ru.cristalix.uiengine.UIEngine
@@ -16,6 +17,8 @@ open class RectangleElement : AbstractElement(), Parent {
 
     var textureSize: V2 = ProxiedV2(Property.TextureWidth.ordinal, this)
         set(value) = value.write(field)
+
+    var mask: Boolean = false
 
     override val children: MutableList<AbstractElement> = ArrayList()
 
@@ -100,6 +103,27 @@ open class RectangleElement : AbstractElement(), Parent {
         val api = UIEngine.clientApi
         GlStateManager.enableBlend()
 
+        val mask = mask
+
+        if (mask) {
+            GlStateManager.enableStencil()
+            GlStateManager.stencilFunc(GL11.GL_GREATER, context!!.stencilPos, 0xFF)
+            GlStateManager.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_INCR)
+            GlStateManager.disableDepth()
+            GlStateManager.disableAlpha()
+            api.overlayRenderer().drawRect(
+                0, 0,
+                properties[Property.SizeX].toInt(),
+                properties[Property.SizeY].toInt(),
+                0
+            )
+            GlStateManager.enableDepth()
+
+            context!!.stencilPos++
+            GlStateManager.stencilFunc(GL11.GL_GREATER, context!!.stencilPos, 0xFF)
+            GlStateManager.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP)
+        }
+
         val properties = properties
         if (textureLocation != null) {
 
@@ -138,6 +162,22 @@ open class RectangleElement : AbstractElement(), Parent {
             for (child in children) {
                 child.transformAndRender()
             }
+        }
+
+        if (mask) {
+            context!!.stencilPos--
+            GlStateManager.stencilFunc(GL11.GL_ALWAYS, 0, 0xFF)
+            GlStateManager.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_DECR)
+            GlStateManager.disableDepth()
+            GlStateManager.disableAlpha()
+            api.overlayRenderer().drawRect(
+                0, 0,
+                properties[Property.SizeX].toInt(),
+                properties[Property.SizeY].toInt(),
+                0
+            )
+            GlStateManager.enableDepth()
+            GlStateManager.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP)
         }
     }
 

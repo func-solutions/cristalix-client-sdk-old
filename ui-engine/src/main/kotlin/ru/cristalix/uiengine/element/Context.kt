@@ -15,6 +15,8 @@ abstract class Context : RectangleElement() {
     private val invMatrix = Matrix4f()
     private val hoverVector = Vector4f()
 
+    var stencilPos = 0
+
     init {
         this.context = this
     }
