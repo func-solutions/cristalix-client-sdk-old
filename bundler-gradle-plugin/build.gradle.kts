@@ -1,39 +1,47 @@
 plugins {
     `java-gradle-plugin`
-    id("com.gradle.plugin-publish") version "0.12.0"
+    id("com.gradle.plugin-publish") version "0.14.0"
 }
 
-repositories {
-    google()
-    jcenter()
-}
-
-pluginBundle {
-
-}
+val artifact = "bundler"
+version = "3.0.0"
 
 gradlePlugin {
     plugins {
-        this.create("bundlerPlugin") {
-            id = "ru.cristalix.uiengine.bundler"
-            implementationClass = "ru.cristalix.uiengine.bundler.BundlerPlugin"
+        create("bundlerPlugin") {
+            id = "ru.cristalix.bundler"
+            displayName = "Cristalix bundler"
+            description = "Plugin for creating binaries, compatible with the cristalix client"
+            implementationClass = "ru.cristalix.bundler.BundlerPlugin"
         }
     }
 }
 
+pluginBundle {
+    website = "https://github.com/delfikpro/cristalix-client-sdk/"
+    vcsUrl = "https://github.com/delfikpro/cristalix-client-sdk/"
+    tags = listOf("minecraft", "cristalix", "bundler")
+}
+
 dependencies {
+
+    implementation("com.android.tools.build:gradle:2.3.0")
+    api("net.sf.proguard:proguard-gradle:6.2.2")
+
     compileOnly(gradleApi())
-    implementation("com.android.tools.build:gradle:3.3.0")
-    implementation("com.guardsquare:proguard-gradle:7.0.0")
+
+    compileOnly("org.projectlombok:lombok:1.18.20")
+    annotationProcessor("org.projectlombok:lombok:1.18.20")
+
 }
 
 
 publishing {
     publications {
         create<MavenPublication>("bundler") {
-            groupId = "ru.cristalix"
-            artifactId = "bundler"
-            version = "2.3.8-rc1"
+            groupId = "${project.group}"
+            artifactId = artifact
+            version = "${project.version}"
             from(components["java"])
         }
     }

@@ -20,63 +20,32 @@
 Ниже приведён минимальный build.gradle для разработки модов на котлине с использованием UI engine
  
 ```groovy
- buildscript {
-     repositories {
-         google()
-         jcenter()
-         maven {
-             url "https://repo.implario.dev/public"
-         }
-     }
-     dependencies {
-         classpath("ru.cristalix:bundler:2.1.4")
-     }
- }
- 
- plugins {
-     id 'org.jetbrains.kotlin.jvm' version '1.4.30'
- }
- 
- repositories {
-     mavenCentral()
-     mavenLocal()
-     maven {
-         url 'https://repo.implario.dev/public'
-     }
- }
- 
- apply plugin: 'ru.cristalix.uiengine.bundler'
- apply plugin: 'kotlin'
- 
- tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-     kotlinOptions {
-         jvmTarget = "1.8"
-     }
- }
 
- sourceCompatibility = '1.8'
- targetCompatibility = '1.8'
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.4.30'
+    id 'ru.cristalix.bundler' version '3.0.0'
+}
 
- tasks.withType(JavaCompile) {
-     options.encoding = "UTF-8"
- }
+repositories {
+    maven {
+        url 'https://repo.implario.dev/public'
+    }
+}
 
+dependencies {
 
- dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.4.30'
 
-     implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: '1.4.30'
+    compileOnly 'ru.cristalix:client-api:latest-SNAPSHOT'
 
-     compileOnly 'dev.xdark:clientapi:1.0.6'
-     compileOnly 'ru.cristalix:client-api-libs:all'
-     
-     // Актуальную версию см. на github.com/delfikpro/cristalix-ui-engine
-     implementation 'ru.cristalix:uiengine:3.5.3' 
+    implementation 'ru.cristalix:client-sdk:5.0.4'
+    implementation 'ru.cristalix:uiengine:3.7.5'
 
- }
+}
 
- jar {
-     from configurations.runtimeClasspath.collect { it.directory ? it : zipTree(it) }
- }
+jar.from configurations.runtimeClasspath.collect(project.&zipTree)
+
+compileKotlin['kotlinOptions'].jvmTarget = "1.8"
 
 ```
 

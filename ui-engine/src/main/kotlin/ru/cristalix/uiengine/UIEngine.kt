@@ -58,7 +58,7 @@ object UIEngine {
 
     fun initialize(mod: JavaMod) {
         initialize(mod.listener, JavaMod.clientApi)
-        mod.onDisable.add { unitialize() }
+        mod.onDisable.add { uninitialize() }
     }
 
     /**
@@ -66,12 +66,11 @@ object UIEngine {
      * It is recommended for every mod to call this as the first statement inside ModMain#load.
      */
     fun initialize(clientApi: ClientApi) {
-        JavaMod.clientApi = clientApi
         initialize(clientApi.eventBus().createListener(), clientApi)
     }
 
     fun initialize(listener: Listener, clientApi: ClientApi) {
-        this.clientApi = JavaMod.clientApi
+        this.clientApi = clientApi
         this.listener = listener
 
         val eventBus = clientApi.eventBus()
@@ -85,8 +84,7 @@ object UIEngine {
         }
     }
 
-    fun unitialize() {
-        clientApi
+    fun uninitialize() {
         GLAllocation.freeBuffer(matrixBuffer)
     }
 

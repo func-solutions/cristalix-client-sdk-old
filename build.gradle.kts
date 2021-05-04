@@ -1,6 +1,6 @@
 plugins {
     `maven-publish`
-    java
+    `java-library`
 }
 
 allprojects {
