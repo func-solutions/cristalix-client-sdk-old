@@ -3,9 +3,9 @@ plugins {
     `java-library`
 }
 
-allprojects {
-    group = "ru.cristalix"
-}
+//allprojects {
+//    group = "ru.cristalix"
+//}
 
 subprojects {
 

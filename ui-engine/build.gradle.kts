@@ -4,6 +4,8 @@ plugins {
 
 apply("plugin" to "kotlin")
 
+group = "ru.cristalix"
+
 dependencies {
     compileOnly(project(":client-api"))
     compileOnly(project(":client-sdk"))
@@ -16,7 +18,7 @@ publishing {
         create<MavenPublication>("uiengine") {
             groupId = "ru.cristalix"
             artifactId = "uiengine"
-            version = "3.7.7-rc1"
+            version = "3.7.7"
             from(components["java"])
         }
     }

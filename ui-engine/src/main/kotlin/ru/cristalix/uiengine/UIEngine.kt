@@ -51,11 +51,6 @@ object UIEngine {
 
     internal var lastMouseState: BooleanArray = booleanArrayOf(false, false, false)
 
-    /**
-     * Returns [true] if 3d context wil be used or not
-     */
-    private fun initContext3d() = !java.lang.Boolean.getBoolean("ru.cristalix.uiengine.no3dInit")
-
     fun initialize(mod: JavaMod) {
         initialize(mod.listener, JavaMod.clientApi)
         mod.onDisable.add { uninitialize() }
@@ -75,11 +70,13 @@ object UIEngine {
 
         val eventBus = clientApi.eventBus()
         eventBus.register(listener, GuiOverlayRender::class.java, { renderOverlay() }, 1)
-        eventBus.register(listener, RenderTickPost::class.java, { renderPost() }, 1)
+        if (!JavaMod.isClientMod()) {
+            eventBus.register(listener, RenderTickPost::class.java, { renderPost() }, 1)
+        }
         eventBus.register(listener, GameLoop::class.java, { gameLoop() }, 1)
         updateResolution()
         eventBus.register(listener, WindowResize::class.java, { updateResolution() }, 1)
-        if (initContext3d()) {
+        if (!JavaMod.isClientMod()) {
             eventBus.register(listener, RenderPass::class.java, { renderWorld(it) }, 1)
         }
     }

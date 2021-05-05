@@ -2,6 +2,8 @@ plugins {
     `java-library`
 }
 
+group = "ru.cristalix"
+
 dependencies {
 //    api("org.lwjgl.lwjgl", "lwjgl", "2.9.3")
     api("org.lwjgl.lwjgl", "lwjgl_util", "2.9.3")

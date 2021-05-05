@@ -9,6 +9,7 @@ import proguard.ParseException;
 import proguard.gradle.ProGuardTask;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -29,12 +30,8 @@ public class BundlerPlugin implements Plugin<Project> {
 
             Jar jar = extension.getTask() != null ? extension.getTask() : (Jar) project.getTasks().getByName("jar");
 
-            ProGuardTask proGuardTask = (ProGuardTask) project.task(Collections.singletonMap("type", ProGuardTask.class), "bundle");
-
-            proGuardTask.doFirst(t -> {
+            jar.doFirst(t -> {
                 try {
-
-
                     if (!project.getBuildDir().isDirectory())
                         project.getBuildDir().mkdirs();
 
@@ -45,6 +42,16 @@ public class BundlerPlugin implements Plugin<Project> {
                                     "version=" + extension.getVersion()
                     ), StandardCharsets.UTF_8);
 
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+            });
+
+            ProGuardTask proGuardTask = (ProGuardTask) project.task(Collections.singletonMap("type", ProGuardTask.class), "bundle");
+
+            proGuardTask.doFirst(t -> {
+                try {
                     proGuardTask.target("1.6");
                     proGuardTask.printmapping(new File(project.getBuildDir(), "mapping.txt"));
 //				proGuardTask.libraryjars("<java.home>/lib/rt.jar");
@@ -79,6 +86,14 @@ public class BundlerPlugin implements Plugin<Project> {
                     proGuardTask.keep(Collections.singletonMap("allowobfuscation", true), "class " + extension.getMainClass() + "{\n" +
                             "    public void load(dev.xdark.clientapi.ClientApi);\n" +
                             "    public void unload();\n" +
+                            "}");
+
+                    proGuardTask.assumevalues("class ru.cristalix.clientapi.JavaMod {" +
+                            "public static boolean isClientMod() return " + extension.isClientMod() + ";" +
+                            "}");
+
+                    proGuardTask.assumenosideeffects("class ru.cristalix.clientapi.JavaMod {" +
+                            "public static boolean isClientMod();" +
                             "}");
 
 				/*

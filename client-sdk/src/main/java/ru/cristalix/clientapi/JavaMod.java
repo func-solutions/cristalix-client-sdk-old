@@ -19,6 +19,14 @@ public class JavaMod implements ModMain {
     public List<Runnable> onDisable = new ArrayList<>();
     public Listener listener;
 
+    /**
+     * Bundler substitutes this check with a constant value.
+     * This is required for client mods to work properly.
+     */
+    public static boolean isClientMod() {
+        return Boolean.getBoolean("ru.cristalix.uiengine.no3dInit");
+    }
+
     @Override
     public final void load(ClientApi clientApi) {
 
@@ -33,26 +41,28 @@ public class JavaMod implements ModMain {
             }
         });
 
-        String modClass = this.getClass().getName();
+        if (!isClientMod()) {
+            String modClass = this.getClass().getName();
 
-        clientApi.eventBus().register(listener, PluginMessage.class, new Consumer<PluginMessage>() {
-            @Override
-            public void accept(PluginMessage pluginMessage) {
-                if (pluginMessage.getChannel().equals("sdkreload")) {
-                    ByteBuf data = pluginMessage.getData();
-                    String clazz = NetUtil.readUtf8(data);
-                    if (!clazz.equals(modClass)) {
-                        data.resetReaderIndex();
-                        return;
+            clientApi.eventBus().register(listener, PluginMessage.class, new Consumer<PluginMessage>() {
+                @Override
+                public void accept(PluginMessage pluginMessage) {
+                    if (pluginMessage.getChannel().equals("sdkreload")) {
+                        ByteBuf data = pluginMessage.getData();
+                        String clazz = NetUtil.readUtf8(data);
+                        if (!clazz.equals(modClass)) {
+                            data.resetReaderIndex();
+                            return;
+                        }
+
+                        ByteBuf buffer = Unpooled.buffer();
+                        NetUtil.writeUtf8(clazz, buffer);
+                        clientApi.clientConnection().sendPayload("sdkconfirm", buffer);
+                        unload();
                     }
-
-                    ByteBuf buffer = Unpooled.buffer();
-                    NetUtil.writeUtf8(clazz, buffer);
-                    clientApi.clientConnection().sendPayload("sdkconfirm", buffer);
-                    unload();
                 }
-            }
-        }, 0);
+            }, 0);
+        }
 
         onEnable();
 

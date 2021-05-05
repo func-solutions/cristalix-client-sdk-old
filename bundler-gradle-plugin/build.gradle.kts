@@ -4,14 +4,15 @@ plugins {
 }
 
 val artifact = "bundler"
-version = "3.0.0"
+version = "3.0.2"
+group = "dev.implario"
 
 gradlePlugin {
     plugins {
         create("bundlerPlugin") {
-            id = "ru.cristalix.bundler"
+            id = "dev.implario.bundler"
             displayName = "Cristalix bundler"
-            description = "Plugin for creating binaries, compatible with the cristalix client"
+            description = "Plugin for creating binaries compatible with the cristalix client"
             implementationClass = "ru.cristalix.bundler.BundlerPlugin"
         }
     }
