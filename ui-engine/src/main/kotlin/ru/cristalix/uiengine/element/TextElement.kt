@@ -5,7 +5,7 @@ import ru.cristalix.uiengine.utility.*
 import dev.xdark.clientapi.opengl.GlStateManager
 
 
-class TextElement() : AbstractElement() {
+open class TextElement() : AbstractElement() {
 
     var content: String = ""
         set(value) {
