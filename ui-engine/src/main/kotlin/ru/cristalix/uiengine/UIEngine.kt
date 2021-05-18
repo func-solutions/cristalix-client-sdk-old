@@ -6,6 +6,7 @@ import dev.xdark.clientapi.event.lifecycle.GameLoop
 import dev.xdark.clientapi.event.render.GuiOverlayRender
 import dev.xdark.clientapi.event.render.RenderPass
 import dev.xdark.clientapi.event.render.RenderTickPost
+import dev.xdark.clientapi.event.render.ScaleChange
 import dev.xdark.clientapi.event.window.WindowResize
 import dev.xdark.clientapi.opengl.GLAllocation
 import org.lwjgl.input.Mouse
@@ -76,6 +77,7 @@ object UIEngine {
         eventBus.register(listener, GameLoop::class.java, { gameLoop() }, 1)
         updateResolution()
         eventBus.register(listener, WindowResize::class.java, { updateResolution() }, 1)
+        eventBus.register(listener, ScaleChange::class.java, { updateResolution() }, 1)
         if (!JavaMod.isClientMod()) {
             eventBus.register(listener, RenderPass::class.java, { renderWorld(it) }, 1)
         }
