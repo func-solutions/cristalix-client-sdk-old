@@ -6,7 +6,7 @@ import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.utility.V2
 import ru.cristalix.uiengine.utility.V3
 
-class Context2D(size: V3) : Context() {
+open class Context2D(size: V3) : Context() {
 
     private val mouse = V2()
 

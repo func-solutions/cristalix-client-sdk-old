@@ -13,12 +13,14 @@ dependencies {
 
 }
 
+tasks.compileKotlin.get().kotlinOptions.jvmTarget = "1.8"
+
 publishing {
     publications {
         create<MavenPublication>("uiengine") {
             groupId = "ru.cristalix"
             artifactId = "uiengine"
-            version = "3.7.9"
+            version = "3.8.0-preview"
             from(components["java"])
         }
     }

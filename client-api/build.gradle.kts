@@ -14,6 +14,10 @@ dependencies {
     api("com.google.code.gson", "gson", "2.8.6")
 }
 
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor(0, "seconds")
+}
+
 publishing {
     publications {
         create<MavenPublication>("clientApi") {

@@ -1,10 +1,11 @@
-package ru.cristalix.uiengine.element
+package ru.cristalix.uiengine.eventloop
 
+import ru.cristalix.uiengine.element.AbstractElement
 import ru.cristalix.uiengine.utility.Easing
 import ru.cristalix.uiengine.utility.Easings
 import ru.cristalix.uiengine.utility.Property
 
-internal data class Animation(val element: AbstractElement, val property: Property) {
+data class Animation(val element: AbstractElement, val property: Property) {
 
     var startedTime: Long = 0
     var duration: Long = 0

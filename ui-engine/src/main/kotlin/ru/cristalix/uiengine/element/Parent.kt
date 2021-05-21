@@ -7,4 +7,5 @@ interface Parent {
     fun addChild(vararg elements: AbstractElement)
 
     fun removeChild(vararg elements: AbstractElement)
+
 }

@@ -7,10 +7,6 @@ import ru.cristalix.uiengine.utility.V2
 
 abstract class Context : RectangleElement() {
 
-    private val runningTasks: MutableList<Task> = ArrayList()
-    private var eventLoopBuffer: MutableList<Task>? = null
-    private var inEventLoop = false
-    internal val runningAnimations: MutableList<Animation> = ArrayList()
     private val baseMatrix = Matrix4f()
     private val invMatrix = Matrix4f()
     private val hoverVector = Vector4f()
@@ -20,55 +16,6 @@ abstract class Context : RectangleElement() {
     init {
         this.context = this
     }
-
-    fun schedule(delaySeconds: Number, action: () -> Unit): Task {
-        val task = Task(System.currentTimeMillis() + (delaySeconds.toDouble() * 1000).toInt(), action)
-        if (inEventLoop) {
-            if (eventLoopBuffer == null) eventLoopBuffer = ArrayList(1)
-            eventLoopBuffer!!.add(task)
-        } else {
-            runningTasks.add(task)
-        }
-        return task
-    }
-
-    fun updateAnimations() {
-
-        val time = System.currentTimeMillis()
-
-        if (runningTasks.isNotEmpty()) {
-            inEventLoop = true
-            with(runningTasks.iterator()) {
-                while (hasNext()) {
-                    val task = next()
-                    if (task.cancelled) {
-                        remove()
-                        continue
-                    }
-                    if (time >= task.scheduledTo) {
-                        remove()
-                        try {
-                            task.action()
-                        } catch (ex: Exception) {
-                            RuntimeException("Error while executing task", ex).printStackTrace()
-                        }
-                    }
-                }
-            }
-            inEventLoop = false
-            eventLoopBuffer?.apply { runningTasks.addAll(this) }
-            eventLoopBuffer = null
-        }
-
-        if (runningAnimations.isNotEmpty()) {
-            with(runningAnimations.iterator()) {
-                while (hasNext()) {
-                    if (!next().update(time)) remove()
-                }
-            }
-        }
-    }
-
 
     fun hoverCulling(element: AbstractElement): Boolean {
         var passed = false
@@ -86,14 +33,14 @@ abstract class Context : RectangleElement() {
             }
         }
 
-        element.passedHoverCulling = passed
+        element.interactive = passed
         return passed
 
     }
 
     fun updateHoverStates(element: AbstractElement, baseMatrix: Matrix4f, mouse: V2) {
 
-        if (!element.passedHoverCulling) return
+        if (!element.interactive) return
 
         // ToDo: Optimize hover detection (cache this matrix inside element)
         val matrix = Matrix4f()
@@ -142,7 +89,6 @@ abstract class Context : RectangleElement() {
 
 
     override fun transformAndRender() {
-        this.updateAnimations()
 
         val mouse = transformViewportAndMouse() ?: return
 

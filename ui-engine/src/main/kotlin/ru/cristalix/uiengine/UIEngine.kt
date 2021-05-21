@@ -3,20 +3,21 @@ package ru.cristalix.uiengine
 import dev.xdark.clientapi.ClientApi
 import dev.xdark.clientapi.event.Listener
 import dev.xdark.clientapi.event.lifecycle.GameLoop
-import dev.xdark.clientapi.event.render.GuiOverlayRender
-import dev.xdark.clientapi.event.render.RenderPass
-import dev.xdark.clientapi.event.render.RenderTickPost
-import dev.xdark.clientapi.event.render.ScaleChange
+import dev.xdark.clientapi.event.render.*
 import dev.xdark.clientapi.event.window.WindowResize
 import dev.xdark.clientapi.opengl.GLAllocation
 import org.lwjgl.input.Mouse
 import ru.cristalix.clientapi.JavaMod
+import ru.cristalix.clientapi.KotlinMod
+import ru.cristalix.clientapi.registerHandler
 import ru.cristalix.uiengine.element.*
+import ru.cristalix.uiengine.eventloop.EventLoop
+import ru.cristalix.uiengine.eventloop.EventLoopImpl
 import ru.cristalix.uiengine.utility.MouseButton
 import ru.cristalix.uiengine.utility.V3
 import java.nio.FloatBuffer
 
-object UIEngine {
+object UIEngine: EventLoop by EventLoopImpl() {
 
     val matrixBuffer: FloatBuffer = GLAllocation.createDirectFloatBuffer(16)
 
@@ -69,17 +70,18 @@ object UIEngine {
         this.clientApi = clientApi
         this.listener = listener
 
-        val eventBus = clientApi.eventBus()
-        eventBus.register(listener, GuiOverlayRender::class.java, { renderOverlay() }, 1)
+        registerHandler<GuiOverlayRender>(listener) { renderOverlay() }
+
         if (!JavaMod.isClientMod()) {
-            eventBus.register(listener, RenderTickPost::class.java, { renderPost() }, 1)
+            registerHandler<RenderTickPost>(listener) { renderPost() }
         }
-        eventBus.register(listener, GameLoop::class.java, { gameLoop() }, 1)
+
+        registerHandler<GameLoop>(listener) { gameLoop() }
         updateResolution()
-        eventBus.register(listener, WindowResize::class.java, { updateResolution() }, 1)
-        eventBus.register(listener, ScaleChange::class.java, { updateResolution() }, 1)
+        registerHandler<WindowResize>(listener) { updateResolution() }
+        registerHandler<ScaleChange>(listener) { updateResolution() }
         if (!JavaMod.isClientMod()) {
-            eventBus.register(listener, RenderPass::class.java, { renderWorld(it) }, 1)
+            registerHandler<RenderPass>(listener) { renderWorld() }
         }
     }
 
@@ -87,8 +89,7 @@ object UIEngine {
         GLAllocation.freeBuffer(matrixBuffer)
     }
 
-    private fun renderWorld(renderPass: RenderPass) {
-        if (renderPass.pass != 2) return
+    private fun renderWorld() {
         worldContexts.forEach { it.transformAndRender() }
     }
 
@@ -110,7 +111,7 @@ object UIEngine {
         var lastClickable: AbstractElement? = null
         for (element in elements) {
             // stdout.println(element.hovered + " " + element.passedHoverCulling + " " + (element.onClick != null))
-            if (!element.passedHoverCulling) continue
+            if (!element.interactive) continue
             if (element.hovered && element.onClick != null) lastClickable = element
             if (element is RectangleElement) {
                 lastClickable = findLastClickable(element.children) ?: lastClickable
@@ -119,16 +120,8 @@ object UIEngine {
         return lastClickable
     }
 
-    /**
-     * Convenient event handler registration.
-     */
-    // Avoid usage of forbidden Class class.
-    @Suppress("NOTHING_TO_INLINE")
-    inline fun <T> registerHandler(type: Class<T>, priority: Int = 1, noinline handler: T.() -> Unit) {
-        clientApi.eventBus().register(listener, type, handler, priority)
-    }
-
     private fun gameLoop() {
+        update()
         for (button in MouseButton.VALUES) {
             val idx = button.ordinal
             val oldState = lastMouseState[idx]

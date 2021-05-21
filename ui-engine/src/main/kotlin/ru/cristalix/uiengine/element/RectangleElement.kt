@@ -57,6 +57,32 @@ open class RectangleElement : AbstractElement(), Parent {
 
     }
 
+    override fun updateInteractiveState() {
+
+        super.updateInteractiveState()
+
+        if (children.isEmpty()) return
+        for (child in children) {
+            if (!child.enabled) continue
+            child.updateInteractiveState()
+            interactive = interactive || child.interactive
+        }
+
+    }
+
+    override fun updateHoverState(mouseMatrix: Matrix4f) {
+        super.updateHoverState(mouseMatrix)
+
+        if (children.isEmpty()) return
+        for (child in children) {
+            if (!child.interactive) continue
+
+            val matrix = Matrix4f()
+            matrix.load(mouseMatrix)
+            child.updateHoverState(matrix)
+        }
+    }
+
     fun captureChildren(): Pair<V3, V3> {
         for (element in children) {
             val size = element.size

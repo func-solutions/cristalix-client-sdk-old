@@ -1,5 +1,6 @@
-package ru.cristalix.uiengine.element
+package ru.cristalix.uiengine.utility
 
+import ru.cristalix.uiengine.element.AbstractElement
 import ru.cristalix.uiengine.utility.Property.*
 import ru.cristalix.uiengine.utility.Color
 import ru.cristalix.uiengine.utility.Rotation

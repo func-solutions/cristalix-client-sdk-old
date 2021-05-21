@@ -2,10 +2,12 @@ package ru.cristalix.uiengine.element
 
 import dev.xdark.clientapi.opengl.GlStateManager
 import org.lwjgl.util.vector.Matrix4f
+import org.lwjgl.util.vector.Vector4f
+import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.UIEngine.matrixBuffer
+import ru.cristalix.uiengine.eventloop.Animation
 import ru.cristalix.uiengine.utility.*
 import ru.cristalix.uiengine.utility.Property.*
-import java.lang.IllegalStateException
 
 abstract class AbstractElement() {
 
@@ -15,10 +17,9 @@ abstract class AbstractElement() {
     open var context: Context? = null
 
     private var dirtyMatrices: MutableList<Int>? = null
-    internal var animationContext: AnimationContext? = null
     protected var cachedHexColor: Int = 0
     internal var hovered: Boolean = false
-    internal var passedHoverCulling: Boolean = false
+    internal var interactive: Boolean = false
 
     var beforeRender: (() -> Unit)? = null
     var afterRender: (() -> Unit)? = null
@@ -52,7 +53,7 @@ abstract class AbstractElement() {
         this.scale = V3(1.0, 1.0, 1.0)
         this.changeProperty(RotationZ.ordinal, 1.0)
     }
-    
+
     constructor(setup: AbstractElement.() -> Unit) : this() {
         setup()
     }
@@ -61,11 +62,10 @@ abstract class AbstractElement() {
 
         val property = Property.VALUES[index]
 
-        val animationContext = this.animationContext
+        val animationContext = UIEngine.animationContext
         if (animationContext != null) {
-            val context = context ?: throw IllegalStateException("Tried to animate an orphan element (no context)")
             var animation: Animation? = null
-            for (existing in context.runningAnimations) {
+            for (existing in UIEngine.runningAnimations) {
                 if (existing.element === this && existing.property.ordinal == index) {
                     animation = existing
                     break
@@ -77,7 +77,8 @@ abstract class AbstractElement() {
                 (animationContext.duration.toDouble() * 1000).toLong(),
                 animationContext.easing
             )
-            context.runningAnimations.add(animation)
+
+            UIEngine.runningAnimations.add(animation)
 
             return
         }
@@ -87,6 +88,53 @@ abstract class AbstractElement() {
             this.markDirty(matrix)
         }
 
+    }
+
+    open fun updateInteractiveState() {
+        this.interactive = enabled && (onHover != null || onClick != null)
+    }
+
+    open fun updateHoverState(mouseMatrix: Matrix4f) {
+
+        for (m in matrices) {
+            Matrix4f.mul(mouseMatrix, m, mouseMatrix)
+        }
+
+        val hitbox = arrayOf(
+            Vector4f(0f, 0f, 0f, 0f),
+            Vector4f(0f, size.y.toFloat(), 0f, 0f),
+            Vector4f(size.x.toFloat(), size.y.toFloat(), 0f, 0f),
+            Vector4f(size.x.toFloat(), 0f, 0f, 0f),
+        )
+
+        for (vertex in hitbox) {
+            Matrix4f.transform(mouseMatrix, vertex, vertex)
+        }
+
+        val hovered = containsZero(hitbox)
+        if (this.hovered != hovered) {
+            this.onHover?.invoke(this, hovered)
+            this.hovered = hovered
+        }
+
+    }
+
+    fun containsZero(convex: Array<Vector4f>): Boolean {
+        convex.forEachIndexed { i, v ->
+            val j = (i + 1) % convex.size
+            val p = convex[j]
+            val edgeX = p.x - v.x
+            val edgeY = p.y - v.y
+
+            val diffX = -v.x
+            val diffY = -v.y
+
+            val dot = -edgeY*diffX+edgeX*diffY
+
+            if (dot < 0) return false
+
+        }
+        return true
     }
 
     fun cleanMatrices() {
@@ -152,18 +200,14 @@ abstract class AbstractElement() {
     }
 
     open fun transformAndRender() {
-        if (!this.enabled) return;
+        if (!this.enabled) return
 
         GlStateManager.pushMatrix()
         this.applyTransformations()
 
-//        if (this.beforeRender) this.beforeRender()
-
         this.beforeRender?.invoke()
         this.render()
         this.afterRender?.invoke()
-
-//        if (this.afterRender) this.afterRender()
 
         GlStateManager.popMatrix()
     }
