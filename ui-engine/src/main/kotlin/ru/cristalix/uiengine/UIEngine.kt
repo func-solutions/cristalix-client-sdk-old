@@ -8,7 +8,6 @@ import dev.xdark.clientapi.event.window.WindowResize
 import dev.xdark.clientapi.opengl.GLAllocation
 import org.lwjgl.input.Mouse
 import ru.cristalix.clientapi.JavaMod
-import ru.cristalix.clientapi.KotlinMod
 import ru.cristalix.clientapi.registerHandler
 import ru.cristalix.uiengine.element.*
 import ru.cristalix.uiengine.eventloop.EventLoop
@@ -86,6 +85,10 @@ object UIEngine: EventLoop by EventLoopImpl() {
     }
 
     fun uninitialize() {
+        // Close any GUIs before disabling
+        if (clientApi.minecraft().currentScreen() is ContextGui)
+            clientApi.minecraft().displayScreen(null)
+
         GLAllocation.freeBuffer(matrixBuffer)
     }
 
@@ -107,7 +110,7 @@ object UIEngine: EventLoop by EventLoopImpl() {
         postOverlayContext.transformAndRender()
     }
 
-    private fun findLastClickable(elements: Collection<AbstractElement>): AbstractElement? {
+    fun findLastClickable(elements: Collection<AbstractElement>): AbstractElement? {
         var lastClickable: AbstractElement? = null
         for (element in elements) {
             // stdout.println(element.hovered + " " + element.passedHoverCulling + " " + (element.onClick != null))
@@ -127,8 +130,9 @@ object UIEngine: EventLoop by EventLoopImpl() {
             val oldState = lastMouseState[idx]
             val newState = Mouse.isButtonDown(idx)
             if (oldState != newState) {
-                val lastClickable = findLastClickable(overlayContext.children)
-                lastClickable?.onClick?.invoke(lastClickable, newState, button)
+                overlayContext.getForemostHovered()?.run {
+                    onClick?.invoke(ClickEvent(newState, button, hoverPosition!!))
+                }
                 lastMouseState[idx] = newState
             }
         }

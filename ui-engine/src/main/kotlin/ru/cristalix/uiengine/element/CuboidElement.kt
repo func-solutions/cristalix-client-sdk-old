@@ -20,17 +20,6 @@ class CuboidElement : AbstractElement(), Parent {
 
     override val children: MutableList<AbstractElement> = ArrayList()
 
-    override var context: Context?
-        get() = super.context
-        set(value) {
-            super.context = value
-            if (children.isNotEmpty()) {
-                for (child in children) {
-                    child.context = value
-                }
-            }
-        }
-
     init {
         color = WHITE
     }
@@ -42,7 +31,6 @@ class CuboidElement : AbstractElement(), Parent {
     override fun addChild(vararg elements: AbstractElement) {
         val children = this.children
         val properties = properties
-        val context = this.context
         val x = properties[Property.SizeX]
         val y = properties[Property.SizeY]
         val z = properties[Property.SizeZ]
@@ -50,7 +38,6 @@ class CuboidElement : AbstractElement(), Parent {
             element.changeProperty(Property.ParentSizeX.ordinal, x)
             element.changeProperty(Property.ParentSizeY.ordinal, y)
             element.changeProperty(Property.ParentSizeZ.ordinal, z)
-            element.context = context
             children.add(element)
         }
     }

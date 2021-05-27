@@ -1,12 +1,18 @@
 package ru.cristalix.uiengine.element
 
 import dev.xdark.clientapi.opengl.GlStateManager
+import dev.xdark.clientapi.render.BufferBuilder
 import dev.xdark.clientapi.resource.ResourceLocation
 import org.lwjgl.opengl.GL11
 import org.lwjgl.util.vector.Matrix4f
 import org.lwjgl.util.vector.Vector4f
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.utility.*
+
+import dev.xdark.clientapi.render.DefaultVertexFormats
+
+import dev.xdark.clientapi.render.Tessellator
+
 
 open class RectangleElement : AbstractElement(), Parent {
 
@@ -22,17 +28,6 @@ open class RectangleElement : AbstractElement(), Parent {
 
     override val children: MutableList<AbstractElement> = ArrayList()
 
-    override var context: Context?
-        get() = super.context
-        set(value) {
-            super.context = value
-            if (children.isNotEmpty()) {
-                for (child in children) {
-                    child.context = value
-                }
-            }
-        }
-
     init {
         this.textureSize = V2(1.0, 1.0)
     }
@@ -47,10 +42,9 @@ open class RectangleElement : AbstractElement(), Parent {
         for (element in elements) {
             element.changeProperty(Property.ParentSizeX.ordinal, x)
             element.changeProperty(Property.ParentSizeY.ordinal, y)
-            element.context = this.context
-            if (element is RectangleElement) {
+//            if (element is RectangleElement) {
                 // ToDo: Abstract contextful parents
-            }
+//            }
             this.children.add(element)
         }
 
@@ -81,6 +75,14 @@ open class RectangleElement : AbstractElement(), Parent {
             matrix.load(mouseMatrix)
             child.updateHoverState(matrix)
         }
+    }
+
+    override fun getForemostHovered(): AbstractElement? {
+        val children = children
+        for (i in children.size - 1 downTo 0) {
+            children[i].getForemostHovered()?.let { return it }
+        }
+        return super.getForemostHovered()
     }
 
     fun captureChildren(): Pair<V3, V3> {
@@ -133,7 +135,7 @@ open class RectangleElement : AbstractElement(), Parent {
 
         if (mask) {
             GlStateManager.enableStencil()
-            GlStateManager.stencilFunc(GL11.GL_GREATER, context!!.stencilPos, 0xFF)
+            GlStateManager.stencilFunc(GL11.GL_GREATER, UIEngine.overlayContext.stencilPos, 0xFF)
             GlStateManager.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_INCR)
             GlStateManager.disableDepth()
             GlStateManager.disableAlpha()
@@ -145,8 +147,8 @@ open class RectangleElement : AbstractElement(), Parent {
             )
             GlStateManager.enableDepth()
 
-            context!!.stencilPos++
-            GlStateManager.stencilFunc(GL11.GL_GREATER, context!!.stencilPos, 0xFF)
+            UIEngine.overlayContext.stencilPos++
+            GlStateManager.stencilFunc(GL11.GL_GREATER, UIEngine.overlayContext.stencilPos, 0xFF)
             GlStateManager.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP)
         }
 
@@ -176,12 +178,31 @@ open class RectangleElement : AbstractElement(), Parent {
             GlStateManager.color(1f, 1f, 1f, 1f)
 
         } else {
-            api.overlayRenderer().drawRect(
-                0, 0,
-                properties[Property.SizeX].toInt(),
-                properties[Property.SizeY].toInt(),
-                this.cachedHexColor
-            )
+
+            val tessellator: Tessellator = UIEngine.clientApi.tessellator()
+            val worldrenderer: BufferBuilder = tessellator.bufferBuilder
+            GlStateManager.enableBlend()
+            GlStateManager.disableTexture2D()
+            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0)
+
+            val color = color
+            GlStateManager.color(color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha.toFloat())
+
+            worldrenderer.begin(7, DefaultVertexFormats.POSITION)
+            worldrenderer.pos(0.0, size.y, 0.0).endVertex()
+            worldrenderer.pos(size.x, size.y, 0.0).endVertex()
+            worldrenderer.pos(size.x, 0.0, 0.0).endVertex()
+            worldrenderer.pos(0.0, 0.0, 0.0).endVertex()
+            tessellator.draw()
+            GlStateManager.enableTexture2D()
+            GlStateManager.disableBlend()
+
+//            api.overlayRenderer().drawRect(
+//                0, 0,
+//                properties[Property.SizeX].toInt(),
+//                properties[Property.SizeY].toInt(),
+//                this.cachedHexColor
+//            )
         }
 
         if (children.isNotEmpty()) {
@@ -191,7 +212,7 @@ open class RectangleElement : AbstractElement(), Parent {
         }
 
         if (mask) {
-            context!!.stencilPos--
+            UIEngine.overlayContext.stencilPos--
             GlStateManager.stencilFunc(GL11.GL_ALWAYS, 0, 0xFF)
             GlStateManager.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_DECR)
             GlStateManager.disableDepth()

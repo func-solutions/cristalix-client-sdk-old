@@ -5,7 +5,7 @@ import ru.cristalix.uiengine.utility.Easing
 import ru.cristalix.uiengine.utility.Easings
 import ru.cristalix.uiengine.utility.Property
 
-data class Animation(val element: AbstractElement, val property: Property) {
+data class Animation(val element: AbstractElement, val propertyIndex: Int) {
 
     var startedTime: Long = 0
     var duration: Long = 0
@@ -15,7 +15,7 @@ data class Animation(val element: AbstractElement, val property: Property) {
     var easing: Easing = Easings.NONE
 
     init {
-        this.lastValue = element.properties[property.ordinal]
+        this.lastValue = element.properties[propertyIndex]
         this.targetValue = this.lastValue
     }
 
@@ -41,7 +41,7 @@ data class Animation(val element: AbstractElement, val property: Property) {
             value = targetValue
         }
         this.lastValue = value
-        this.element.changeProperty(property.ordinal, value)
+        this.element.changeProperty(propertyIndex, value)
         return alive
     }
 

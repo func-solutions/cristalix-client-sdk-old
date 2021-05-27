@@ -64,7 +64,7 @@ open class TextElement() : AbstractElement() {
                 ((size.x - lineWidthCache[index]) * origin.x).toFloat(),
                 if (fontRenderer.unicodeFlag) 0f else 1f, cachedHexColor, shadow
             )
-            GlStateManager.translate(0.0, if (line.isBlank()) emptyLineHeight else lineHeight, 0.0);
+            GlStateManager.translate(0.0, if (line.isBlank()) emptyLineHeight else lineHeight, 0.0)
 
         }
 

@@ -18,7 +18,7 @@ open class Context2D(size: V3) : Context() {
         val resolution = UIEngine.clientApi.resolution()
         val scaleFactor = resolution.scaleFactor
         val mouse = mouse
-        mouse.x =(Mouse.getX() / scaleFactor).toDouble()
+        mouse.x = (Mouse.getX() / scaleFactor).toDouble()
         mouse.y = ((Display.getHeight() - Mouse.getY()) / scaleFactor).toDouble()
         return mouse
     }

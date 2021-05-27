@@ -2,10 +2,23 @@ package ru.cristalix.uiengine.element
 
 import dev.xdark.clientapi.gui.Screen
 import org.lwjgl.input.Keyboard
+import org.lwjgl.input.Mouse
+import org.lwjgl.util.vector.Matrix4f
+import org.lwjgl.util.vector.Vector2f
+import ru.cristalix.uiengine.ClickEvent
 import ru.cristalix.uiengine.UIEngine
+import ru.cristalix.uiengine.utility.MouseButton
 import ru.cristalix.uiengine.utility.V3
 
-class ContextGui: Context2D(V3()) {
+inline fun safe(action: () -> Unit) {
+    try {
+        action()
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+open class ContextGui : Context2D(V3()) {
 
     val keyTypedHandlers = ArrayList<(char: Char, code: Int) -> Unit>()
 
@@ -16,8 +29,32 @@ class ContextGui: Context2D(V3()) {
     }
 
     val screen: Screen = Screen.Builder.builder()
-        .draw { _, _, _, _ -> this.render() }
-        .keyTyped { _, key, code -> keyTypedHandlers.forEach { it(key, code) } }
+        .draw { _, _, _, _ -> safe(this::transformAndRender) }
+        .keyTyped { _, key, code ->
+            keyTypedHandlers.forEach {
+                safe { it(key, code) }
+            }
+        }
+        .mouseClick { _, _, _, button ->
+            safe {
+                getForemostHovered()?.run {
+                    this.onClick?.invoke(ClickEvent(true, MouseButton.values()[button], hoverPosition!!))
+                }
+//                UIEngine.findLastClickable(children)?.run {
+//                    this.onClick?.invoke(ClickEvent(true, MouseButton.values()[button], hoverPosition!!))
+//                }
+            }
+        }
+        .mouseRelease { _, _, _, button ->
+            safe {
+                getForemostHovered()?.run {
+                    this.onClick?.invoke(ClickEvent(false, MouseButton.values()[button], hoverPosition!!))
+                }
+//                UIEngine.findLastClickable(children)?.run {
+//                    this.onClick?.invoke(ClickEvent(false, MouseButton.values()[button], hoverPosition!!))
+//                }
+            }
+        }
         .build()
 
     fun open() = UIEngine.clientApi.minecraft().displayScreen(screen)

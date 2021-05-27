@@ -6,37 +6,68 @@ import ru.cristalix.uiengine.utility.Easing
 import ru.cristalix.uiengine.utility.Easings
 
 data class AnimationContext(
-    val duration: Number,
+    val durationMillis: Long,
     val easing: Easing
 )
 
+data class AnimationPipeline<T : AbstractElement?>(
+    val element: T,
+    var currentDelay: Long
+)
+
+fun secondsToMillis(seconds: Number) = (seconds.toDouble() * 1000).toLong()
+
 inline fun animate(
-    duration: Number,
+    seconds: Number,
+    noinline easing: Easing = Easings.NONE,
+    crossinline action: () -> Unit
+): AnimationPipeline<Nothing?> {
+    animateImpl(seconds, easing, action)
+    return AnimationPipeline(null, secondsToMillis(seconds))
+}
+
+
+inline fun <T : AbstractElement> T.animate(
+    seconds: Number,
+    noinline easing: Easing = Easings.NONE,
+    crossinline action: T.() -> Unit
+): AnimationPipeline<T> {
+    animateImpl(seconds, easing, { action() })
+    return AnimationPipeline(this, secondsToMillis(seconds))
+}
+
+
+inline fun <T : AbstractElement> AnimationPipeline<T>.thenAnimate(
+    seconds: Number,
+    noinline easing: Easing = Easings.NONE,
+    crossinline action: T.() -> Unit
+): AnimationPipeline<T> = also {
+    UIEngine.schedule(currentDelay / 1000.0) {
+        animateImpl(seconds, easing, { action(element) })
+    }
+    currentDelay += secondsToMillis(seconds)
+}
+
+
+inline fun animateImpl(
+    seconds: Number,
     noinline easing: Easing = Easings.NONE,
     action: () -> Unit
 ) {
 
     val previous = UIEngine.animationContext
-    val new = AnimationContext(duration, easing)
+    val durationMillis = secondsToMillis(seconds)
+    val new = AnimationContext(durationMillis, easing)
     UIEngine.animationContext = new
     action()
     UIEngine.animationContext = previous
 
 }
 
-inline fun <T : AbstractElement> T.animate(
-    duration: Number,
-    noinline easing: Easing = Easings.NONE,
-    action: T.() -> Unit
-): T {
 
-    val previous = UIEngine.animationContext
-    val new = AnimationContext(duration, easing)
-    UIEngine.animationContext = new
-    action()
-    UIEngine.animationContext = previous
+fun <T : AbstractElement> AnimationPipeline<T>.thenWait(seconds: Number): AnimationPipeline<T> =
+    also { currentDelay += secondsToMillis(seconds) }
 
-    return this
-}
+
 
 

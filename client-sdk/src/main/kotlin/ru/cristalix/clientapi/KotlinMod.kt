@@ -4,17 +4,27 @@ import dev.xdark.clientapi.event.Event
 import dev.xdark.clientapi.event.Listener
 import dev.xdark.clientapi.event.network.PluginMessage
 import io.netty.buffer.ByteBuf
+import kotlin.reflect.KClass
 
 inline fun <reified T : Event> registerHandler(
-    listener: Listener,
+    listener: Listener = theMod.listener,
     priority: Int = 1,
     noinline handler: T.() -> Unit
 ) {
     Event.bus(T::class.java).register(listener, handler, priority)
 }
 
+lateinit var theMod: KotlinMod
 
-open class KotlinMod : JavaMod() {
+inline val <reified T : KotlinMod> KClass<T>.mod: T
+    get() = theMod as T
+
+@Suppress("LeakingThis")
+abstract class KotlinMod : JavaMod() {
+
+    init {
+        theMod = this
+    }
 
     inline fun <reified T : Event> registerHandler(priority: Int = 1, noinline handler: T.() -> Unit) {
         registerHandler(listener, priority, handler)

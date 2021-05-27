@@ -3,22 +3,28 @@ package ru.cristalix.uiengine.element
 import dev.xdark.clientapi.opengl.GlStateManager
 import org.lwjgl.util.vector.Matrix4f
 import org.lwjgl.util.vector.Vector4f
+import ru.cristalix.uiengine.ClickHandler
+import ru.cristalix.uiengine.HoverEvent
+import ru.cristalix.uiengine.HoverHandler
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.UIEngine.matrixBuffer
 import ru.cristalix.uiengine.eventloop.Animation
 import ru.cristalix.uiengine.utility.*
 import ru.cristalix.uiengine.utility.Property.*
 
+@Suppress("LeakingThis")
 abstract class AbstractElement() {
 
     internal val properties: DoubleArray = DoubleArray(Property.VALUES.size)
     val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
 
-    open var context: Context? = null
-
     private var dirtyMatrices: MutableList<Int>? = null
     protected var cachedHexColor: Int = 0
-    internal var hovered: Boolean = false
+
+    var hovered: Boolean = false
+        internal set
+
+    internal var hoverPosition: V2? = null
     internal var interactive: Boolean = false
 
     var beforeRender: (() -> Unit)? = null
@@ -58,23 +64,39 @@ abstract class AbstractElement() {
         setup()
     }
 
+    fun onClick(action: ClickHandler) {
+        onClick = action
+    }
+
+    fun onHover(action: HoverHandler) {
+        onHover = action
+    }
+
+    fun beforeRender(action: () -> Unit) {
+        beforeRender = action
+    }
+
+    fun afterRender(action: () -> Unit) {
+        afterRender = action
+    }
+
     internal fun changeProperty(index: Int, value: Number) {
 
-        val property = Property.VALUES[index]
-
         val animationContext = UIEngine.animationContext
+        val doubleValue = value.toDouble()
+
         if (animationContext != null) {
             var animation: Animation? = null
             for (existing in UIEngine.runningAnimations) {
-                if (existing.element === this && existing.property.ordinal == index) {
+                if (existing.element === this && existing.propertyIndex == index) {
                     animation = existing
                     break
                 }
             }
-            if (animation == null) animation = Animation(this, property)
+            if (animation == null) animation = Animation(this, index)
             animation.newTarget(
-                value.toDouble(),
-                (animationContext.duration.toDouble() * 1000).toLong(),
+                doubleValue,
+                animationContext.durationMillis,
                 animationContext.easing
             )
 
@@ -82,10 +104,12 @@ abstract class AbstractElement() {
 
             return
         }
-        // stdout.println('setting ' + propertyId + ' to ' + value);
-        this.properties[index] = value.toDouble()
-        for (matrix in property.matrixInfluence) {
-            this.markDirty(matrix)
+
+        if (this.properties[index] != doubleValue) {
+            this.properties[index] = doubleValue
+            for (matrix in Property.VALUES[index].matrixInfluence) {
+                this.markDirty(matrix)
+            }
         }
 
     }
@@ -97,14 +121,14 @@ abstract class AbstractElement() {
     open fun updateHoverState(mouseMatrix: Matrix4f) {
 
         for (m in matrices) {
-            Matrix4f.mul(mouseMatrix, m, mouseMatrix)
+            if (m != null) Matrix4f.mul(mouseMatrix, m, mouseMatrix)
         }
 
         val hitbox = arrayOf(
-            Vector4f(0f, 0f, 0f, 0f),
-            Vector4f(0f, size.y.toFloat(), 0f, 0f),
-            Vector4f(size.x.toFloat(), size.y.toFloat(), 0f, 0f),
-            Vector4f(size.x.toFloat(), 0f, 0f, 0f),
+            Vector4f(0f, 0f, 0f, 1f),
+            Vector4f(0f, size.y.toFloat(), 0f, 1f),
+            Vector4f(size.x.toFloat(), size.y.toFloat(), 0f, 1f),
+            Vector4f(size.x.toFloat(), 0f, 0f, 1f),
         )
 
         for (vertex in hitbox) {
@@ -112,14 +136,32 @@ abstract class AbstractElement() {
         }
 
         val hovered = containsZero(hitbox)
+
+        if (hovered) {
+            val vec = Vector4f(0f, 0f, 0f, 1f)
+            Matrix4f.transform(mouseMatrix, vec, vec)
+
+            this.hoverPosition = V2(
+                (vec.x - hitbox[0].x).toDouble(),
+                (vec.y - hitbox[0].y).toDouble()
+            )
+        } else {
+            this.hoverPosition = null
+        }
+
         if (this.hovered != hovered) {
-            this.onHover?.invoke(this, hovered)
+            this.onHover?.invoke(HoverEvent(hoverPosition))
             this.hovered = hovered
         }
 
     }
 
+    open fun getForemostHovered(): AbstractElement? {
+        return if (hovered) this else null
+    }
+
     fun containsZero(convex: Array<Vector4f>): Boolean {
+
         convex.forEachIndexed { i, v ->
             val j = (i + 1) % convex.size
             val p = convex[j]
@@ -129,9 +171,9 @@ abstract class AbstractElement() {
             val diffX = -v.x
             val diffY = -v.y
 
-            val dot = -edgeY*diffX+edgeX*diffY
+            val dot = -edgeY * diffX + edgeX * diffY
 
-            if (dot < 0) return false
+            if (dot >= 0) return false
 
         }
         return true
@@ -234,21 +276,6 @@ abstract class AbstractElement() {
             GlStateManager.multMatrix(matrixBuffer)
         }
     }
-
-//    fun update(action: Element.() -> Unit): Element {
-//        TODO("Not yet implemented")
-//        return getThis()
-//    }
-//
-//    infix fun then(action: () -> Unit): Element {
-//        TODO("Not yet implemented")
-//        return getThis()
-//    }
-//
-//    fun then(delay: Number, action: () -> Unit): Element {
-//        TODO("Not yet implemented")
-//        return getThis()
-//    }
 
     abstract fun render()
 }

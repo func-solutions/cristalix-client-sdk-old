@@ -1,6 +1,32 @@
-package ru.cristalix.uiengine.utility
+@file:Suppress("PackageDirectoryMismatch")
+
+package ru.cristalix.uiengine
 
 import ru.cristalix.uiengine.element.AbstractElement
+import ru.cristalix.uiengine.utility.MouseButton
+import ru.cristalix.uiengine.utility.V2
 
-typealias ClickHandler = ((element: AbstractElement, buttonDown: Boolean, button: MouseButton) -> Unit)
-typealias HoverHandler = ((element: AbstractElement, hovered: Boolean) -> Unit)
+typealias ClickHandler = ClickEvent.() -> Unit
+typealias HoverHandler = HoverEvent.() -> Unit
+
+inline fun AbstractElement.onMouseDown(crossinline action: ClickHandler) {
+    onClick = {
+        if (down) action()
+    }
+}
+
+inline fun AbstractElement.onMouseUp(crossinline action: ClickHandler) {
+    onClick = {
+        if (!down) action()
+    }
+}
+
+data class ClickEvent(
+    val down: Boolean,
+    val button: MouseButton,
+    val position: V2
+)
+
+data class HoverEvent(val position: V2?) {
+    inline val hovered get() = position != null
+}
