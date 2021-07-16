@@ -59,7 +59,6 @@ open class RectangleElement : AbstractElement(), Parent {
 
         if (children.isEmpty()) return
         for (child in children) {
-            if (!child.enabled) continue
             child.updateInteractiveState()
             interactive = interactive || child.interactive
         }
