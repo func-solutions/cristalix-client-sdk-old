@@ -7,7 +7,6 @@ import ru.cristalix.uiengine.utility.Rotation
 import ru.cristalix.uiengine.utility.V2
 import ru.cristalix.uiengine.utility.V3
 
-
 open class ProxiedV2(
     private val offset: Int,
     private val element: AbstractElement

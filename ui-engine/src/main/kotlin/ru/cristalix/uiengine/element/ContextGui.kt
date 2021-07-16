@@ -23,9 +23,6 @@ open class ContextGui(builder: Screen.Builder = Screen.Builder.builder()) : Cont
     val keyTypedHandlers = ArrayList<(char: Char, code: Int) -> Unit>()
 
     init {
-        onKeyTyped { _, code ->
-            if (code == Keyboard.KEY_ESCAPE) close()
-        }
     }
 
     val screen: Screen = builder
