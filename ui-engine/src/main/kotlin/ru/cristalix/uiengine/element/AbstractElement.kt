@@ -169,7 +169,7 @@ abstract class AbstractElement() {
     }
 
     open fun getForemostHovered(): AbstractElement? {
-        return if (hovered) this else null
+        return if (interactive && hovered) this else null
     }
 
     fun containsZero(convex: Array<Vector4f>): Boolean {
