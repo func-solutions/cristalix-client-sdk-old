@@ -49,10 +49,10 @@ public class BundlerPlugin implements Plugin<Project> {
             });
 
             ProGuardTask proGuardTask = (ProGuardTask) project.task(Collections.singletonMap("type", ProGuardTask.class), "bundle");
+            proGuardTask.target("1.6");
 
             proGuardTask.doFirst(t -> {
                 try {
-                    proGuardTask.target("1.6");
                     proGuardTask.printmapping(new File(project.getBuildDir(), "mapping.txt"));
 //				proGuardTask.libraryjars("<java.home>/lib/rt.jar");
 
@@ -115,9 +115,9 @@ public class BundlerPlugin implements Plugin<Project> {
 //                            "    <methods>;\n" +
 //                            "}");
 //
-//                    proGuardTask.assumenosideeffects("class kotlin.jvm.internal.Reflection {\n" +
-//                            "    <methods>;\n" +
-//                            "}");
+                    proGuardTask.assumenosideeffects("class kotlin.jvm.internal.Reflection {\n" +
+                            "    <methods>;\n" +
+                            "}");
 //                    proGuardTask.assumenosideeffects("class java.lang.StackTraceElement {\n" +
 //                            "    <methods>;\n" +
 //                            "}");

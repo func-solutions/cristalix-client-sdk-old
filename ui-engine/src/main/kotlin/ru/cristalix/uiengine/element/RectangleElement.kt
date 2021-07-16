@@ -153,49 +153,50 @@ open class RectangleElement : AbstractElement(), Parent {
         }
 
         val properties = properties
-        if (textureLocation != null) {
+        if (color.alpha > 0) {
+            if (textureLocation != null) {
 
-            api.renderEngine().bindTexture(textureLocation)
+                api.renderEngine().bindTexture(textureLocation)
 
-            GlStateManager.enableAlpha()
-            val color = color
-            GlStateManager.color(color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha.toFloat())
+                GlStateManager.enableAlpha()
+                val color = color
+                GlStateManager.color(color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha.toFloat())
 
-            val precision = 0x4000_0000
+                val precision = 0x4000_0000
 
-            api.overlayRenderer().drawScaledCustomSizeModalRect(
-                0, 0,
-                (properties[Property.TextureX] * precision).toFloat(),
-                (properties[Property.TextureY] * precision).toFloat(),
-                (properties[Property.TextureWidth] * precision).toInt(),
-                (properties[Property.TextureHeight] * precision).toInt(),
-                properties[Property.SizeX].toInt(),
-                properties[Property.SizeY].toInt(),
-                precision.toFloat(),
-                precision.toFloat()
-            )
+                api.overlayRenderer().drawScaledCustomSizeModalRect(
+                    0, 0,
+                    (properties[Property.TextureX] * precision).toFloat(),
+                    (properties[Property.TextureY] * precision).toFloat(),
+                    (properties[Property.TextureWidth] * precision).toInt(),
+                    (properties[Property.TextureHeight] * precision).toInt(),
+                    properties[Property.SizeX].toInt(),
+                    properties[Property.SizeY].toInt(),
+                    precision.toFloat(),
+                    precision.toFloat()
+                )
 
-            GlStateManager.color(1f, 1f, 1f, 1f)
+                GlStateManager.color(1f, 1f, 1f, 1f)
 
-        } else {
+            } else {
 
-            val tessellator: Tessellator = UIEngine.clientApi.tessellator()
-            val worldrenderer: BufferBuilder = tessellator.bufferBuilder
-            GlStateManager.enableBlend()
-            GlStateManager.disableTexture2D()
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0)
+                val tessellator: Tessellator = UIEngine.clientApi.tessellator()
+                val worldrenderer: BufferBuilder = tessellator.bufferBuilder
+                GlStateManager.enableBlend()
+                GlStateManager.disableTexture2D()
+                GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0)
 
-            val color = color
-            GlStateManager.color(color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha.toFloat())
+                val color = color
+                GlStateManager.color(color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha.toFloat())
 
-            worldrenderer.begin(7, DefaultVertexFormats.POSITION)
-            worldrenderer.pos(0.0, size.y, 0.0).endVertex()
-            worldrenderer.pos(size.x, size.y, 0.0).endVertex()
-            worldrenderer.pos(size.x, 0.0, 0.0).endVertex()
-            worldrenderer.pos(0.0, 0.0, 0.0).endVertex()
-            tessellator.draw()
-            GlStateManager.enableTexture2D()
-            GlStateManager.disableBlend()
+                worldrenderer.begin(7, DefaultVertexFormats.POSITION)
+                worldrenderer.pos(0.0, size.y, 0.0).endVertex()
+                worldrenderer.pos(size.x, size.y, 0.0).endVertex()
+                worldrenderer.pos(size.x, 0.0, 0.0).endVertex()
+                worldrenderer.pos(0.0, 0.0, 0.0).endVertex()
+                tessellator.draw()
+                GlStateManager.enableTexture2D()
+                GlStateManager.disableBlend()
 
 //            api.overlayRenderer().drawRect(
 //                0, 0,
@@ -203,10 +204,12 @@ open class RectangleElement : AbstractElement(), Parent {
 //                properties[Property.SizeY].toInt(),
 //                this.cachedHexColor
 //            )
+            }
         }
 
         if (children.isNotEmpty()) {
             for (child in children) {
+                child.lastParent = this
                 child.transformAndRender()
             }
         }

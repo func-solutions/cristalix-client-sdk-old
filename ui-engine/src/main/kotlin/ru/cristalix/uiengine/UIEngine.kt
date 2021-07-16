@@ -85,9 +85,12 @@ object UIEngine: EventLoop by EventLoopImpl() {
     }
 
     fun uninitialize() {
-        // Close any GUIs before disabling
-        if (clientApi.minecraft().currentScreen() is ContextGui)
-            clientApi.minecraft().displayScreen(null)
+
+        if (!JavaMod.isClientMod()) {
+            // Close any GUIs before disabling
+            if (clientApi.minecraft().currentScreen() is ContextGui)
+                clientApi.minecraft().displayScreen(null)
+        }
 
         GLAllocation.freeBuffer(matrixBuffer)
     }

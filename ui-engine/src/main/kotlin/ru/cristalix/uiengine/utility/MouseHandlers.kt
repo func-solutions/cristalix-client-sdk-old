@@ -27,6 +27,7 @@ data class ClickEvent(
     val position: V2
 )
 
-data class HoverEvent(val position: V2?) {
-    inline val hovered get() = position != null
-}
+data class HoverEvent(
+    val hovered: Boolean,
+    val position: V2?
+)

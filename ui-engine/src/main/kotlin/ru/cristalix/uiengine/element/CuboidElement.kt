@@ -150,7 +150,10 @@ class CuboidElement : AbstractElement(), Parent {
             )
         }
 
-        children.forEach(AbstractElement::transformAndRender)
+        children.forEach {
+            it.lastParent = this
+            it.transformAndRender()
+        }
 
     }
 

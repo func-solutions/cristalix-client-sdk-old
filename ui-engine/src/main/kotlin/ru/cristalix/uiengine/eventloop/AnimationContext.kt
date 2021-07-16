@@ -59,8 +59,11 @@ inline fun animateImpl(
     val durationMillis = secondsToMillis(seconds)
     val new = AnimationContext(durationMillis, easing)
     UIEngine.animationContext = new
-    action()
-    UIEngine.animationContext = previous
+    try {
+        action()
+    } finally {
+        UIEngine.animationContext = previous
+    }
 
 }
 

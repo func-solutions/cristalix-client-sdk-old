@@ -18,7 +18,7 @@ inline fun safe(action: () -> Unit) {
     }
 }
 
-open class ContextGui : Context2D(V3()) {
+open class ContextGui(builder: Screen.Builder = Screen.Builder.builder()) : Context2D(V3()) {
 
     val keyTypedHandlers = ArrayList<(char: Char, code: Int) -> Unit>()
 
@@ -28,7 +28,7 @@ open class ContextGui : Context2D(V3()) {
         }
     }
 
-    val screen: Screen = Screen.Builder.builder()
+    val screen: Screen = builder
         .draw { _, _, _, _ -> safe(this::transformAndRender) }
         .keyTyped { _, key, code ->
             keyTypedHandlers.forEach {
@@ -40,9 +40,6 @@ open class ContextGui : Context2D(V3()) {
                 getForemostHovered()?.run {
                     this.onClick?.invoke(ClickEvent(true, MouseButton.values()[button], hoverPosition!!))
                 }
-//                UIEngine.findLastClickable(children)?.run {
-//                    this.onClick?.invoke(ClickEvent(true, MouseButton.values()[button], hoverPosition!!))
-//                }
             }
         }
         .mouseRelease { _, _, _, button ->
@@ -50,9 +47,6 @@ open class ContextGui : Context2D(V3()) {
                 getForemostHovered()?.run {
                     this.onClick?.invoke(ClickEvent(false, MouseButton.values()[button], hoverPosition!!))
                 }
-//                UIEngine.findLastClickable(children)?.run {
-//                    this.onClick?.invoke(ClickEvent(false, MouseButton.values()[button], hoverPosition!!))
-//                }
             }
         }
         .build()

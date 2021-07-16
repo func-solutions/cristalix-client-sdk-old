@@ -15,7 +15,7 @@ import ru.cristalix.uiengine.utility.Property.*
 @Suppress("LeakingThis")
 abstract class AbstractElement() {
 
-    internal val properties: DoubleArray = DoubleArray(Property.VALUES.size)
+    val properties: DoubleArray = DoubleArray(Property.VALUES.size)
     val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
 
     private var dirtyMatrices: MutableList<Int>? = null
@@ -24,15 +24,34 @@ abstract class AbstractElement() {
     var hovered: Boolean = false
         internal set
 
-    internal var hoverPosition: V2? = null
+    var hoverPosition: V2 = V2()
+        protected set
+
     internal var interactive: Boolean = false
 
     var beforeRender: (() -> Unit)? = null
+        set(value) {
+            val prev = field
+            field = {
+                prev?.invoke()
+                value?.invoke()
+            }
+        }
+
     var afterRender: (() -> Unit)? = null
+        set(value) {
+            val prev = field
+            field = {
+                prev?.invoke()
+                value?.invoke()
+            }
+        }
 
     var enabled: Boolean = true
     var onClick: ClickHandler? = null
     var onHover: HoverHandler? = null
+
+    var lastParent: AbstractElement? = null
 
     var offset: V3 = ProxiedV3(OffsetX.ordinal, this)
         set(value) = value.write(field)
@@ -137,20 +156,13 @@ abstract class AbstractElement() {
 
         val hovered = containsZero(hitbox)
 
-        if (hovered) {
-            val vec = Vector4f(0f, 0f, 0f, 1f)
-            Matrix4f.transform(mouseMatrix, vec, vec)
-
-            this.hoverPosition = V2(
-                (vec.x - hitbox[0].x).toDouble(),
-                (vec.y - hitbox[0].y).toDouble()
-            )
-        } else {
-            this.hoverPosition = null
-        }
+        this.hoverPosition = V2(
+            (-hitbox[0].x).toDouble(),
+            (-hitbox[0].y).toDouble()
+        )
 
         if (this.hovered != hovered) {
-            this.onHover?.invoke(HoverEvent(hoverPosition))
+            this.onHover?.invoke(HoverEvent(hovered, hoverPosition))
             this.hovered = hovered
         }
 
