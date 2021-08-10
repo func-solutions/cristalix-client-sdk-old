@@ -44,6 +44,7 @@ class CuboidElement : AbstractElement(), Parent {
 
     override fun updateMatrix(matrixId: Int) {
         if (matrixId == sizeMatrix) {
+            val children = children
             if (children.isNotEmpty()) {
                 val properties = properties
                 val x = properties[Property.SizeX]
@@ -70,6 +71,7 @@ class CuboidElement : AbstractElement(), Parent {
         val tessellator = api.tessellator()
         val bufferBuilder = tessellator.bufferBuilder
 
+        val size = size
         val sx = size.x
         val sy = size.y
         val sz = size.z
@@ -142,6 +144,7 @@ class CuboidElement : AbstractElement(), Parent {
             GlStateManager.color(1f, 1f, 1f, 1f)
 
         } else {
+            val properties = properties
             api.overlayRenderer().drawRect(
                 0, 0,
                 properties[Property.SizeX].toInt(),

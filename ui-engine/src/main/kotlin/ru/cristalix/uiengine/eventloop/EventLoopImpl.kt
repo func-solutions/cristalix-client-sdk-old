@@ -47,6 +47,7 @@ class EventLoopImpl: EventLoop {
             eventLoopBuffer = null
         }
 
+        val runningAnimations = runningAnimations
         if (runningAnimations.isNotEmpty()) {
             with(runningAnimations.iterator()) {
                 while (hasNext()) {

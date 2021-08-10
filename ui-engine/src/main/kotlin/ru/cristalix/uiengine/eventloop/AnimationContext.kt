@@ -43,7 +43,7 @@ inline fun <T : AbstractElement> AnimationPipeline<T>.thenAnimate(
     crossinline action: T.() -> Unit
 ): AnimationPipeline<T> = also {
     UIEngine.schedule(currentDelay / 1000.0) {
-        animateImpl(seconds, easing, { action(element) })
+        animateImpl(seconds, easing) { action(element) }
     }
     currentDelay += secondsToMillis(seconds)
 }
@@ -54,7 +54,6 @@ inline fun animateImpl(
     noinline easing: Easing = Easings.NONE,
     action: () -> Unit
 ) {
-
     val previous = UIEngine.animationContext
     val durationMillis = secondsToMillis(seconds)
     val new = AnimationContext(durationMillis, easing)
@@ -64,9 +63,7 @@ inline fun animateImpl(
     } finally {
         UIEngine.animationContext = previous
     }
-
 }
-
 
 fun <T : AbstractElement> AnimationPipeline<T>.thenWait(seconds: Number): AnimationPipeline<T> =
     also { currentDelay += secondsToMillis(seconds) }

@@ -30,6 +30,7 @@ abstract class Context : RectangleElement() {
         val y = height - Mouse.getY().toFloat() / resolution.scaleFactor
         updateInteractiveState()
         if (interactive) {
+            val baseMatrix = baseMatrix
             baseMatrix.setIdentity()
             baseMatrix.translate(Vector2f(-x, -y.toFloat()))
             updateHoverState(baseMatrix)

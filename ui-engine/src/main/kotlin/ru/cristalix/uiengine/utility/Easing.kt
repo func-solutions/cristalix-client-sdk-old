@@ -123,6 +123,4 @@ object Easings {
         else
             (1 + BOUNCE_OUT(2 * it - 1)) / 2
     }
-
-
 }

@@ -9,5 +9,4 @@ interface EventLoop {
     fun schedule(delaySeconds: Number, action: () -> Unit): Task
 
     fun update()
-
 }

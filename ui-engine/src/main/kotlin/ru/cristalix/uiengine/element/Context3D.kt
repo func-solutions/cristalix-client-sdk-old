@@ -19,10 +19,13 @@ class Context3D(offset: V3) : Context() {
         val mc = UIEngine.clientApi.minecraft()
         val entity = mc.renderViewEntity
         val pt = mc.timer.renderPartialTicks
+        val prevX = entity.prevX
+        val prevY = entity.prevY
+        val prevZ = entity.prevZ
         GlStateManager.translate(
-            -(entity.x - entity.prevX) * pt - entity.prevX,
-            -(entity.y - entity.prevY) * pt - entity.prevY,
-            -(entity.z - entity.prevZ) * pt - entity.prevZ,
+            -(entity.x - prevX) * pt - prevX,
+            -(entity.y - prevY) * pt - prevY,
+            -(entity.z - prevZ) * pt - prevZ,
         )
 //        GlStateManager.scale(1.0, -1.0, -1.0)
         super.applyTransformations()

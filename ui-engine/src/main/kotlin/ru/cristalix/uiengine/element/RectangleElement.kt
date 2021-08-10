@@ -37,6 +37,7 @@ open class RectangleElement : AbstractElement(), Parent {
     }
 
     override fun addChild(vararg elements: AbstractElement) {
+        val properties = properties
         val x = properties[Property.SizeX]
         val y = properties[Property.SizeY]
         for (element in elements) {
@@ -57,6 +58,7 @@ open class RectangleElement : AbstractElement(), Parent {
 
         if (!enabled) return
 
+        val children = children
         if (children.isEmpty()) return
         for (child in children) {
             child.updateInteractiveState()
@@ -68,6 +70,7 @@ open class RectangleElement : AbstractElement(), Parent {
     override fun updateHoverState(mouseMatrix: Matrix4f) {
         super.updateHoverState(mouseMatrix)
 
+        val children = children
         if (children.isEmpty()) return
         for (child in children) {
             if (!child.interactive) continue
@@ -109,6 +112,7 @@ open class RectangleElement : AbstractElement(), Parent {
     override fun updateMatrix(matrixId: Int) {
 
         if (matrixId == sizeMatrix) {
+            val children = children
             if (children.isNotEmpty()) {
                 val properties = properties
                 val x = properties[Property.SizeX]
@@ -133,6 +137,7 @@ open class RectangleElement : AbstractElement(), Parent {
         GlStateManager.enableBlend()
 
         val mask = mask
+        val properties = properties
 
         if (mask) {
             GlStateManager.enableStencil()
@@ -153,14 +158,12 @@ open class RectangleElement : AbstractElement(), Parent {
             GlStateManager.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP)
         }
 
-        val properties = properties
+        val color = color
         if (color.alpha > 0) {
+            val textureLocation = textureLocation
             if (textureLocation != null) {
-
                 api.renderEngine().bindTexture(textureLocation)
-
                 GlStateManager.enableAlpha()
-                val color = color
                 GlStateManager.color(color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha.toFloat())
 
                 val precision = 0x4000_0000
@@ -180,16 +183,15 @@ open class RectangleElement : AbstractElement(), Parent {
                 GlStateManager.color(1f, 1f, 1f, 1f)
 
             } else {
-
                 val tessellator: Tessellator = UIEngine.clientApi.tessellator()
                 val worldrenderer: BufferBuilder = tessellator.bufferBuilder
                 GlStateManager.enableBlend()
                 GlStateManager.disableTexture2D()
                 GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0)
 
-                val color = color
                 GlStateManager.color(color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha.toFloat())
 
+                val size = size
                 worldrenderer.begin(7, DefaultVertexFormats.POSITION)
                 worldrenderer.pos(0.0, size.y, 0.0).endVertex()
                 worldrenderer.pos(size.x, size.y, 0.0).endVertex()
@@ -208,6 +210,7 @@ open class RectangleElement : AbstractElement(), Parent {
             }
         }
 
+        val children = children
         if (children.isNotEmpty()) {
             for (child in children) {
                 child.lastParent = this

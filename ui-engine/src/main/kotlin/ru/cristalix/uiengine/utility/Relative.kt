@@ -15,9 +15,11 @@ val BOTTOM_RIGHT: V3 = V3(1.0, 1.0)
 inline fun <T: AbstractElement> T.matchParentSize(x: Boolean = false, y: Boolean = false, z: Boolean = false) {
     beforeRender {
         lastParent?.let {
-            if (x) this.size.x = it.size.x
-            if (y) this.size.y = it.size.y
-            if (z) this.size.z = it.size.z
+            val size = size
+            val osize = it.size
+            if (x) size.x = osize.x
+            if (y) size.y = osize.y
+            if (z) size.z = osize.z
         }
     }
 }

@@ -14,7 +14,6 @@ package ru.cristalix.uiengine.utility
 open class V2(
     open var x: Double = 0.0,
     open var y: Double = 0.0
-
 ) {
     open fun write(another: V2) {
         another.x = x

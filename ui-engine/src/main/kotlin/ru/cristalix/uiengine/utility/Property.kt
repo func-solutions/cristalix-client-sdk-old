@@ -16,16 +16,17 @@ const val uvMatrix = -3
 val allMatrices =
     intArrayOf(alignMatrix, rotationMatrix, offsetMatrix, scaleMatrix, originMatrix, sizeMatrix, colorMatrix, uvMatrix)
 
-
 operator fun DoubleArray.get(property: Property): Double {
     return this[property.ordinal]
 }
 
-operator fun DoubleArray.set(property: Property, value: Number): Double {
-    val doubleValue = value.toDouble()
-    this[property.ordinal] = doubleValue
-    return doubleValue
+operator fun DoubleArray.set(property: Property, value: Double): Double {
+    this[property.ordinal] = value
+    return value
 }
+
+operator fun DoubleArray.set(property: Property, value: Number): Double =
+    set(property, value.toDouble())
 
 enum class Property(
     vararg val matrixInfluence: Int
@@ -73,6 +74,7 @@ enum class Property(
     ;
 
     companion object {
+        @JvmStatic
         val VALUES = values()
     }
 

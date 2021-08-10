@@ -11,13 +11,13 @@ open class TextElement() : AbstractElement() {
         set(value) {
             field = value
 
-            lines = value.split("\n").toTypedArray()
-            lineWidthCache =
-                lines.map { UIEngine.clientApi.fontRenderer().getStringWidth(it).toDouble() }.toDoubleArray()
+            val lines = value.split("\n").toTypedArray()
+            this.lines = lines
+            lineWidthCache = DoubleArray(lines.size) { UIEngine.clientApi.fontRenderer().getStringWidth(lines[it]).toDouble() }
 
             val emptyLines = lines.count { it.isBlank() }
             this.size = V3(
-                lineWidthCache.maxOrNull() ?: 0.0,
+                lineWidthCache.max(),
                 lineHeight * (lines.size - emptyLines) + emptyLineHeight * emptyLines
             )
         }
@@ -30,9 +30,9 @@ open class TextElement() : AbstractElement() {
 
     var emptyLineHeight = 9.0
 
-    internal var lines: Array<String> = arrayOf()
+    private var lines: Array<String> = arrayOf()
 
-    internal var lineWidthCache: DoubleArray = doubleArrayOf()
+    private var lineWidthCache: DoubleArray = doubleArrayOf()
 
     var shadow = false
 
@@ -68,6 +68,16 @@ open class TextElement() : AbstractElement() {
 
         }
 
+    }
+
+    private fun DoubleArray.max(): Double {
+        if (isEmpty()) return 0.0
+        var max = this[0]
+        for (i in 1..lastIndex) {
+            val e = this[i]
+            max = maxOf(max, e)
+        }
+        return max
     }
 
 }
