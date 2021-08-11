@@ -14,10 +14,10 @@ import dev.xdark.clientapi.render.DefaultVertexFormats
 import dev.xdark.clientapi.render.Tessellator
 import kotlin.math.abs
 
-var depth = 0
-var debug = false
+@JvmField var depth = 0
+@JvmField var debug = false
 
-val debugColors = arrayOf(
+@JvmField val debugColors = arrayOf(
         floatArrayOf(1.0f, 0.1f, 0.1f, 1.0f),
         floatArrayOf(1.0f, 1.0f, 0.1f, 1.0f),
         floatArrayOf(0.1f, 1.0f, 0.1f, 1.0f),
@@ -36,6 +36,7 @@ open class RectangleElement : AbstractElement(), Parent {
     var textureSize: V2 = ProxiedV2(Property.TextureWidth.ordinal, this)
         set(value) = value.write(field)
 
+    @JvmField
     var mask: Boolean = false
 
     override val children: MutableList<AbstractElement> = ArrayList()
@@ -49,7 +50,7 @@ open class RectangleElement : AbstractElement(), Parent {
     }
 
     override fun removeChild(vararg elements: AbstractElement) {
-        this.children.removeAll(elements)
+        this.children.removeAll(elements.asList())
     }
 
     override fun addChild(element: AbstractElement) {
@@ -95,7 +96,6 @@ open class RectangleElement : AbstractElement(), Parent {
             child.updateInteractiveState()
             interactive = interactive || child.interactive
         }
-
     }
 
     override fun updateHoverState(mouseMatrix: Matrix4f) {

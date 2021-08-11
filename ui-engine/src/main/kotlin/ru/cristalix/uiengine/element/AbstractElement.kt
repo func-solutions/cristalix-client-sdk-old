@@ -1,8 +1,6 @@
 package ru.cristalix.uiengine.element
 
 import dev.xdark.clientapi.opengl.GlStateManager
-import it.unimi.dsi.fastutil.ints.IntArrayList
-import it.unimi.dsi.fastutil.ints.IntList
 import org.lwjgl.util.vector.Matrix4f
 import org.lwjgl.util.vector.Vector4f
 import ru.cristalix.uiengine.ClickHandler
@@ -20,7 +18,7 @@ abstract class AbstractElement() {
     @JvmField val properties: DoubleArray = DoubleArray(Property.VALUES.size)
     @JvmField val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
 
-    private var dirtyMatrices: IntList? = null
+    private var dirtyMatrices = BooleanArray(MATRIX_COUNT)
     @JvmField protected var cachedHexColor: Int = 0
 
     var hovered: Boolean = false
@@ -70,7 +68,6 @@ abstract class AbstractElement() {
     @JvmField var enabled: Boolean = true
     @JvmField var onClick: ClickHandler? = null
     @JvmField var onHover: HoverHandler? = null
-
     @JvmField var lastParent: AbstractElement? = null
 
     var offset: V3 = ProxiedV3(OffsetX.ordinal, this)
@@ -239,15 +236,16 @@ abstract class AbstractElement() {
 
     fun cleanMatrices() {
         val dirty = this.dirtyMatrices ?: return
-        this.dirtyMatrices = null
         for (i in dirty.indices) {
-            this.updateMatrix(dirty.getInt(i))
+            if (dirty[i]) {
+                this.updateMatrix(i - MATRIX_OFFSET)
+            }
         }
     }
 
     open fun updateMatrix(matrixId: Int) {
         val properties = properties
-        dirtyMatrices?.removeInt(matrixId)
+        dirtyMatrices[matrixId + MATRIX_OFFSET] = false
 
         if (matrixId == colorMatrix) {
             this.cachedHexColor = this.color.toGuiHex()
@@ -291,13 +289,12 @@ abstract class AbstractElement() {
                     -properties[OriginZ] * properties[SizeZ]
                 )
             }
-            this.matrices[matrixId] = matrix
         }
     }
 
     fun markDirty(matrix: Int) {
-        val matrices = dirtyMatrices ?: IntArrayList()
-        if (!matrices.contains(matrix)) matrices.add(matrix)
+        val matrices = dirtyMatrices ?: BooleanArray(MATRIX_COUNT)
+        matrices[matrix] = true
         dirtyMatrices = matrices
 
         if (matrix == sizeMatrix) {

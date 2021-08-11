@@ -4,7 +4,6 @@ import dev.xdark.clientapi.opengl.GlStateManager
 import dev.xdark.clientapi.render.DefaultVertexFormats
 import dev.xdark.clientapi.resource.ResourceLocation
 import org.lwjgl.opengl.GL11
-import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.UIEngine.clientApi
 import ru.cristalix.uiengine.utility.*
 
@@ -29,7 +28,7 @@ class CuboidElement : AbstractElement(), Parent {
     }
 
     override fun removeChild(vararg elements: AbstractElement) {
-        this.children.removeAll(elements)
+        this.children.removeAll(elements.asList())
     }
 
     override fun addChild(element: AbstractElement) {
@@ -66,12 +65,12 @@ class CuboidElement : AbstractElement(), Parent {
                 val x = properties[Property.SizeX]
                 val y = properties[Property.SizeY]
                 val z = properties[Property.SizeZ]
-                for (child in children) {
-                    val childProperties = child.properties
+                children.forEach {
+                    val childProperties = it.properties
                     childProperties[Property.ParentSizeX] = x
                     childProperties[Property.ParentSizeY] = y
                     childProperties[Property.ParentSizeZ] = z
-                    child.updateMatrix(alignMatrix)
+                    it.updateMatrix(alignMatrix)
                 }
             }
         }

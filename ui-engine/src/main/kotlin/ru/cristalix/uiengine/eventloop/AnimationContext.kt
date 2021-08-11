@@ -5,14 +5,14 @@ import ru.cristalix.uiengine.Easings
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.element.AbstractElement
 
-data class AnimationContext(
-    val durationMillis: Long,
-    val easing: Easing
+class AnimationContext(
+    @JvmField val durationMillis: Long,
+    @JvmField val easing: Easing
 )
 
-data class AnimationPipeline<T : AbstractElement?>(
-    val element: T,
-    var currentDelay: Long
+class AnimationPipeline<T : AbstractElement?>(
+    @JvmField val element: T,
+    @JvmField var currentDelay: Long
 )
 
 fun secondsToMillis(seconds: Double): Long = (seconds * 1000).toLong()
@@ -181,7 +181,3 @@ fun <T : AbstractElement> AnimationPipeline<T>.thenWait(seconds: Float): Animati
 
 fun <T : AbstractElement> AnimationPipeline<T>.thenWait(seconds: Number): AnimationPipeline<T> =
     thenWait(seconds.toDouble())
-
-
-
-

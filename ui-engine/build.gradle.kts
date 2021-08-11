@@ -23,7 +23,7 @@ publishing {
         create<MavenPublication>("uiengine") {
             groupId = "ru.cristalix"
             artifactId = "uiengine"
-            version = "3.13.2"
+            version = "3.13.3"
             from(components["java"])
         }
     }

@@ -4,14 +4,16 @@ import ru.cristalix.uiengine.Easing
 import ru.cristalix.uiengine.Easings
 import ru.cristalix.uiengine.element.AbstractElement
 
-data class Animation(val element: AbstractElement, val propertyIndex: Int) {
-
-    var startedTime: Long = 0
-    var duration: Long = 0
-    var startValue: Double = 0.0
-    var targetValue: Double = 0.0
-    var lastValue: Double = 0.0
-    var easing: Easing = Easings.NONE
+class Animation(
+    @JvmField val element: AbstractElement,
+    @JvmField val propertyIndex: Int
+ ) {
+    @JvmField var startedTime: Long = 0
+    @JvmField var duration: Long = 0
+    @JvmField var startValue: Double = 0.0
+    @JvmField var targetValue: Double = 0.0
+    @JvmField var lastValue: Double = 0.0
+    @JvmField var easing: Easing = Easings.NONE
 
     init {
         this.lastValue = element.properties[propertyIndex]
@@ -41,5 +43,4 @@ data class Animation(val element: AbstractElement, val propertyIndex: Int) {
         this.element.changeProperty(propertyIndex, value)
         return alive
     }
-
 }

@@ -1,5 +1,8 @@
 package ru.cristalix.uiengine.utility
 
+const val MATRIX_COUNT = 9
+const val MATRIX_OFFSET = 3
+
 // Positive numbers are matrices that are directly converted to GL transformations
 const val alignMatrix = 0
 const val offsetMatrix = 1
@@ -16,25 +19,25 @@ const val uvMatrix = -3
 val allMatrices =
     intArrayOf(alignMatrix, rotationMatrix, offsetMatrix, scaleMatrix, originMatrix, sizeMatrix, colorMatrix, uvMatrix)
 
-operator fun DoubleArray.get(property: Property): Double {
+inline operator fun DoubleArray.get(property: Property): Double {
     return this[property.ordinal]
 }
 
-operator fun DoubleArray.set(property: Property, value: Double): Double {
+inline operator fun DoubleArray.set(property: Property, value: Double): Double {
     this[property.ordinal] = value
     return value
 }
 
-operator fun DoubleArray.set(property: Property, value: Long): Double =
+inline operator fun DoubleArray.set(property: Property, value: Long): Double =
     set(property, value.toDouble())
 
-operator fun DoubleArray.set(property: Property, value: Int): Double =
+inline operator fun DoubleArray.set(property: Property, value: Int): Double =
     set(property, value.toDouble())
 
-operator fun DoubleArray.set(property: Property, value: Float): Double =
+inline operator fun DoubleArray.set(property: Property, value: Float): Double =
     set(property, value.toDouble())
 
-operator fun DoubleArray.set(property: Property, value: Number): Double =
+inline operator fun DoubleArray.set(property: Property, value: Number): Double =
     set(property, value.toDouble())
 
 enum class Property(
@@ -86,7 +89,4 @@ enum class Property(
         @JvmField
         val VALUES = values()
     }
-
 }
-
-

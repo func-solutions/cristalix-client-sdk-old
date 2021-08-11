@@ -1,10 +1,18 @@
 package ru.cristalix.clientapi
 
 import dev.xdark.clientapi.event.Event
+import dev.xdark.clientapi.event.EventBus
 import dev.xdark.clientapi.event.Listener
 import dev.xdark.clientapi.event.network.PluginMessage
 import io.netty.buffer.ByteBuf
-import kotlin.reflect.KClass
+
+inline fun <T: Event> EventBus<T>.register(
+    listener: Listener = theMod.listener,
+    priority: Int = 1,
+    noinline handler: T.() -> Unit
+) {
+    register(listener, handler, priority)
+}
 
 inline fun <reified T : Event> registerHandler(
     listener: Listener = theMod.listener,
@@ -16,7 +24,7 @@ inline fun <reified T : Event> registerHandler(
 
 lateinit var theMod: KotlinMod
 
-inline val <reified T : KotlinMod> KClass<T>.mod: T
+inline val <reified T : KotlinMod> Class<T>.mod: T
     get() = theMod as T
 
 @Suppress("LeakingThis")

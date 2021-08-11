@@ -9,6 +9,7 @@ import dev.xdark.clientapi.opengl.GLAllocation
 import org.lwjgl.input.Mouse
 import ru.cristalix.clientapi.JavaMod
 import ru.cristalix.clientapi.registerHandler
+import ru.cristalix.clientapi.theMod
 import ru.cristalix.uiengine.element.*
 import ru.cristalix.uiengine.eventloop.EventLoop
 import ru.cristalix.uiengine.eventloop.EventLoopImpl
