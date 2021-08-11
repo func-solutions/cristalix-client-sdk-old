@@ -1,6 +1,8 @@
 package ru.cristalix.uiengine.element
 
 import dev.xdark.clientapi.opengl.GlStateManager
+import it.unimi.dsi.fastutil.ints.IntArrayList
+import it.unimi.dsi.fastutil.ints.IntList
 import org.lwjgl.util.vector.Matrix4f
 import org.lwjgl.util.vector.Vector4f
 import ru.cristalix.uiengine.ClickHandler
@@ -18,7 +20,7 @@ abstract class AbstractElement() {
     val properties: DoubleArray = DoubleArray(Property.VALUES.size)
     val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
 
-    private var dirtyMatrices: MutableList<Int>? = null
+    private var dirtyMatrices: IntList? = null
     protected var cachedHexColor: Int = 0
 
     var hovered: Boolean = false
@@ -196,14 +198,14 @@ abstract class AbstractElement() {
     fun cleanMatrices() {
         val dirty = this.dirtyMatrices ?: return
         this.dirtyMatrices = null
-        for (matrix in dirty.toIntArray()) {
-            this.updateMatrix(matrix)
+        for (i in dirty.indices) {
+            this.updateMatrix(dirty.getInt(i))
         }
     }
 
     open fun updateMatrix(matrixId: Int) {
         val properties = properties
-        dirtyMatrices?.remove(matrixId)
+        dirtyMatrices?.removeInt(matrixId)
 
         if (matrixId == colorMatrix) {
             this.cachedHexColor = this.color.toGuiHex()
@@ -246,7 +248,7 @@ abstract class AbstractElement() {
     }
 
     fun markDirty(matrix: Int) {
-        val matrices = dirtyMatrices ?: ArrayList()
+        val matrices = dirtyMatrices ?: IntArrayList()
         if (!matrices.contains(matrix)) matrices.add(matrix)
         dirtyMatrices = matrices
 

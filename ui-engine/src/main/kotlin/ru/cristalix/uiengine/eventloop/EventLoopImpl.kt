@@ -8,8 +8,8 @@ class EventLoopImpl: EventLoop {
     override val runningAnimations: MutableList<Animation> = ArrayList()
     override var animationContext: AnimationContext? = null
 
-    override fun schedule(delaySeconds: Number, action: () -> Unit): Task {
-        val task = Task(System.currentTimeMillis() + (delaySeconds.toDouble() * 1000).toInt(), action)
+    override fun schedule(delaySeconds: Double, action: () -> Unit): Task {
+        val task = Task(System.currentTimeMillis() + (delaySeconds * 1000).toLong(), action)
         if (inEventLoop) {
             if (eventLoopBuffer == null) eventLoopBuffer = ArrayList(1)
             eventLoopBuffer!!.add(task)

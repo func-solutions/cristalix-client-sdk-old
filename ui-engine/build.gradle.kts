@@ -10,7 +10,6 @@ dependencies {
     compileOnly(project(":client-api"))
     compileOnly(project(":client-sdk"))
     compileOnly(kotlin("stdlib"))
-
 }
 
 tasks.compileKotlin.get().kotlinOptions.jvmTarget = "1.8"
@@ -20,7 +19,7 @@ publishing {
         create<MavenPublication>("uiengine") {
             groupId = "ru.cristalix"
             artifactId = "uiengine"
-            version = "3.9.8"
+            version = "3.9.9"
             from(components["java"])
         }
     }

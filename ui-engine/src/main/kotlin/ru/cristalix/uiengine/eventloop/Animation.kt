@@ -1,9 +1,8 @@
 package ru.cristalix.uiengine.eventloop
 
+import ru.cristalix.uiengine.Easing
+import ru.cristalix.uiengine.Easings
 import ru.cristalix.uiengine.element.AbstractElement
-import ru.cristalix.uiengine.utility.Easing
-import ru.cristalix.uiengine.utility.Easings
-import ru.cristalix.uiengine.utility.Property
 
 data class Animation(val element: AbstractElement, val propertyIndex: Int) {
 
@@ -34,7 +33,7 @@ data class Animation(val element: AbstractElement, val propertyIndex: Int) {
         val alive = part <= 1.0
         val value: Double
         if (alive) {
-            part = this.easing(part)
+            part = this.easing.ease(part)
             value = startValue + (targetValue - startValue) * part
         } else {
             this.startedTime = 0

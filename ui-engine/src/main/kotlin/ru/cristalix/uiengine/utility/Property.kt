@@ -25,6 +25,15 @@ operator fun DoubleArray.set(property: Property, value: Double): Double {
     return value
 }
 
+operator fun DoubleArray.set(property: Property, value: Long): Double =
+    set(property, value.toDouble())
+
+operator fun DoubleArray.set(property: Property, value: Int): Double =
+    set(property, value.toDouble())
+
+operator fun DoubleArray.set(property: Property, value: Float): Double =
+    set(property, value.toDouble())
+
 operator fun DoubleArray.set(property: Property, value: Number): Double =
     set(property, value.toDouble())
 

@@ -6,7 +6,19 @@ interface EventLoop {
 
     var animationContext: AnimationContext?
 
-    fun schedule(delaySeconds: Number, action: () -> Unit): Task
+    fun schedule(delaySeconds: Double, action: () -> Unit): Task
+
+    fun schedule(delaySeconds: Long, action: () -> Unit): Task =
+        schedule(delaySeconds.toDouble(), action)
+
+    fun schedule(delaySeconds: Int, action: () -> Unit): Task =
+        schedule(delaySeconds.toDouble(), action)
+
+    fun schedule(delaySeconds: Float, action: () -> Unit): Task =
+        schedule(delaySeconds.toDouble(), action)
+
+    fun schedule(delaySeconds: Number, action: () -> Unit): Task =
+        schedule(delaySeconds.toDouble(), action)
 
     fun update()
 }

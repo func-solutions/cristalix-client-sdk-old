@@ -12,6 +12,7 @@ dependencies {
     api("dev.xdark", "clientapi", "live-SNAPSHOT")
     api("com.google.guava", "guava", "21.0")
     api("com.google.code.gson", "gson", "2.8.6")
+    api("it.unimi.dsi", "fastutil", "8.3.1")
 }
 
 configurations.all {
