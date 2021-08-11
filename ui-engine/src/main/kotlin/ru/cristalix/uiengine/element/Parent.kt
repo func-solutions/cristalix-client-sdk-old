@@ -11,4 +11,15 @@ interface Parent {
     fun addChild(vararg elements: AbstractElement)
 
     fun removeChild(vararg elements: AbstractElement)
+
+    operator fun <T : AbstractElement> T.unaryPlus(): T {
+        this@Parent.addChild(this)
+        return this
+    }
+
+    operator fun <T: AbstractElement> plus(element: T): T {
+        this@Parent.addChild(element)
+        return element
+    }
+
 }

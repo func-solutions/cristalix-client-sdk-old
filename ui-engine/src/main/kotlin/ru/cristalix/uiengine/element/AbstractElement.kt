@@ -49,6 +49,24 @@ abstract class AbstractElement() {
             }
         }
 
+    var beforeTransform: (() -> Unit)? = null
+        set(value) {
+            val prev = field
+            field = {
+                prev?.invoke()
+                value?.invoke()
+            }
+        }
+
+    var afterTransform: (() -> Unit)? = null
+        set(value) {
+            val prev = field
+            field = {
+                prev?.invoke()
+                value?.invoke()
+            }
+        }
+
     @JvmField var enabled: Boolean = true
     @JvmField var onClick: ClickHandler? = null
     @JvmField var onHover: HoverHandler? = null
@@ -86,11 +104,19 @@ abstract class AbstractElement() {
     }
 
     fun onClick(action: ClickHandler) {
-        onClick = action
+        val prev = onClick
+        onClick = {
+            prev?.invoke(this)
+            action.invoke(this)
+        }
     }
 
     fun onHover(action: HoverHandler) {
-        onHover = action
+        val prev = onHover
+        onHover = {
+            prev?.invoke(this)
+            action.invoke(this)
+        }
     }
 
     fun beforeRender(action: () -> Unit) {
@@ -98,6 +124,14 @@ abstract class AbstractElement() {
     }
 
     fun afterRender(action: () -> Unit) {
+        afterRender = action
+    }
+
+    fun beforeTransform(action: () -> Unit) {
+        beforeRender = action
+    }
+
+    fun afterTransform(action: () -> Unit) {
         afterRender = action
     }
 
@@ -274,6 +308,7 @@ abstract class AbstractElement() {
     open fun transformAndRender() {
         if (!this.enabled) return
 
+        this.beforeTransform?.invoke()
         GlStateManager.pushMatrix()
         this.applyTransformations()
 
@@ -282,6 +317,7 @@ abstract class AbstractElement() {
         this.afterRender?.invoke()
 
         GlStateManager.popMatrix()
+        this.afterTransform?.invoke()
     }
 
     open fun applyTransformations() {

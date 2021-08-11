@@ -12,7 +12,19 @@ import ru.cristalix.uiengine.utility.*
 import dev.xdark.clientapi.render.DefaultVertexFormats
 
 import dev.xdark.clientapi.render.Tessellator
+import kotlin.math.abs
 
+var depth = 0
+var debug = false
+
+val debugColors = arrayOf(
+        floatArrayOf(1.0f, 0.1f, 0.1f, 1.0f),
+        floatArrayOf(1.0f, 1.0f, 0.1f, 1.0f),
+        floatArrayOf(0.1f, 1.0f, 0.1f, 1.0f),
+        floatArrayOf(0.1f, 1.0f, 1.0f, 1.0f),
+        floatArrayOf(0.1f, 0.1f, 1.0f, 1.0f),
+        floatArrayOf(1.0f, 0.1f, 1.0f, 1.0f),
+)
 
 open class RectangleElement : AbstractElement(), Parent {
 
@@ -62,6 +74,7 @@ open class RectangleElement : AbstractElement(), Parent {
 //            if (element is RectangleElement) {
                 // ToDo: Abstract contextful parents
 //            }
+            element.lastParent = this
             this.children.add(element)
         }
 
@@ -76,6 +89,7 @@ open class RectangleElement : AbstractElement(), Parent {
 
         val children = children
         if (children.isEmpty()) return
+
         for (child in children) {
             child.updateInteractiveState()
             interactive = interactive || child.interactive
@@ -88,6 +102,7 @@ open class RectangleElement : AbstractElement(), Parent {
 
         val children = children
         if (children.isEmpty()) return
+
         for (child in children) {
             if (!child.interactive) continue
 
@@ -99,8 +114,10 @@ open class RectangleElement : AbstractElement(), Parent {
 
     override fun getForemostHovered(): AbstractElement? {
         val children = children
-        for (i in children.size - 1 downTo 0) {
-            children[i].getForemostHovered()?.let { return it }
+        if (interactive) {
+            for (i in children.size - 1 downTo 0) {
+                children[i].getForemostHovered()?.let { return it }
+            }
         }
         return super.getForemostHovered()
     }
@@ -176,6 +193,11 @@ open class RectangleElement : AbstractElement(), Parent {
         }
 
         val color = color
+
+        if (debug) {
+            depth++
+        }
+
         if (color.alpha > 0) {
             val textureLocation = textureLocation
             if (textureLocation != null) {
@@ -228,11 +250,41 @@ open class RectangleElement : AbstractElement(), Parent {
         }
 
         val children = children
+        if (debug) {
+            val d = debugColors[abs(depth) % debugColors.size]
+            GlStateManager.color(d[0], d[1], d[2], 0.6f)
+
+            GlStateManager.enableBlend()
+            GlStateManager.disableTexture2D()
+            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0)
+
+            val tessellator: Tessellator = UIEngine.clientApi.tessellator()
+            val worldrenderer: BufferBuilder = tessellator.bufferBuilder
+            GL11.glLineWidth(1.5f)
+            worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION)
+            worldrenderer.pos(0.0, size.y, 0.0).endVertex()
+            worldrenderer.pos(size.x, size.y, 0.0).endVertex()
+            worldrenderer.pos(size.x, 0.0, 0.0).endVertex()
+            worldrenderer.pos(0.0, 0.0, 0.0).endVertex()
+            tessellator.draw()
+
+            GL11.glPointSize(4.0f)
+            worldrenderer.begin(GL11.GL_POINTS, DefaultVertexFormats.POSITION)
+            worldrenderer.pos(size.x * origin.x, size.y * origin.y, 0.0).endVertex()
+            tessellator.draw()
+            GlStateManager.enableTexture2D()
+            GlStateManager.disableBlend()
+        }
+
         if (children.isNotEmpty()) {
             for (child in children) {
                 child.lastParent = this
                 child.transformAndRender()
             }
+        }
+
+        if (debug) {
+            depth--
         }
 
         if (mask) {
