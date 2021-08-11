@@ -32,8 +32,24 @@ open class RectangleElement : AbstractElement(), Parent {
         this.textureSize = V2(1.0, 1.0)
     }
 
+    override fun removeChild(element: AbstractElement) {
+        this.children.remove(element)
+    }
+
     override fun removeChild(vararg elements: AbstractElement) {
         this.children.removeAll(elements)
+    }
+
+    override fun addChild(element: AbstractElement) {
+        val properties = properties
+        val x = properties[Property.SizeX]
+        val y = properties[Property.SizeY]
+        element.changeProperty(Property.ParentSizeX.ordinal, x)
+        element.changeProperty(Property.ParentSizeY.ordinal, y)
+//            if (element is RectangleElement) {
+        // ToDo: Abstract contextful parents
+//            }
+        this.children.add(element)
     }
 
     override fun addChild(vararg elements: AbstractElement) {
@@ -133,15 +149,17 @@ open class RectangleElement : AbstractElement(), Parent {
     }
 
     override fun render() {
-        val api = UIEngine.clientApi
+        val engine = UIEngine
+        val api = engine.clientApi
         GlStateManager.enableBlend()
 
         val mask = mask
         val properties = properties
 
         if (mask) {
+            val overlayContext = engine.overlayContext
             GlStateManager.enableStencil()
-            GlStateManager.stencilFunc(GL11.GL_GREATER, UIEngine.overlayContext.stencilPos, 0xFF)
+            GlStateManager.stencilFunc(GL11.GL_GREATER, overlayContext.stencilPos, 0xFF)
             GlStateManager.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_INCR)
             GlStateManager.disableDepth()
             GlStateManager.disableAlpha()
@@ -153,8 +171,7 @@ open class RectangleElement : AbstractElement(), Parent {
             )
             GlStateManager.enableDepth()
 
-            UIEngine.overlayContext.stencilPos++
-            GlStateManager.stencilFunc(GL11.GL_GREATER, UIEngine.overlayContext.stencilPos, 0xFF)
+            GlStateManager.stencilFunc(GL11.GL_GREATER, ++overlayContext.stencilPos, 0xFF)
             GlStateManager.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP)
         }
 
@@ -183,7 +200,7 @@ open class RectangleElement : AbstractElement(), Parent {
                 GlStateManager.color(1f, 1f, 1f, 1f)
 
             } else {
-                val tessellator: Tessellator = UIEngine.clientApi.tessellator()
+                val tessellator: Tessellator = engine.clientApi.tessellator()
                 val worldrenderer: BufferBuilder = tessellator.bufferBuilder
                 GlStateManager.enableBlend()
                 GlStateManager.disableTexture2D()
@@ -219,7 +236,7 @@ open class RectangleElement : AbstractElement(), Parent {
         }
 
         if (mask) {
-            UIEngine.overlayContext.stencilPos--
+            engine.overlayContext.stencilPos--
             GlStateManager.stencilFunc(GL11.GL_ALWAYS, 0, 0xFF)
             GlStateManager.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_DECR)
             GlStateManager.disableDepth()

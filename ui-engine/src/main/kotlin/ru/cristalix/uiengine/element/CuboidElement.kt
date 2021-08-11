@@ -10,7 +10,7 @@ import ru.cristalix.uiengine.utility.*
 
 class CuboidElement : AbstractElement(), Parent {
 
-    var textureLocation: ResourceLocation? = null
+    @JvmField var textureLocation: ResourceLocation? = null
 
     var textureFrom: V2 = ProxiedV2(Property.TextureX.ordinal, this)
         set(value) = value.write(field)
@@ -24,8 +24,24 @@ class CuboidElement : AbstractElement(), Parent {
         color = WHITE
     }
 
+    override fun removeChild(element: AbstractElement) {
+        this.children.remove(element)
+    }
+
     override fun removeChild(vararg elements: AbstractElement) {
         this.children.removeAll(elements)
+    }
+
+    override fun addChild(element: AbstractElement) {
+        val children = this.children
+        val properties = properties
+        val x = properties[Property.SizeX]
+        val y = properties[Property.SizeY]
+        val z = properties[Property.SizeZ]
+        element.changeProperty(Property.ParentSizeX.ordinal, x)
+        element.changeProperty(Property.ParentSizeY.ordinal, y)
+        element.changeProperty(Property.ParentSizeZ.ordinal, z)
+        children.add(element)
     }
 
     override fun addChild(vararg elements: AbstractElement) {
@@ -79,6 +95,7 @@ class CuboidElement : AbstractElement(), Parent {
         val textureLocation = textureLocation
         if (textureLocation != null) {
             val textureSize = textureSize
+            val textureFrom =  textureFrom
             val uSize = textureSize.x
             val vSize = textureSize.y
             val u1 = textureFrom.x / uSize

@@ -7,8 +7,8 @@ public final class Easings {
 	public static final double c1 = 1.70158D;
 	public static final double c2 = c1 * 1.525D;
 	public static final double c3 = c1 + 1.D;
-	public static final double c4 = 2.0D * Math.PI / 3.D;
-	public static final double c5 = 2.0D * Math.PI / 4.5D;
+	public static final double c4 = 2.0D * PI / 3.D;
+	public static final double c5 = 2.0D * PI / 4.5D;
 
 	public static final Easing NONE = value -> value;
 	public static final Easing QUAD_IN = powIn(2);
@@ -122,7 +122,7 @@ public final class Easings {
 	}
 
 	public static Easing powIn(double n) {
-		return value -> Math.pow(value, n);
+		return value -> pow(value, n);
 	}
 
 	public static Easing powIn(int n) {
@@ -130,7 +130,7 @@ public final class Easings {
 	}
 
 	public static Easing powOut(double n) {
-		return value -> 1.0D - Math.pow(1.0D - value, n);
+		return value -> 1.0D - pow(1.0D - value, n);
 	}
 
 	public static Easing powOut(int n) {
@@ -140,9 +140,9 @@ public final class Easings {
 	public static Easing powBoth(double n) {
 		return value -> {
 			if (value < 0.5D) {
-				return Math.pow(2.0D, n - 1) * Math.pow(value, n);
+				return pow(2.0D, n - 1) * pow(value, n);
 			} else {
-				return 1.0D - Math.pow(-2.0D * value + 2.0D, n) / 2.0D;
+				return 1.0D - pow(-2.0D * value + 2.0D, n) / 2.0D;
 			}
 		};
 	}

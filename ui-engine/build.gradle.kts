@@ -12,6 +12,10 @@ dependencies {
     compileOnly(kotlin("stdlib"))
 }
 
+tasks.compileJava.get().run {
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
+}
 tasks.compileKotlin.get().kotlinOptions.jvmTarget = "1.8"
 
 publishing {

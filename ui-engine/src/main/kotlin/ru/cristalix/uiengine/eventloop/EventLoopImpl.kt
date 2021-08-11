@@ -23,6 +23,7 @@ class EventLoopImpl: EventLoop {
 
         val time = System.currentTimeMillis()
 
+        val runningTasks = runningTasks
         if (runningTasks.isNotEmpty()) {
             inEventLoop = true
             with(runningTasks.iterator()) {
@@ -56,7 +57,4 @@ class EventLoopImpl: EventLoop {
             }
         }
     }
-
-
-
 }

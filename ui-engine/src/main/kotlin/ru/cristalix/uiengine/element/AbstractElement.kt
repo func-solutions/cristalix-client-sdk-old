@@ -17,11 +17,11 @@ import ru.cristalix.uiengine.utility.Property.*
 @Suppress("LeakingThis")
 abstract class AbstractElement() {
 
-    val properties: DoubleArray = DoubleArray(Property.VALUES.size)
-    val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
+    @JvmField val properties: DoubleArray = DoubleArray(Property.VALUES.size)
+    @JvmField val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
 
     private var dirtyMatrices: IntList? = null
-    protected var cachedHexColor: Int = 0
+    @JvmField protected var cachedHexColor: Int = 0
 
     var hovered: Boolean = false
         internal set
@@ -49,11 +49,11 @@ abstract class AbstractElement() {
             }
         }
 
-    var enabled: Boolean = true
-    var onClick: ClickHandler? = null
-    var onHover: HoverHandler? = null
+    @JvmField var enabled: Boolean = true
+    @JvmField var onClick: ClickHandler? = null
+    @JvmField var onHover: HoverHandler? = null
 
-    var lastParent: AbstractElement? = null
+    @JvmField var lastParent: AbstractElement? = null
 
     var offset: V3 = ProxiedV3(OffsetX.ordinal, this)
         set(value) = value.write(field)
@@ -102,10 +102,12 @@ abstract class AbstractElement() {
     }
 
     internal fun changeProperty(index: Int, value: Double) {
-        val animationContext = UIEngine.animationContext
+        val engine = UIEngine
+        val animationContext = engine.animationContext
         if (animationContext != null) {
             var animation: Animation? = null
-            for (existing in UIEngine.runningAnimations) {
+            val runningAnimations = engine.runningAnimations
+            for (existing in runningAnimations) {
                 if (existing.element === this && existing.propertyIndex == index) {
                     animation = existing
                     break
@@ -117,7 +119,7 @@ abstract class AbstractElement() {
                 animationContext.durationMillis,
                 animationContext.easing
             )
-            UIEngine.runningAnimations.add(animation)
+            runningAnimations.add(animation)
             return
         }
 
@@ -147,9 +149,15 @@ abstract class AbstractElement() {
     }
 
     open fun updateHoverState(mouseMatrix: Matrix4f) {
-        for (m in matrices) {
-            if (m != null) Matrix4f.mul(mouseMatrix, m, mouseMatrix)
+        val matrices = matrices
+        val count = matrices.size
+        for (i in 0 until count) {
+            val m = matrices[i]
+            if (m != null) {
+                Matrix4f.mul(mouseMatrix, m, mouseMatrix)
+            }
         }
+        val size = size
         val hitbox = arrayOf(
             Vector4f(0f, 0f, 0f, 1f),
             Vector4f(0f, size.y.toFloat(), 0f, 1f),
@@ -212,8 +220,14 @@ abstract class AbstractElement() {
         }
 
         if (matrixId >= 0) {
-            val matrix: Matrix4f = this.matrices[matrixId] ?: Matrix4f()
-            matrix.setIdentity()
+            val matrices = matrices
+            var matrix = matrices[matrixId]
+            if (matrix == null) {
+                matrix = Matrix4f()
+                matrices[matrixId] = matrix
+            } else {
+                matrix.setIdentity()
+            }
 
             when (matrixId) {
                 alignMatrix -> matrix.translate(

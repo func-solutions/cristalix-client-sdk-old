@@ -12,11 +12,13 @@ open class ProxiedV2(
     private val offset: Int,
     private val element: AbstractElement
 ) : V2() {
+    private val properties = element.properties
+
     override var x: Double
-        get() = element.properties[offset]
+        get() = properties[offset]
         set(value) = element.changeProperty(offset, value)
     override var y: Double
-        get() = element.properties[offset + 1]
+        get() = properties[offset + 1]
         set(value) = element.changeProperty(offset + 1, value)
 }
 
@@ -24,51 +26,59 @@ class ProxiedV3(
     private val offset: Int,
     private val element: AbstractElement
 ) : V3() {
+    private val properties = element.properties
+
     override var x: Double
-        get() = element.properties[offset]
+        get() = properties[offset]
         set(value) = element.changeProperty(offset, value)
     override var y: Double
-        get() = element.properties[offset + 1]
+        get() = properties[offset + 1]
         set(value) = element.changeProperty(offset + 1, value)
     override var z: Double
-        get() = element.properties[offset + 2]
+        get() = properties[offset + 2]
         set(value) = element.changeProperty(offset + 2, value)
 }
 
 class ProxiedRotation(
     private val element: AbstractElement
 ) : Rotation() {
+
+    private val properties = element.properties
+
     override var x: Double
-        get() = element.properties[RotationX.ordinal]
+        get() = properties[RotationX]
         set(value) = element.changeProperty(RotationX.ordinal, value)
     override var y: Double
-        get() = element.properties[RotationY.ordinal]
+        get() = properties[RotationY]
         set(value) = element.changeProperty(RotationY.ordinal, value)
     override var z: Double
-        get() = element.properties[RotationZ.ordinal]
+        get() = properties[RotationZ]
         set(value) = element.changeProperty(RotationZ.ordinal, value)
     override var degrees: Double
-        get() = element.properties[RotationAngle.ordinal]
+        get() = properties[RotationAngle]
         set(value) = element.changeProperty(RotationAngle.ordinal, value)
 }
 
 open class ProxiedColor(
-    private val element: AbstractElement
+   private val element: AbstractElement
 ): Color() {
+
+    private val properties = element.properties
+
     override var red: Int
-        get() = element.properties[ColorR.ordinal].toInt()
+        get() = properties[ColorR].toInt()
         set(value) = element.changeProperty(ColorR.ordinal, value)
 
     override var green: Int
-        get() = element.properties[ColorG.ordinal].toInt()
+        get() = properties[ColorG].toInt()
         set(value) = element.changeProperty(ColorG.ordinal, value)
 
     override var blue: Int
-        get() = element.properties[ColorB.ordinal].toInt()
+        get() = properties[ColorB].toInt()
         set(value) = element.changeProperty(ColorB.ordinal, value)
 
     override var alpha: Double
-        get() = element.properties[ColorA.ordinal]
+        get() = properties[ColorA]
         set(value) = element.changeProperty(ColorA.ordinal, value)
 }
 

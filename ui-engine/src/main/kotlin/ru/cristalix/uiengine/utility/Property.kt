@@ -83,7 +83,7 @@ enum class Property(
     ;
 
     companion object {
-        @JvmStatic
+        @JvmField
         val VALUES = values()
     }
 

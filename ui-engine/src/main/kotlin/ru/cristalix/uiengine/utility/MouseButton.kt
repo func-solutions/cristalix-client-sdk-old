@@ -7,7 +7,7 @@ enum class MouseButton {
     MIDDLE;
 
     companion object {
+        @JvmField
         val VALUES = values()
     }
-
 }

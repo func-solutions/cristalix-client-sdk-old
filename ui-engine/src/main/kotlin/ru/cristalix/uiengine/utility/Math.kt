@@ -12,8 +12,8 @@ package ru.cristalix.uiengine.utility
 //) : V2(x, y)
 
 open class V2(
-    open var x: Double = 0.0,
-    open var y: Double = 0.0
+    @JvmField open var x: Double = 0.0,
+    @JvmField open var y: Double = 0.0
 ) {
     open fun write(another: V2) {
         another.x = x
@@ -24,7 +24,7 @@ open class V2(
 open class V3(
     x: Double = 0.0,
     y: Double = 0.0,
-    open var z: Double = 0.0
+    @JvmField open var z: Double = 0.0
 ) : V2(x, y) {
     override fun write(another: V2) {
         super.write(another)
@@ -40,7 +40,7 @@ open class V3(
 }
 
 open class Rotation(
-    open var degrees: Double = 0.0,
+    @JvmField open var degrees: Double = 0.0,
     x: Double = 0.0,
     y: Double = 0.0,
     z: Double = 1.0,

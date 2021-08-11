@@ -131,14 +131,15 @@ inline fun animateImpl(
     easing: Easing = Easings.NONE,
     action: () -> Unit
 ) {
-    val previous = UIEngine.animationContext
+    val engine = UIEngine
+    val previous = engine.animationContext
     val durationMillis = secondsToMillis(seconds)
     val new = AnimationContext(durationMillis, easing)
-    UIEngine.animationContext = new
+    engine.animationContext = new
     try {
         action()
     } finally {
-        UIEngine.animationContext = previous
+        engine.animationContext = previous
     }
 }
 

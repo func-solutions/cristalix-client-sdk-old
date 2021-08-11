@@ -19,13 +19,11 @@ data class Animation(val element: AbstractElement, val propertyIndex: Int) {
     }
 
     fun newTarget(value: Double, duration: Long, easing: Easing) {
-
         this.startValue = this.lastValue
         this.targetValue = value
         this.startedTime = System.currentTimeMillis()
         this.duration = duration
         this.easing = easing
-
     }
 
     fun update(time: Long): Boolean {

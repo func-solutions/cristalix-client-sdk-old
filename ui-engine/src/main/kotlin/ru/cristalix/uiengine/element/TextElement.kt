@@ -13,13 +13,15 @@ open class TextElement() : AbstractElement() {
 
             val lines = value.split("\n").toTypedArray()
             this.lines = lines
-            lineWidthCache = DoubleArray(lines.size) { UIEngine.clientApi.fontRenderer().getStringWidth(lines[it]).toDouble() }
+            val fontRenderer = UIEngine.clientApi.fontRenderer()
+            val lineWidthCache = IntArray(lines.size) { fontRenderer.getStringWidth(lines[it]) }
 
             val emptyLines = lines.count { it.isBlank() }
             this.size = V3(
-                lineWidthCache.max(),
+                lineWidthCache.max().toDouble(),
                 lineHeight * (lines.size - emptyLines) + emptyLineHeight * emptyLines
             )
+            this.lineWidthCache = lineWidthCache
         }
 
     var lineHeight = 9.0
@@ -28,12 +30,14 @@ open class TextElement() : AbstractElement() {
             content = content
         }
 
+    @JvmField
     var emptyLineHeight = 9.0
 
     private var lines: Array<String> = arrayOf()
 
-    private var lineWidthCache: DoubleArray = doubleArrayOf()
+    private var lineWidthCache: IntArray = intArrayOf()
 
+    @JvmField
     var shadow = false
 
     init {
@@ -44,9 +48,9 @@ open class TextElement() : AbstractElement() {
         setup()
     }
 
-
     override fun render() {
 
+        val cachedHexColor = cachedHexColor
         val alpha: Int = cachedHexColor ushr 24
 
         // There is a weird behaviour of vanilla fontRenderer that disables transparency if the alpha value is lower than 5.
@@ -57,23 +61,31 @@ open class TextElement() : AbstractElement() {
         if (alpha != 255) GlStateManager.enableBlend()
         val fontRenderer = UIEngine.clientApi.fontRenderer()
 
-        lines.forEachIndexed { index, line ->
-
+        val lineWidthCache = lineWidthCache
+        val sizeX = size.x
+        val y = if (fontRenderer.unicodeFlag) 0f else 1f
+        val originX = origin.x
+        val lines = lines
+        val emptyLineHeight = emptyLineHeight
+        val lineHeight = lineHeight
+        val shadow = shadow
+        val size = lines.size
+        for (i in 0 until size) {
+            val line = lines[i]
             fontRenderer.drawString(
                 line,
-                ((size.x - lineWidthCache[index]) * origin.x).toFloat(),
-                if (fontRenderer.unicodeFlag) 0f else 1f, cachedHexColor, shadow
+                ((sizeX - lineWidthCache[i]) * originX).toFloat(),
+                y, cachedHexColor, shadow
             )
             GlStateManager.translate(0.0, if (line.isBlank()) emptyLineHeight else lineHeight, 0.0)
-
         }
-
     }
 
-    private fun DoubleArray.max(): Double {
-        if (isEmpty()) return 0.0
+    private fun IntArray.max(): Int {
+        val size = size
+        if (size == 0) return 0
         var max = this[0]
-        for (i in 1..lastIndex) {
+        for (i in 1 until size) {
             val e = this[i]
             max = maxOf(max, e)
         }

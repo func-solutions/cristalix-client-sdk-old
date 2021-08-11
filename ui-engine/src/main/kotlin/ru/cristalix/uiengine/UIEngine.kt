@@ -18,7 +18,7 @@ import java.nio.FloatBuffer
 
 object UIEngine: EventLoop by EventLoopImpl() {
 
-    val matrixBuffer: FloatBuffer = GLAllocation.createDirectFloatBuffer(16)
+    @JvmField val matrixBuffer: FloatBuffer = GLAllocation.createDirectFloatBuffer(16)
 
     /**
      * Instance of ClientApi.
@@ -36,21 +36,21 @@ object UIEngine: EventLoop by EventLoopImpl() {
     /**
      * Ingame HUD context that renders like chat, hotbar, etc.
      */
-    val overlayContext: Context2D = Context2D(size = V3())
+    @JvmField val overlayContext: Context2D = Context2D(size = V3())
 
     /**
      * Ingame HUD context that renders after chests, pause menu and everything else
      */
-    val postOverlayContext: Context2D = Context2D(size = V3())
+    @JvmField val postOverlayContext: Context2D = Context2D(size = V3())
 
     /**
      * World contexts for stuff like holograms.
      * You can add your own Context3D here.
      * Please note that worldContexts is being cleared on respawns / world changes
      */
-    val worldContexts: MutableList<Context3D> = ArrayList()
+    @JvmField val worldContexts: MutableList<Context3D> = ArrayList()
 
-    internal var lastMouseState: BooleanArray = booleanArrayOf(false, false, false)
+    private var lastMouseState: BooleanArray = booleanArrayOf(false, false, false)
 
     fun initialize(mod: JavaMod) {
         initialize(mod.listener, JavaMod.clientApi)
@@ -96,7 +96,9 @@ object UIEngine: EventLoop by EventLoopImpl() {
     }
 
     private fun renderWorld() {
-        worldContexts.forEach { it.transformAndRender() }
+        val worldContexts = worldContexts
+        val size = worldContexts.size
+        for (i in 0 until size) worldContexts[i].transformAndRender()
     }
 
     private fun updateResolution() {
@@ -128,13 +130,14 @@ object UIEngine: EventLoop by EventLoopImpl() {
 
     private fun gameLoop() {
         update()
+        val lastMouseState = lastMouseState
         for (button in MouseButton.VALUES) {
             val idx = button.ordinal
             val oldState = lastMouseState[idx]
             val newState = Mouse.isButtonDown(idx)
             if (oldState != newState) {
                 overlayContext.getForemostHovered()?.run {
-                    onClick?.invoke(ClickEvent(newState, button, hoverPosition!!))
+                    onClick?.invoke(ClickEvent(newState, button, hoverPosition))
                 }
                 lastMouseState[idx] = newState
             }
