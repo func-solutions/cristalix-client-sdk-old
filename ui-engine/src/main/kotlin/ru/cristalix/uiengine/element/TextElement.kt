@@ -14,9 +14,15 @@ open class TextElement() : AbstractElement() {
             val lines = value.split("\n").toTypedArray()
             this.lines = lines
             val fontRenderer = UIEngine.clientApi.fontRenderer()
-            val lineWidthCache = IntArray(lines.size) { fontRenderer.getStringWidth(lines[it]) }
+            var emptyLines = 0
+            val lineWidthCache = IntArray(lines.size) {
+                val line = lines[it]
+                if (line.isBlank()) {
+                    emptyLines++
+                }
+                fontRenderer.getStringWidth(line)
+            }
 
-            val emptyLines = lines.count { it.isBlank() }
             this.size = V3(
                 lineWidthCache.max().toDouble(),
                 lineHeight * (lines.size - emptyLines) + emptyLineHeight * emptyLines
@@ -30,15 +36,13 @@ open class TextElement() : AbstractElement() {
             content = content
         }
 
-    @JvmField
-    var emptyLineHeight = 9.0
+    @JvmField var emptyLineHeight = 9.0
 
     private var lines: Array<String> = arrayOf()
 
     private var lineWidthCache: IntArray = intArrayOf()
 
-    @JvmField
-    var shadow = false
+    @JvmField var shadow = false
 
     init {
         color = WHITE

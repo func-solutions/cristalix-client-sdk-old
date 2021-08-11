@@ -5,10 +5,10 @@ val BLACK = Color(0, 0, 0, 1.0)
 val TRANSPARENT = Color(0, 0, 0, 0.0)
 
 open class Color(
-    @JvmField open var red: Int = 0,
-    @JvmField open var green: Int = 0,
-    @JvmField open var blue: Int = 0,
-    @JvmField open var alpha: Double = 1.0
+    open var red: Int = 0,
+    open var green: Int = 0,
+    open var blue: Int = 0,
+    open var alpha: Double = 1.0
 ) {
     open fun write(another: Color) {
         another.red = this.red
