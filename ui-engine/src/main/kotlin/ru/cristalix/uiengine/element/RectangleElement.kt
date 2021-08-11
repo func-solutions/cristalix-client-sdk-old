@@ -61,6 +61,7 @@ open class RectangleElement : AbstractElement(), Parent {
 //            if (element is RectangleElement) {
         // ToDo: Abstract contextful parents
 //            }
+        element.lastParent = this
         this.children.add(element)
     }
 
