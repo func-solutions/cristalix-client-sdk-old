@@ -4,7 +4,6 @@ import dev.xdark.clientapi.opengl.GlStateManager
 import org.lwjgl.util.vector.Matrix4f
 import org.lwjgl.util.vector.Vector4f
 import ru.cristalix.uiengine.ClickHandler
-import ru.cristalix.uiengine.HoverEvent
 import ru.cristalix.uiengine.HoverHandler
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.UIEngine.matrixBuffer
@@ -207,8 +206,8 @@ abstract class AbstractElement() {
         hoverPosition.y = (-hitbox[0].x).toDouble()
 
         if (this.hovered != hovered) {
-            this.onHover?.invoke(HoverEvent(hovered, hoverPosition))
             this.hovered = hovered
+            this.onHover?.invoke(this)
         }
 
     }

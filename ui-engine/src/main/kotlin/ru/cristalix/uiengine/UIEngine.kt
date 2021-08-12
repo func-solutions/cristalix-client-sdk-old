@@ -138,7 +138,7 @@ object UIEngine: EventLoop by EventLoopImpl() {
             val newState = Mouse.isButtonDown(idx)
             if (oldState != newState) {
                 overlayContext.getForemostHovered()?.run {
-                    onClick?.invoke(ClickEvent(newState, button, hoverPosition))
+                    onClick?.invoke(ClickEvent(newState, button))
                 }
                 lastMouseState[idx] = newState
             }
