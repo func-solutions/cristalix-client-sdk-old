@@ -235,7 +235,7 @@ abstract class AbstractElement() {
     }
 
     fun cleanMatrices() {
-        val dirty = this.dirtyMatrices ?: return
+        val dirty = this.dirtyMatrices
         for (i in dirty.indices) {
             if (dirty[i]) {
                 this.updateMatrix(i - MATRIX_OFFSET)
@@ -293,9 +293,7 @@ abstract class AbstractElement() {
     }
 
     fun markDirty(matrix: Int) {
-        val matrices = dirtyMatrices ?: BooleanArray(MATRIX_COUNT)
-        matrices[matrix] = true
-        dirtyMatrices = matrices
+        dirtyMatrices[matrix + MATRIX_OFFSET] = true
 
         if (matrix == sizeMatrix) {
             markDirty(originMatrix)
