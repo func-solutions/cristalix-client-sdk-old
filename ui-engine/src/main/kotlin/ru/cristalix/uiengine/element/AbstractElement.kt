@@ -125,11 +125,11 @@ abstract class AbstractElement() {
     }
 
     fun beforeTransform(action: () -> Unit) {
-        beforeRender = action
+        beforeTransform = action
     }
 
     fun afterTransform(action: () -> Unit) {
-        afterRender = action
+        afterTransform = action
     }
 
     internal fun changeProperty(index: Int, value: Double) {
