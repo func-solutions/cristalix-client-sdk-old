@@ -1,4 +1,4 @@
-package ru.cristalix.uiengine;
+package ru.cristalix.uiengine.utility;
 
 @FunctionalInterface
 public interface Easing {
