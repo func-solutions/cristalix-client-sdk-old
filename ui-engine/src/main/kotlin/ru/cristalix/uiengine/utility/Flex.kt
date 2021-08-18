@@ -20,7 +20,7 @@ enum class FlexDirection(
 
 }
 
-class Flex: RectangleElement() {
+open class Flex: RectangleElement() {
 
     var flexDirection = FlexDirection.RIGHT
 
