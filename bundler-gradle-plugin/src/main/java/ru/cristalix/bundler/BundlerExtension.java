@@ -2,6 +2,7 @@ package ru.cristalix.bundler;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.gradle.api.tasks.Input;
 import org.gradle.jvm.tasks.Jar;
 
 @Getter
@@ -14,6 +15,8 @@ public class BundlerExtension {
 	private String version = "1.0";
 	private boolean obfuscate = false;
 	private boolean clientMod = false;
+
+	@Input
 	private Jar task;
 
 }

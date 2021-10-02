@@ -27,7 +27,6 @@ public class BundlerPlugin implements Plugin<Project> {
         try {
             File modProperties = new File(project.getBuildDir(), "mod.properties");
 
-
             Jar jar = extension.getTask() != null ? extension.getTask() : (Jar) project.getTasks().getByName("jar");
 
             jar.doFirst(t -> {

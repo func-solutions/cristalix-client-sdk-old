@@ -12,7 +12,7 @@ import ru.cristalix.uiengine.utility.*
 import ru.cristalix.uiengine.utility.Property.*
 
 @Suppress("LeakingThis")
-abstract class AbstractElement() {
+abstract class AbstractElement(): IElement {
 
     @JvmField val properties: DoubleArray = DoubleArray(Property.VALUES.size)
     @JvmField val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
@@ -87,7 +87,7 @@ abstract class AbstractElement() {
     var rotation: Rotation = ProxiedRotation(this)
         set(value) = value.write(field)
 
-    var size: V3 = ProxiedV3(SizeX.ordinal, this)
+    override var size: V3 = ProxiedV3(SizeX.ordinal, this)
         set(value) = value.write(field)
 
     init {
