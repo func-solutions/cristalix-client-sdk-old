@@ -57,6 +57,17 @@ class CuboidElement : AbstractElement(), Parent {
         }
     }
 
+    override fun syncChild(vararg elements: AbstractElement) {
+        val properties = properties
+        val x = properties[Property.SizeX]
+        val y = properties[Property.SizeY]
+        for (element in elements) {
+            element.changeProperty(Property.ParentSizeX.ordinal, x)
+            element.changeProperty(Property.ParentSizeY.ordinal, y)
+            element.lastParent = this
+        }
+    }
+
     override fun updateMatrix(matrixId: Int) {
         if (matrixId == sizeMatrix) {
             val children = children

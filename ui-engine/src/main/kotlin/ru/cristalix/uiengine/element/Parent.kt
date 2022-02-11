@@ -14,6 +14,8 @@ interface Parent: IElement {
 
     fun removeChild(vararg elements: AbstractElement)
 
+    fun syncChild(vararg elements: AbstractElement)
+
     operator fun <T : AbstractElement> T.unaryPlus(): T {
         this@Parent.addChild(this)
         return this

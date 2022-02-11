@@ -22,7 +22,7 @@ abstract class Context : RectangleElement() {
         val width = resolution.scaledWidth_double
         val height = resolution.scaledHeight_double
 
-        if (width != size.x || height != size.y) {
+        if (this !is Context3D && (width != size.x || height != size.y)) {
             size = V3(width, height)
         }
 
@@ -32,8 +32,7 @@ abstract class Context : RectangleElement() {
         if (interactive) {
             val baseMatrix = baseMatrix
             baseMatrix.setIdentity()
-            baseMatrix.translate(Vector2f(-x, -y.toFloat()))
-            updateHoverState(baseMatrix)
+            updateHoverState(baseMatrix, Vector4f(x, y.toFloat(), 0f, 1f))
         }
 
         super.transformAndRender()

@@ -4,10 +4,16 @@ import dev.xdark.clientapi.ClientApi;
 import dev.xdark.clientapi.entry.ModMain;
 import dev.xdark.clientapi.event.Listener;
 import dev.xdark.clientapi.event.network.PluginMessage;
+import dev.xdark.clientapi.resource.ResourceLocation;
+import dev.xdark.clientapi.texture.RenderEngine;
 import dev.xdark.feder.NetUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -76,6 +82,29 @@ public class JavaMod implements ModMain {
             runnable.run();
 
         onDisable.clear();
+    }
+
+    public static ResourceLocation loadTextureFromJar(ClientApi clientApi, String namespace, String address, String path) {
+        try {
+            if (!path.startsWith("/")) path = "/" + path;
+            InputStream stream = JavaMod.class.getResourceAsStream(path);
+            if (stream == null) {
+                throw new IllegalArgumentException("No resource with path " + path + " found");
+            }
+            BufferedImage image = ImageIO.read(stream);
+
+            ResourceLocation location = ResourceLocation.of(namespace, address);
+            RenderEngine renderEngine = clientApi.renderEngine();
+            renderEngine.deleteTexture(location);
+            renderEngine.loadTexture(location, renderEngine.newImageTexture(image, false, false));
+            return location;
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public ResourceLocation loadTextureFromJar(String namespace, String address, String path) {
+        return loadTextureFromJar(clientApi, namespace, address, path);
     }
 
 }

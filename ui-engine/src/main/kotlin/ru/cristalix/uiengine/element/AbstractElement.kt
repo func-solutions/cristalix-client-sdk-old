@@ -178,7 +178,9 @@ abstract class AbstractElement(): IElement {
         this.interactive = enabled && (onHover != null || onClick != null)
     }
 
-    open fun updateHoverState(mouseMatrix: Matrix4f) {
+    protected val invertedMouseMatrix = Matrix4f()
+    protected val normalizedMouseVector = Vector4f()
+    open fun updateHoverState(mouseMatrix: Matrix4f, mouseVector: Vector4f) {
         val matrices = matrices
         val count = matrices.size
         for (i in 0 until count) {
@@ -187,23 +189,22 @@ abstract class AbstractElement(): IElement {
                 Matrix4f.mul(mouseMatrix, m, mouseMatrix)
             }
         }
-        val size = size
-        val hitbox = arrayOf(
-            Vector4f(0f, 0f, 0f, 1f),
-            Vector4f(0f, size.y.toFloat(), 0f, 1f),
-            Vector4f(size.x.toFloat(), size.y.toFloat(), 0f, 1f),
-            Vector4f(size.x.toFloat(), 0f, 0f, 1f),
-        )
 
-        for (vertex in hitbox) {
-            Matrix4f.transform(mouseMatrix, vertex, vertex)
+        val hoverPosition = hoverPosition
+        if (Matrix4f.invert(mouseMatrix, invertedMouseMatrix) == null) {
+            hoverPosition.x = 0.0
+            hoverPosition.y = 0.0
+            return
         }
 
-        val hovered = containsZero(hitbox)
+        Matrix4f.transform(invertedMouseMatrix, mouseVector, normalizedMouseVector)
 
-        val hoverPosition =  hoverPosition
-        hoverPosition.x = (-hitbox[0].x).toDouble()
-        hoverPosition.y = (-hitbox[0].x).toDouble()
+        val hoverX = normalizedMouseVector.x.toDouble()
+        val hoverY = normalizedMouseVector.y.toDouble()
+        hoverPosition.x = hoverX
+        hoverPosition.y = hoverY
+
+        val hovered = hoverX >= 0 && hoverY >= 0 && hoverX < size.x && hoverY < size.y
 
         if (this.hovered != hovered) {
             this.hovered = hovered
@@ -213,7 +214,7 @@ abstract class AbstractElement(): IElement {
     }
 
     open fun getForemostHovered(): AbstractElement? {
-        return if (interactive && hovered) this else null
+        return if (enabled && interactive && hovered) this else null
     }
 
     fun containsZero(convex: Array<Vector4f>): Boolean {

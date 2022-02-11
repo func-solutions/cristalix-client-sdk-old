@@ -20,6 +20,9 @@ subprojects {
 
 
     afterEvaluate {
+        tasks.jar {
+            from(sourceSets.main.get().allSource)
+        }
         publishing {
             repositories {
                 maven {

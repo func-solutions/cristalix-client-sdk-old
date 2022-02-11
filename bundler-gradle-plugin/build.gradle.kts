@@ -4,7 +4,7 @@ plugins {
 }
 
 val artifact = "bundler"
-version = "3.0.3"
+version = "4.0.1"
 group = "dev.implario"
 
 gradlePlugin {

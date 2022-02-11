@@ -66,6 +66,17 @@ open class RectangleElement : AbstractElement(), Parent {
         this.children.add(element)
     }
 
+    override fun syncChild(vararg elements: AbstractElement) {
+        val properties = properties
+        val x = properties[Property.SizeX]
+        val y = properties[Property.SizeY]
+        for (element in elements) {
+            element.changeProperty(Property.ParentSizeX.ordinal, x)
+            element.changeProperty(Property.ParentSizeY.ordinal, y)
+            element.lastParent = this
+        }
+    }
+
     override fun addChild(vararg elements: AbstractElement) {
         val properties = properties
         val x = properties[Property.SizeX]
@@ -98,8 +109,8 @@ open class RectangleElement : AbstractElement(), Parent {
         }
     }
 
-    override fun updateHoverState(mouseMatrix: Matrix4f) {
-        super.updateHoverState(mouseMatrix)
+    override fun updateHoverState(mouseMatrix: Matrix4f, mouseVector: Vector4f) {
+        super.updateHoverState(mouseMatrix, mouseVector)
 
         val children = children
         if (children.isEmpty()) return
@@ -109,13 +120,13 @@ open class RectangleElement : AbstractElement(), Parent {
 
             val matrix = Matrix4f()
             matrix.load(mouseMatrix)
-            child.updateHoverState(matrix)
+            child.updateHoverState(matrix, mouseVector)
         }
     }
 
     override fun getForemostHovered(): AbstractElement? {
         val children = children
-        if (interactive) {
+        if (enabled && interactive) {
             for (i in children.size - 1 downTo 0) {
                 children[i].getForemostHovered()?.let { return it }
             }
