@@ -92,6 +92,7 @@ public class JavaMod implements ModMain {
                 throw new IllegalArgumentException("No resource with path " + path + " found");
             }
             BufferedImage image = ImageIO.read(stream);
+            stream.close();
 
             ResourceLocation location = ResourceLocation.of(namespace, address);
             RenderEngine renderEngine = clientApi.renderEngine();

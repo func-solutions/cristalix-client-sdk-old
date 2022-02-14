@@ -39,6 +39,9 @@ open class RectangleElement : AbstractElement(), Parent {
     @JvmField
     var mask: Boolean = false
 
+    @JvmField
+    var layering: Boolean = false
+
     override val children: MutableList<AbstractElement> = ArrayList()
 
     init {
@@ -185,24 +188,13 @@ open class RectangleElement : AbstractElement(), Parent {
         val mask = mask
         val properties = properties
 
+        val children = children
+        val childrenAmount = children.size
         if (mask) {
-            val overlayContext = engine.overlayContext
-            GlStateManager.enableStencil()
-            GlStateManager.stencilFunc(GL11.GL_GREATER, overlayContext.stencilPos, 0xFF)
-            GlStateManager.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_INCR)
-            GlStateManager.disableDepth()
-            GlStateManager.disableAlpha()
-            api.overlayRenderer().drawRect(
-                0, 0,
-                properties[Property.SizeX].toInt(),
-                properties[Property.SizeY].toInt(),
-                0
-            )
             GlStateManager.enableDepth()
-
-            GlStateManager.stencilFunc(GL11.GL_GREATER, ++overlayContext.stencilPos, 0xFF)
-            GlStateManager.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP)
+            GlStateManager.translate(0f, 0f, 0.97f)
         }
+
 
         val color = color
 
@@ -210,7 +202,7 @@ open class RectangleElement : AbstractElement(), Parent {
             depth++
         }
 
-        if (color.alpha > 0) {
+        if (color.alpha > 0 || mask) {
             val textureLocation = textureLocation
             if (textureLocation != null) {
                 api.renderEngine().bindTexture(textureLocation)
@@ -261,7 +253,6 @@ open class RectangleElement : AbstractElement(), Parent {
             }
         }
 
-        val children = children
         if (debug) {
             val d = debugColors[abs(depth) % debugColors.size]
             GlStateManager.color(d[0], d[1], d[2], 0.6f)
@@ -288,10 +279,23 @@ open class RectangleElement : AbstractElement(), Parent {
             GlStateManager.disableBlend()
         }
 
-        if (children.isNotEmpty()) {
+        if (childrenAmount > 0) {
+            if (mask) {
+//                GlStateManager.translate(0f, 0f, -1f)
+                GlStateManager.depthFunc(GL11.GL_EQUAL)
+                GlStateManager.depthMask(false)
+            }
+            val offset = 1.02f / (childrenAmount + 1)
             for (child in children) {
+                if (layering) {
+                    GlStateManager.translate(0f, 0f, offset)
+                }
                 child.lastParent = this
                 child.transformAndRender()
+            }
+            if (mask) {
+                GlStateManager.depthMask(true)
+                GlStateManager.depthFunc(GL11.GL_LEQUAL)
             }
         }
 
@@ -300,20 +304,7 @@ open class RectangleElement : AbstractElement(), Parent {
         }
 
         if (mask) {
-            engine.overlayContext.stencilPos--
-            GlStateManager.stencilFunc(GL11.GL_ALWAYS, 0, 0xFF)
-            GlStateManager.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_DECR)
             GlStateManager.disableDepth()
-            GlStateManager.disableAlpha()
-            api.overlayRenderer().drawRect(
-                0, 0,
-                properties[Property.SizeX].toInt(),
-                properties[Property.SizeY].toInt(),
-                0
-            )
-            GlStateManager.enableDepth()
-            GlStateManager.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP)
         }
     }
-
 }
