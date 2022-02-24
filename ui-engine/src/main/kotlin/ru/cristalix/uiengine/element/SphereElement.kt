@@ -11,14 +11,6 @@ import kotlin.math.sin
 class SphereElement : AbstractElement() {
 
     override fun render() {
-        val mc = clientApi.minecraft()
-        // Переменные для того, чтобы при перемещении игрока, фигура стояла в нужном месте
-        val entity = mc.renderViewEntity
-        val pt = mc.timer.renderPartialTicks
-        val prevX = entity.prevX
-        val prevY = entity.prevY
-        val prevZ = entity.prevZ
-
         // GL начало
         GlStateManager.disableLighting()
         GlStateManager.disableTexture2D()
@@ -33,9 +25,9 @@ class SphereElement : AbstractElement() {
         val accuracy = 20.0
 
         // Координаты сферы (если они есть и у родителя - координаты самой сферы становятся относительными)
-        val dx = (lastParent?.offset?.x ?: 0.0) + offset.x - (entity.x - prevX) * pt - prevX
-        val dy = (lastParent?.offset?.y ?: 0.0) + offset.y - (entity.y - prevY) * pt - prevY
-        val dz = (lastParent?.offset?.z ?: 0.0) + offset.z - (entity.z - prevZ) * pt - prevZ
+        val dx = (lastParent?.offset?.x ?: 0.0) + offset.x 
+        val dy = (lastParent?.offset?.y ?: 0.0) + offset.y 
+        val dz = (lastParent?.offset?.z ?: 0.0) + offset.z 
 
         // Начало отрисовки сферы
         var j: Int
