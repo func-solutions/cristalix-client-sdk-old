@@ -24,10 +24,9 @@ class SphereElement : AbstractElement() {
         // Количество вершин на срезе (можно разбить на два измерения)
         val accuracy = 20.0
 
-        // Координаты сферы (если они есть и у родителя - координаты самой сферы становятся относительными)
-        val dx = offset.x
-        val dy = offset.y
-        val dz = offset.z
+        val dx = size.x / 2
+        val dy = size.y / 2
+        val dz = size.z / 2
 
         // Начало отрисовки сферы
         var j: Int
@@ -51,12 +50,12 @@ class SphereElement : AbstractElement() {
             while (j <= accuracy) {
                 val lng = 2.0 * Math.PI * (j - 1.0) / accuracy
                 // Прочет x, y координат точек сферы
-                val x = cos(lng) * size.x * 10.0
-                val y = sin(lng) * size.y * 10.0
+                val x = cos(lng) * size.x * 10.0 / 2
+                val y = sin(lng) * size.y * 10.0 / 2
 
                 // Заполнение буффера вершинами и нормалями
-                writeNormalAndPosition(buffer, dx + x * zr0, dy + y * zr0, dz + size.z * 10.0 * z0)
-                writeNormalAndPosition(buffer, dx + x * zr1, dy + y * zr1, dz + size.z * 10.0 * z1)
+                writeNormalAndPosition(buffer, dx + x * zr0, dy + y * zr0, dz + size.z / 2 * 10.0 * z0)
+                writeNormalAndPosition(buffer, dx + x * zr1, dy + y * zr1, dz + size.z / 2 * 10.0 * z1)
                 j++
             }
             // Отрисовка и чистка буффера
