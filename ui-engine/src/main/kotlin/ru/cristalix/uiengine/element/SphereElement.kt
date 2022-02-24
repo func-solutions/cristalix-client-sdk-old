@@ -25,9 +25,9 @@ class SphereElement : AbstractElement() {
         val accuracy = 20.0
 
         // Координаты сферы (если они есть и у родителя - координаты самой сферы становятся относительными)
-        val dx = (lastParent?.offset?.x ?: 0.0) + offset.x 
-        val dy = (lastParent?.offset?.y ?: 0.0) + offset.y 
-        val dz = (lastParent?.offset?.z ?: 0.0) + offset.z 
+        val dx = offset.x
+        val dy = offset.y
+        val dz = offset.z
 
         // Начало отрисовки сферы
         var j: Int
