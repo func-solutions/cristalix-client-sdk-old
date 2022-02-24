@@ -85,12 +85,10 @@ class CuboidElement : AbstractElement(), Parent {
                 }
             }
         }
-
         super.updateMatrix(matrixId)
     }
 
     override fun render() {
-
         val api = clientApi
         GlStateManager.enableBlend()
 
@@ -169,7 +167,6 @@ class CuboidElement : AbstractElement(), Parent {
             tessellator.draw()
 
             GlStateManager.color(1f, 1f, 1f, 1f)
-
         } else {
             val properties = properties
             api.overlayRenderer().drawRect(
@@ -184,8 +181,5 @@ class CuboidElement : AbstractElement(), Parent {
             it.lastParent = this
             it.transformAndRender()
         }
-
     }
-
-
 }
