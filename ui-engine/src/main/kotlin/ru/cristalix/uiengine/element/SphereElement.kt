@@ -18,8 +18,8 @@ class SphereElement : AbstractElement() {
         GlStateManager.disableCull()
         GlStateManager.shadeModel(GL11.GL_SMOOTH)
         GlStateManager.enableBlend()
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE)
-        GlStateManager.color(color.red.toFloat(), color.green.toFloat(), color.blue.toFloat(), color.alpha.toFloat())
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+        GlStateManager.color(color.red.toFloat() / 255f, color.green.toFloat()  / 255f, color.blue.toFloat()  / 255f, color.alpha.toFloat())
 
         // Количество вершин на срезе (можно разбить на два измерения)
         val accuracy = 20.0
@@ -65,7 +65,6 @@ class SphereElement : AbstractElement() {
 
         // GL конец
         GlStateManager.color(1f, 1f, 1f, 1f)
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_CONSTANT_COLOR)
         GlStateManager.shadeModel(GL11.GL_FLAT)
         GlStateManager.enableTexture2D()
         GlStateManager.enableAlpha()
