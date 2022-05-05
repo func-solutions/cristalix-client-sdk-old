@@ -17,6 +17,11 @@ subprojects {
     apply(plugin = "maven-publish")
     apply(plugin = "org.jetbrains.kotlin.jvm")
 
+    java {
+        toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+        withSourcesJar()
+    }
+
     tasks {
         withType<Jar> { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
         withType<JavaCompile> { options.encoding = "UTF-8" }
