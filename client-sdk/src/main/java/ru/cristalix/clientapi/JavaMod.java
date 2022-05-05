@@ -19,62 +19,41 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class JavaMod implements ModMain {
-
-    public static ClientApi clientApi;
+    public ClientApi clientApi;
 
     public List<Runnable> onDisable = new ArrayList<>();
     public Listener listener;
 
-    /**
-     * Bundler substitutes this check with a constant value.
-     * This is required for client mods to work properly.
-     */
-    public static boolean isClientMod() {
-        return Boolean.getBoolean("ru.cristalix.uiengine.no3dInit");
-    }
-
     @Override
     public final void load(ClientApi clientApi) {
-
-        JavaMod.clientApi = clientApi;
+        this.clientApi = clientApi;
 
         listener = clientApi.eventBus().createListener();
 
-        onDisable.add(new Runnable() {
-            @Override
-            public void run() {
-                clientApi.eventBus().unregisterAll(listener);
-            }
-        });
+        onDisable.add(() -> clientApi.eventBus().unregisterAll(listener));
 
-        if (!isClientMod()) {
-            String modClass = this.getClass().getName();
+        String modClass = this.getClass().getName();
 
-            clientApi.eventBus().register(listener, PluginMessage.class, new Consumer<PluginMessage>() {
-                @Override
-                public void accept(PluginMessage pluginMessage) {
-                    if (pluginMessage.getChannel().equals("sdkreload")) {
-                        ByteBuf data = pluginMessage.getData();
-                        String clazz = NetUtil.readUtf8(data);
-                        if (!clazz.equals(modClass)) {
-                            data.resetReaderIndex();
-                            return;
-                        }
-
-                        ByteBuf buffer = Unpooled.buffer();
-                        NetUtil.writeUtf8(clazz, buffer);
-                        clientApi.clientConnection().sendPayload("sdkconfirm", buffer);
-                        unload();
-                    }
+        clientApi.eventBus().register(listener, PluginMessage.class, (Consumer<PluginMessage>) pluginMessage -> {
+            if (pluginMessage.getChannel().equals("sdkreload")) {
+                ByteBuf data = pluginMessage.getData();
+                String clazz = NetUtil.readUtf8(data);
+                if (!clazz.equals(modClass)) {
+                    data.resetReaderIndex();
+                    return;
                 }
-            }, 0);
-        }
+
+                ByteBuf buffer = Unpooled.buffer();
+                NetUtil.writeUtf8(clazz, buffer);
+                clientApi.clientConnection().sendPayload("sdkconfirm", buffer);
+                unload();
+            }
+        }, 0);
 
         onEnable();
-
     }
 
-    public void onEnable() { }
+    public void onEnable() {}
 
     @Override
     public final void unload() {
@@ -84,7 +63,12 @@ public class JavaMod implements ModMain {
         onDisable.clear();
     }
 
-    public static ResourceLocation loadTextureFromJar(ClientApi clientApi, String namespace, String address, String path) {
+    public static ResourceLocation loadTextureFromJar(
+        ClientApi clientApi,
+        String namespace,
+        String address,
+        String path
+    ) {
         try {
             if (!path.startsWith("/")) path = "/" + path;
             InputStream stream = JavaMod.class.getResourceAsStream(path);
@@ -104,8 +88,11 @@ public class JavaMod implements ModMain {
         }
     }
 
-    public ResourceLocation loadTextureFromJar(String namespace, String address, String path) {
+    public ResourceLocation loadTextureFromJar(
+        String namespace,
+        String address,
+        String path
+    ) {
         return loadTextureFromJar(clientApi, namespace, address, path);
     }
-
 }

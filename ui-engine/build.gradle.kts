@@ -1,31 +1,15 @@
-plugins {
-    kotlin("jvm") version "1.4.21"
-}
-
-apply("plugin" to "kotlin")
-
-group = "ru.cristalix"
-
 dependencies {
-    compileOnly(project(":client-api"))
-    compileOnly(project(":client-sdk"))
-    compileOnly(kotlin("stdlib"))
-}
+    implementation(kotlin("stdlib"))
 
-tasks.compileJava.get().run {
-    sourceCompatibility = "1.8"
-    targetCompatibility = "1.8"
+    api(projects.clientSdk)
 }
-tasks.compileKotlin.get().kotlinOptions.jvmTarget = "1.8"
 
 publishing {
     publications {
-        create<MavenPublication>("uiengine") {
-            groupId = "ru.cristalix"
+        create<MavenPublication>("maven") {
             artifactId = "uiengine"
-            version = "3.15.8"
+
             from(components["java"])
         }
     }
 }
-

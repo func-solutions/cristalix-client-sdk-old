@@ -9,7 +9,6 @@ import dev.xdark.clientapi.opengl.GLAllocation
 import org.lwjgl.input.Mouse
 import ru.cristalix.clientapi.JavaMod
 import ru.cristalix.clientapi.registerHandler
-import ru.cristalix.clientapi.theMod
 import ru.cristalix.uiengine.element.*
 import ru.cristalix.uiengine.eventloop.EventLoop
 import ru.cristalix.uiengine.eventloop.EventLoopImpl
@@ -17,9 +16,10 @@ import ru.cristalix.uiengine.utility.MouseButton
 import ru.cristalix.uiengine.utility.V3
 import java.nio.FloatBuffer
 
-object UIEngine: EventLoop by EventLoopImpl() {
+object UIEngine : EventLoop by EventLoopImpl() {
 
-    @JvmField val matrixBuffer: FloatBuffer = GLAllocation.createDirectFloatBuffer(16)
+    @JvmField
+    val matrixBuffer: FloatBuffer = GLAllocation.createDirectFloatBuffer(16)
 
     /**
      * Instance of ClientApi.
@@ -37,24 +37,27 @@ object UIEngine: EventLoop by EventLoopImpl() {
     /**
      * Ingame HUD context that renders like chat, hotbar, etc.
      */
-    @JvmField val overlayContext: Context2D = Context2D(size = V3())
+    @JvmField
+    val overlayContext: Context2D = Context2D(size = V3())
 
     /**
      * Ingame HUD context that renders after chests, pause menu and everything else
      */
-    @JvmField val postOverlayContext: Context2D = Context2D(size = V3())
+    @JvmField
+    val postOverlayContext: Context2D = Context2D(size = V3())
 
     /**
      * World contexts for stuff like holograms.
      * You can add your own Context3D here.
      * Please note that worldContexts is being cleared on respawns / world changes
      */
-    @JvmField val worldContexts: MutableList<Context3D> = ArrayList()
+    @JvmField
+    val worldContexts: MutableList<Context3D> = ArrayList()
 
     private var lastMouseState: BooleanArray = booleanArrayOf(false, false, false)
 
     fun initialize(mod: JavaMod) {
-        initialize(mod.listener, JavaMod.clientApi)
+        mod.run { initialize(mod.listener, mod.clientApi) }
         mod.onDisable.add { uninitialize() }
     }
 
@@ -62,36 +65,32 @@ object UIEngine: EventLoop by EventLoopImpl() {
      * Main cristalix UI engine entrypoint.
      * It is recommended for every mod to call this as the first statement inside ModMain#load.
      */
+    context(JavaMod)
     fun initialize(clientApi: ClientApi) {
         initialize(clientApi.eventBus().createListener(), clientApi)
     }
 
+    context(JavaMod)
     fun initialize(listener: Listener, clientApi: ClientApi) {
         this.clientApi = clientApi
         this.listener = listener
 
         registerHandler<GuiOverlayRender>(listener) { renderOverlay() }
 
-        if (!JavaMod.isClientMod()) {
-            registerHandler<RenderTickPost>(listener) { renderPost() }
-        }
+        registerHandler<RenderTickPost>(listener) { renderPost() }
 
         registerHandler<GameLoop>(listener) { gameLoop() }
         updateResolution()
         registerHandler<WindowResize>(listener) { updateResolution() }
         registerHandler<ScaleChange>(listener) { updateResolution() }
-        if (!JavaMod.isClientMod()) {
-            registerHandler<RenderPass>(listener) { renderWorld() }
-        }
+        registerHandler<RenderPass>(listener) { renderWorld() }
     }
 
     fun uninitialize() {
 
-        if (!JavaMod.isClientMod()) {
-            // Close any GUIs before disabling
-            if (clientApi.minecraft().currentScreen() is ContextGui)
-                clientApi.minecraft().displayScreen(null)
-        }
+        // Close any GUIs before disabling
+        if (clientApi.minecraft().currentScreen() is ContextGui)
+            clientApi.minecraft().displayScreen(null)
 
         GLAllocation.freeBuffer(matrixBuffer)
     }

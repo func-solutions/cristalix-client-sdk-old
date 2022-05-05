@@ -4,12 +4,12 @@ import dev.xdark.clientapi.opengl.GlStateManager
 import dev.xdark.clientapi.render.BufferBuilder
 import dev.xdark.clientapi.render.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
-import ru.cristalix.clientapi.JavaMod.clientApi
+import ru.cristalix.clientapi.JavaMod
 import kotlin.math.cos
 import kotlin.math.sin
 
+context(JavaMod)
 class SphereElement : AbstractElement() {
-
     override fun render() {
         // GL начало
         GlStateManager.disableLighting()
