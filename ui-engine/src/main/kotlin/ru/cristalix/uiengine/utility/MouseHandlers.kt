@@ -21,7 +21,7 @@ inline fun AbstractElement.onMouseUp(crossinline action: ClickHandler) {
     }
 }
 
-data class ClickEvent(
+class ClickEvent(
     val down: Boolean,
     val button: MouseButton
 )

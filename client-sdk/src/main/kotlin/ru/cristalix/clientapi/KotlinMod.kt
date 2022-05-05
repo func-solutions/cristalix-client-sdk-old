@@ -9,12 +9,23 @@ import dev.xdark.clientapi.event.network.PluginMessage
 import io.netty.buffer.ByteBuf
 
 context(JavaMod)
-inline fun <T : Event> EventBus<T>.register(
+fun <T : Event> EventBus<T>.register(
     listener: Listener = this@JavaMod.listener,
     priority: Int = 1,
-    noinline handler: T.() -> Unit
+    handler: T.() -> Unit
 ) {
     register(listener, handler, priority)
+}
+
+context(JavaMod)
+@Suppress("FunctionName")
+fun <T : Event> _registerHandler(
+    clazz: Class<T>,
+    listener: Listener = this@JavaMod.listener,
+    priority: Int = 1,
+    handler: T.() -> Unit
+) {
+    Event.bus(clazz).register(listener, handler, priority)
 }
 
 context(JavaMod)
@@ -22,16 +33,14 @@ inline fun <reified T : Event> registerHandler(
     listener: Listener = this@JavaMod.listener,
     priority: Int = 1,
     noinline handler: T.() -> Unit
-) {
-    Event.bus(T::class.java).register(listener, handler, priority)
-}
+): Unit = _registerHandler(T::class.java, listener, priority, handler)
 
 abstract class KotlinMod : JavaMod() {
     inline fun <reified T : Event> registerHandler(priority: Int = 1, noinline handler: T.() -> Unit) {
         registerHandler(listener, priority, handler)
     }
 
-    inline fun registerChannel(channel: String, priority: Int = 1, crossinline handler: ByteBuf.() -> Unit) {
+    fun registerChannel(channel: String, priority: Int = 1, handler: ByteBuf.() -> Unit) {
         registerHandler<PluginMessage>(priority) {
             if (this.channel == channel) {
                 handler(data)

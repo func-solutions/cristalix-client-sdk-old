@@ -12,7 +12,7 @@ import ru.cristalix.uiengine.element.AbstractElement
 @JvmField val BOTTOM: V3 = V3(0.5, 1.0)
 @JvmField val BOTTOM_RIGHT: V3 = V3(1.0, 1.0)
 
-inline fun <T: AbstractElement> T.matchParentSize(x: Boolean = false, y: Boolean = false, z: Boolean = false) {
+fun <T: AbstractElement> T.matchParentSize(x: Boolean = false, y: Boolean = false, z: Boolean = false) {
     beforeRender {
         lastParent?.let {
             val size = size
