@@ -6,6 +6,7 @@ import dev.xdark.clientapi.event.lifecycle.GameLoop
 import dev.xdark.clientapi.event.render.*
 import dev.xdark.clientapi.event.window.WindowResize
 import dev.xdark.clientapi.opengl.GLAllocation
+import dev.xdark.clientapi.opengl.GlStateManager
 import org.lwjgl.input.Mouse
 import ru.cristalix.clientapi.JavaMod
 import ru.cristalix.clientapi.registerHandler

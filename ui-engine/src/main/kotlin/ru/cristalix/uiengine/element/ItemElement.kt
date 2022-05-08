@@ -26,5 +26,4 @@ open class ItemElement() : AbstractElement() {
             RenderHelper.disableStandardItemLighting()
         }
     }
-
 }

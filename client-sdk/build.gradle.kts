@@ -16,7 +16,7 @@ publishing {
         create<MavenPublication>("clientSdk") {
             groupId = "ru.cristalix"
             artifactId = "client-sdk"
-            version = "5.4.2"
+            version = "1.0.0"
             from(components["java"])
         }
     }

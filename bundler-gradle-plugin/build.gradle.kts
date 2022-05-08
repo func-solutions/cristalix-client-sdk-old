@@ -4,7 +4,7 @@ plugins {
 }
 
 val artifact = "bundler"
-version = "4.0.1"
+version = "1.0.0"
 group = "dev.implario"
 
 gradlePlugin {
@@ -19,8 +19,8 @@ gradlePlugin {
 }
 
 pluginBundle {
-    website = "https://github.com/delfikpro/cristalix-client-sdk/"
-    vcsUrl = "https://github.com/delfikpro/cristalix-client-sdk/"
+    website = "https://github.com/cristalix-arcades/cristalix-client-sdk/"
+    vcsUrl = "https://github.com/cristalix-arcades/cristalix-client-sdk/"
     tags = listOf("minecraft", "cristalix", "bundler")
 }
 
