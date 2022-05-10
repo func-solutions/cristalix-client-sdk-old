@@ -14,3 +14,5 @@ inline fun cube(setup: CuboidElement.() -> Unit) = CuboidElement().also(setup)
 
 context(JavaMod)
 inline fun sphere(setup: SphereElement.() -> Unit) = SphereElement().also(setup)
+
+inline fun carved(setup: CarvedRectangle.() -> Unit) = CarvedRectangle().also(setup)
