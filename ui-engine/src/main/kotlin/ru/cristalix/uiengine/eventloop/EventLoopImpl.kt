@@ -1,12 +1,27 @@
 package ru.cristalix.uiengine.eventloop
 
+import kotlin.properties.Delegates
+
 class EventLoopImpl: EventLoop {
 
-    private val runningTasks: MutableList<Task> = ArrayList()
+    companion object {
+        // ахАХХАХХАХАХА неважно зачем это допустим прогард момент?
+        fun EventLoopImpl.init() {
+            runningTasks = arrayListOf()
+            inEventLoop = false
+            runningAnimations = arrayListOf()
+        }
+    }
+
+    private lateinit var runningTasks: MutableList<Task>
     private var eventLoopBuffer: MutableList<Task>? = null
-    private var inEventLoop = false
-    override val runningAnimations: MutableList<Animation> = ArrayList()
+    private var inEventLoop by Delegates.notNull<Boolean>()
+    override lateinit var runningAnimations: MutableList<Animation>
     override var animationContext: AnimationContext? = null
+
+    init {
+        init()
+    }
 
     override fun schedule(delaySeconds: Double, action: () -> Unit): Task {
         val task = Task(System.currentTimeMillis() + (delaySeconds * 1000).toLong(), action)
@@ -20,7 +35,6 @@ class EventLoopImpl: EventLoop {
     }
 
     override fun update() {
-
         val time = System.currentTimeMillis()
 
         val runningTasks = runningTasks
