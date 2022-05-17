@@ -4,7 +4,7 @@ import ru.cristalix.uiengine.utility.LEFT
 import ru.cristalix.uiengine.utility.RIGHT
 import ru.cristalix.uiengine.utility.rectangle
 
-class CarvedRectangle(
+open class CarvedRectangle(
     var carveSize: Double = 1.0,
 ): RectangleElement() {
     val main = +rectangle {}
