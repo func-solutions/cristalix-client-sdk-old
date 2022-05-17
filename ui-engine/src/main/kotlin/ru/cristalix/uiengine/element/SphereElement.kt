@@ -8,7 +8,7 @@ import ru.cristalix.clientapi.JavaMod.clientApi
 import kotlin.math.cos
 import kotlin.math.sin
 
-class SphereElement : AbstractElement() {
+open class SphereElement : AbstractElement() {
 
     override fun render() {
         // GL начало
