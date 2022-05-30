@@ -72,8 +72,13 @@ abstract class AbstractElement(): IElement {
     var offset: V3 = ProxiedV3(OffsetX.ordinal, this)
         set(value) = value.write(field)
 
+    @Suppress("SetterBackingFieldAssignment")
     var scale: V3 = ProxiedV3(ScaleX.ordinal, this)
-        set(value) = value.write(field)
+        set(value) {
+            if (value.z == 0.0)
+                value.z = 1.0
+            value.write(field)
+        }
 
     var align: V3 = ProxiedV3(AlignX.ordinal, this)
         set(value) = value.write(field)

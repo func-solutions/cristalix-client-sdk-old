@@ -16,3 +16,6 @@ context(JavaMod)
 inline fun sphere(setup: SphereElement.() -> Unit) = SphereElement().also(setup)
 
 inline fun carved(setup: CarvedRectangle.() -> Unit) = CarvedRectangle().also(setup)
+
+inline fun input(gui: ContextGui, setup: InputElement.() -> Unit) = InputElement(gui).also(setup)
+

@@ -2,6 +2,8 @@ package ru.cristalix.uiengine.element
 
 import org.lwjgl.input.Keyboard
 import ru.cristalix.uiengine.UIEngine
+import ru.cristalix.uiengine.UIEngine.clientApi
+import ru.cristalix.uiengine.eventloop.animate
 import ru.cristalix.uiengine.onMouseDown
 import ru.cristalix.uiengine.utility.CENTER
 import ru.cristalix.uiengine.utility.flex
@@ -10,23 +12,24 @@ import kotlin.math.pow
 
 open class InputElement(gui: ContextGui) : CarvedRectangle() {
     var typing = false
+    lateinit var contentText: TextElement
+
     var hint = ""
         set(value) {
             hintText.content = "§7$value"
             field = value
         }
-    var content = contentText.content
+    var content = ""
         set(value) {
             contentText.content = value
             field = value
         }
 
-    var allowSymbols = "qwertyuiopasdfghjklzxcvbnmйцукенгшщзхъфывапролджэячсмитьбю -0123456789"
-    var allowMultiline = true
+    var allowSymbols = "qwertyuiopasdfghjklzxcvbnmйцукенгшщзхъфывапролджэячсмитьбюё -0123456789"
+    var allowMultiline = false
 
     private var lastUpdate = 0L
-    private lateinit var contentText: TextElement
-    private var container = +flex {
+    var container = +flex {
         align = CENTER
         origin = CENTER
         flexSpacing = 1.0
@@ -34,7 +37,7 @@ open class InputElement(gui: ContextGui) : CarvedRectangle() {
             content = ""
         }
     }
-    private val hintText = +text {
+    val hintText = +text {
         align = CENTER
         origin = CENTER
     }
@@ -60,19 +63,30 @@ open class InputElement(gui: ContextGui) : CarvedRectangle() {
             container.size = size
         }
 
+        var lock = false
+
         gui.onKeyTyped { char, code ->
             if (!typing)
                 return@onKeyTyped
             removeSuffix()
             if (code == Keyboard.KEY_BACK) {
                 back()
-            } else if (allowSymbols.contains(char)) {
-                if (UIEngine.clientApi.fontRenderer()
-                        .getStringWidth(contentText.content.split("\n").last()) + 12 >= size.x
-                )
+            } else if (allowSymbols.contains(char.lowercaseChar())) {
+                val out = clientApi.fontRenderer().getStringWidth(contentText.content.split("\n").last()) * contentText.scale.x * scale.x + 12 >= size.x
+                if (out && allowMultiline) {
                     nextLine()
-                else
+                } else if (out) {
+                    val before = color.red
+                    if (!lock) {
+                        lock = true
+                        animate(0.1) { color.red = 255 }
+                        UIEngine.schedule(0.1) {
+                            animate(0.2) { color.red = before }
+                        }
+                        UIEngine.schedule(0.3) { lock = false }
+                    }
                     return@onKeyTyped
+                }
                 contentText.content += char
             } else if (code == Keyboard.KEY_RETURN) {
                 nextLine()
