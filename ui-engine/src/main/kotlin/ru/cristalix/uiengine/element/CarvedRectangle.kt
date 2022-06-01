@@ -1,20 +1,51 @@
 package ru.cristalix.uiengine.element
 
-import ru.cristalix.uiengine.utility.LEFT
-import ru.cristalix.uiengine.utility.RIGHT
-import ru.cristalix.uiengine.utility.rectangle
+import ru.cristalix.uiengine.utility.*
 
 open class CarvedRectangle(
     var carveSize: Double = 1.0,
+    var carvedSide: CarvedSide = CarvedSide.ALL
 ): RectangleElement() {
     val main = +rectangle {}
     val left = +rectangle {
-        origin = LEFT
-        align = LEFT
+        when (carvedSide) {
+            CarvedSide.BOTTOM -> {
+                origin = TOP_LEFT
+                align = TOP_LEFT
+            }
+            CarvedSide.ALL -> {
+                origin = LEFT
+                align = LEFT
+            }
+            CarvedSide.TOP -> {
+                origin = BOTTOM_LEFT
+                align = BOTTOM_LEFT
+            }
+            else -> {
+                origin = LEFT
+                align = LEFT
+            }
+        }
     }
     val right = +rectangle {
-        origin = RIGHT
-        align = RIGHT
+        when (carvedSide) {
+            CarvedSide.BOTTOM -> {
+                origin = TOP_RIGHT
+                align = TOP_RIGHT
+            }
+            CarvedSide.ALL -> {
+                origin = RIGHT
+                align = RIGHT
+            }
+            CarvedSide.TOP -> {
+                origin = BOTTOM_RIGHT
+                align = BOTTOM_RIGHT
+            }
+            else -> {
+                origin = RIGHT
+                align = RIGHT
+            }
+        }
     }
     var lastAlpha: Double = 0.0
 
@@ -34,8 +65,24 @@ open class CarvedRectangle(
             main.size.x = size.x - carveSize * 2
             main.size.y = size.y
             left.size.x = carveSize
-            left.size.y = size.y - carveSize * 2
-            right.size.y = size.y - carveSize * 2
+            when (carvedSide) {
+                CarvedSide.BOTTOM -> {
+                    left.size.y = size.y - carveSize
+                    right.size.y = size.y - carveSize
+                }
+                CarvedSide.ALL -> {
+                    left.size.y = size.y - carveSize * 2
+                    right.size.y = size.y - carveSize * 2
+                }
+                CarvedSide.TOP -> {
+                    left.size.y = size.y - carveSize
+                    right.size.y = size.y - carveSize
+                }
+                else -> {
+                    left.size.y = size.y - carveSize * 2
+                    right.size.y = size.y - carveSize * 2
+                }
+            }
             right.size.x = carveSize
         }
     }
