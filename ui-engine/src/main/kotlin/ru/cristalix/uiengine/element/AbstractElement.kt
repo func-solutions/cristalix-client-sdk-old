@@ -26,6 +26,9 @@ abstract class AbstractElement(): IElement {
     var hoverPosition: V2 = V2()
         protected set
 
+    var leftPressed = false
+    var rightPressed = false
+
     internal var interactive: Boolean = false
 
     var beforeRender: (() -> Unit)? = null
@@ -99,7 +102,30 @@ abstract class AbstractElement(): IElement {
         setup()
     }
 
-    fun onClick(action: ClickHandler) {
+    fun onLeftClick(action: () -> Unit) = onMouseStateChange {
+        if (button == MouseButton.LEFT) {
+            if (down) leftPressed = true
+            else if (leftPressed) {
+                action()
+                leftPressed = false
+            }
+        }
+    }
+
+    fun onRightClick(action: () -> Unit) = onMouseStateChange {
+        if (button == MouseButton.RIGHT) {
+            if (down) rightPressed = true
+            else if (rightPressed) {
+                action()
+                rightPressed = false
+            }
+        }
+    }
+
+    @Deprecated("Use onLeftClick()")
+    fun onClick(action: ClickHandler) = onMouseStateChange(action)
+
+    fun onMouseStateChange(action: ClickHandler) {
         val prev = onClick
         onClick = {
             prev?.invoke(this)
