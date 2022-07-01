@@ -1,46 +1,65 @@
-import org.gradle.internal.impldep.org.bouncycastle.cms.RecipientId.password
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `maven-publish`
     `java-library`
+    kotlin("jvm") apply false
 }
 
-//allprojects {
-//    group = "ru.cristalix"
-//}
+allprojects {
+    group = "ru.cristalix"
+    version = "5.0-SNAPSHOT"
+}
 
 subprojects {
+    apply(plugin = "java")
+    apply(plugin = "java-library")
+    apply(plugin = "maven-publish")
+    apply(plugin = "org.jetbrains.kotlin.jvm")
 
-    apply("plugin" to "maven-publish")
-
-    repositories {
-        maven {
-            setUrl("https://repo.c7x.ru/repository/maven-public/")
-            credentials {
-                username = System.getenv("CRI_REPO_LOGIN") ?: project.properties["CRI_REPO_LOGIN"] as String
-                password = System.getenv("CRI_REPO_PASSWORD") ?: project.properties["CRI_REPO_PASSWORD"] as String
-            }
-        }
-        mavenCentral()
+    java {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        withSourcesJar()
     }
 
-
-    afterEvaluate {
-        tasks.jar {
-            from(sourceSets.main.get().allSource)
+    tasks {
+        withType<Jar>().configureEach { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
+        withType<JavaCompile>().configureEach { options.encoding = "UTF-8" }
+        withType<KotlinCompile>().configureEach {
+            kotlinOptions {
+                jvmTarget = "1.8"
+                freeCompilerArgs = listOf(
+                    "-Xlambdas=indy",
+                    "-Xno-param-assertions",
+                    "-Xno-receiver-assertions",
+                    "-Xno-call-assertions",
+                    "-Xbackend-threads=0",
+                    "-Xuse-k2",
+                    "-Xassertions=always-disable",
+                    "-Xuse-fast-jar-file-system",
+                    "-Xsam-conversions=indy",
+                    "-Xjdk-release=1.8"
+                )
+            }
         }
-        publishing {
-            repositories {
-                maven {
-                    setUrl("https://repo.c7x.ru/repository/maven-releases/")
-                    credentials {
-                        username = System.getenv("CRI_REPO_LOGIN") ?: project.properties["CRI_REPO_LOGIN"] as String
-                        password = System.getenv("CRI_REPO_PASSWORD") ?: project.properties["CRI_REPO_PASSWORD"] as String
-                    }
+    }
+
+    publishing {
+        repositories {
+            mavenLocal()
+            maven {
+                name = "c7x"
+                url = uri(
+                    "https://repo.c7x.ru/repository/maven-${
+                        if (project.version.toString().contains("SNAPSHOT")) "snapshots" else "releases"
+                    }/"
+                )
+                credentials {
+                    username = System.getenv("CRI_REPO_LOGIN") ?: System.getenv("CRISTALIX_REPO_USERNAME")
+                    password = System.getenv("CRI_REPO_PASSWORD") ?: System.getenv("CRISTALIX_REPO_PASSWORD")
                 }
             }
         }
     }
 }
-
-

@@ -1,22 +1,12 @@
-plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.4.30"
-}
-
-group = "ru.cristalix"
-
 dependencies {
-    compileOnly(kotlin("stdlib"))
-    compileOnly(project(":client-api"))
+    compileOnlyApi(projects.clientApi)
 }
-
-tasks.compileKotlin.get().kotlinOptions.jvmTarget = "1.8"
 
 publishing {
     publications {
-        create<MavenPublication>("clientSdk") {
-            groupId = "ru.cristalix"
+        create<MavenPublication>("maven") {
             artifactId = "client-sdk"
-            version = "1.0.0"
+
             from(components["java"])
         }
     }
