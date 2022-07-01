@@ -5,12 +5,12 @@ import dev.xdark.clientapi.event.EventBus
 import dev.xdark.clientapi.event.Listener
 import dev.xdark.clientapi.event.network.PluginMessage
 import io.netty.buffer.ByteBuf
-import kotlin.properties.Delegates.notNull
+import ru.cristalix.clientapi.KotlinModHolder.mod
 
-inline fun <T : Event> EventBus<T>.register(
+fun <T : Event> EventBus<T>.register(
     listener: Listener = mod.listener,
     priority: Int = 1,
-    noinline handler: T.() -> Unit,
+    handler: T.() -> Unit,
 ) {
     register(listener, handler, priority)
 }
@@ -23,9 +23,12 @@ inline fun <reified T : Event> registerHandler(
     Event.bus(T::class.java).register(listener, handler, priority)
 }
 
-var mod: KotlinMod by notNull()
-
+@Suppress("LeakingThis")
 abstract class KotlinMod : JavaMod() {
+    init {
+        mod = this
+    }
+
     inline fun <reified T : Event> registerHandler(priority: Int = 1, noinline handler: T.() -> Unit) {
         registerHandler(listener, priority, handler)
     }
