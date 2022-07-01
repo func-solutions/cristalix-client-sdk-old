@@ -8,7 +8,7 @@ plugins {
 
 allprojects {
     group = "ru.cristalix"
-    version = "5.0-SNAPSHOT"
+    version = "6.0-SNAPSHOT"
 }
 
 subprojects {
