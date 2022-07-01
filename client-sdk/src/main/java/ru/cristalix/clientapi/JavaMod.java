@@ -59,7 +59,7 @@ public class JavaMod implements ModMain {
 
     @Override
     public final void load(ClientApi clientApi) {
-
+        ModHolder.mod = this;
         JavaMod.clientApi = clientApi;
 
         listener = clientApi.eventBus().createListener();
