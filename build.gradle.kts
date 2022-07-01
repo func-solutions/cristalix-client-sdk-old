@@ -8,7 +8,7 @@ plugins {
 
 allprojects {
     group = "ru.cristalix"
-    version = "7.0-SNAPSHOT"
+    version = "8.0-SNAPSHOT"
 }
 
 subprojects {
@@ -18,8 +18,7 @@ subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
 
     java {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        sourceCompatibility = JavaVersion.VERSION_1_8
+        toolchain.languageVersion.set(JavaLanguageVersion.of(8))
         withSourcesJar()
     }
 
