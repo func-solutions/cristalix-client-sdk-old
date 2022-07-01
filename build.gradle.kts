@@ -38,8 +38,7 @@ subprojects {
                     "-Xuse-k2",
                     "-Xassertions=always-disable",
                     "-Xuse-fast-jar-file-system",
-                    "-Xsam-conversions=indy",
-                    "-Xjdk-release=1.8"
+                    "-Xsam-conversions=indy"
                 )
             }
         }
