@@ -19,29 +19,29 @@ const val uvMatrix = -3
 val allMatrices =
     intArrayOf(alignMatrix, rotationMatrix, offsetMatrix, scaleMatrix, originMatrix, sizeMatrix, colorMatrix, uvMatrix)
 
-inline operator fun DoubleArray.get(property: Property): Double {
+operator fun DoubleArray.get(property: Property): Double {
     return this[property.ordinal]
 }
 
-inline operator fun DoubleArray.set(property: Property, value: Double): Double {
+operator fun DoubleArray.set(property: Property, value: Double): Double {
     this[property.ordinal] = value
     return value
 }
 
-inline operator fun DoubleArray.set(property: Property, value: Long): Double =
+operator fun DoubleArray.set(property: Property, value: Long): Double =
     set(property, value.toDouble())
 
-inline operator fun DoubleArray.set(property: Property, value: Int): Double =
+operator fun DoubleArray.set(property: Property, value: Int): Double =
     set(property, value.toDouble())
 
-inline operator fun DoubleArray.set(property: Property, value: Float): Double =
+operator fun DoubleArray.set(property: Property, value: Float): Double =
     set(property, value.toDouble())
 
-inline operator fun DoubleArray.set(property: Property, value: Number): Double =
+operator fun DoubleArray.set(property: Property, value: Number): Double =
     set(property, value.toDouble())
 
 enum class Property(
-    vararg val matrixInfluence: Int
+    vararg val matrixInfluence: Int,
 ) {
 
     OffsetX(offsetMatrix),
@@ -82,11 +82,5 @@ enum class Property(
     TextureY(uvMatrix),
     TextureWidth(uvMatrix),
     TextureHeight(uvMatrix),
-
     ;
-
-    companion object {
-        @JvmField
-        val VALUES = values()
-    }
 }

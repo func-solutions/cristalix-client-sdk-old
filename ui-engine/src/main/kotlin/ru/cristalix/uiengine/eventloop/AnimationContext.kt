@@ -1,18 +1,22 @@
 package ru.cristalix.uiengine.eventloop
 
-import ru.cristalix.uiengine.utility.Easing
-import ru.cristalix.uiengine.utility.Easings
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.element.AbstractElement
+import ru.cristalix.uiengine.utility.Easing
+import ru.cristalix.uiengine.utility.Easings
 
 class AnimationContext(
-    @JvmField val durationMillis: Long,
-    @JvmField val easing: Easing
+    @JvmField
+    val durationMillis: Long,
+    @JvmField
+    val easing: Easing,
 )
 
 class AnimationPipeline<T : AbstractElement?>(
-    @JvmField val element: T,
-    @JvmField var currentDelay: Long
+    @JvmField
+    val element: T,
+    @JvmField
+    var currentDelay: Long,
 )
 
 fun secondsToMillis(seconds: Double): Long = (seconds * 1000).toLong()
@@ -28,7 +32,7 @@ fun secondsToMillis(seconds: Number): Long = secondsToMillis(seconds.toDouble())
 inline fun animate(
     seconds: Double,
     easing: Easing = Easings.NONE,
-    crossinline action: () -> Unit
+    crossinline action: () -> Unit,
 ): AnimationPipeline<Nothing?> {
     animateImpl(seconds, easing, action)
     return AnimationPipeline(null, secondsToMillis(seconds))
@@ -37,31 +41,31 @@ inline fun animate(
 inline fun animate(
     seconds: Long,
     easing: Easing = Easings.NONE,
-    crossinline action: () -> Unit
+    crossinline action: () -> Unit,
 ): AnimationPipeline<Nothing?> = animate(seconds.toDouble(), easing, action)
 
 inline fun animate(
     seconds: Int,
     easing: Easing = Easings.NONE,
-    crossinline action: () -> Unit
+    crossinline action: () -> Unit,
 ): AnimationPipeline<Nothing?> = animate(seconds.toDouble(), easing, action)
 
 inline fun animate(
     seconds: Float,
     easing: Easing = Easings.NONE,
-    crossinline action: () -> Unit
+    crossinline action: () -> Unit,
 ): AnimationPipeline<Nothing?> = animate(seconds.toDouble(), easing, action)
 
 inline fun animate(
     seconds: Number,
     easing: Easing = Easings.NONE,
-    crossinline action: () -> Unit
+    crossinline action: () -> Unit,
 ): AnimationPipeline<Nothing?> = animate(seconds.toDouble(), easing, action)
 
 inline fun <T : AbstractElement> T.animate(
     seconds: Double,
     easing: Easing = Easings.NONE,
-    crossinline action: T.() -> Unit
+    crossinline action: T.() -> Unit,
 ): AnimationPipeline<T> {
     animateImpl(seconds, easing) { action() }
     return AnimationPipeline(this, secondsToMillis(seconds))
@@ -70,31 +74,31 @@ inline fun <T : AbstractElement> T.animate(
 inline fun <T : AbstractElement> T.animate(
     seconds: Long,
     easing: Easing = Easings.NONE,
-    crossinline action: T.() -> Unit
+    crossinline action: T.() -> Unit,
 ): AnimationPipeline<T> = animate(seconds.toDouble(), easing, action)
 
 inline fun <T : AbstractElement> T.animate(
     seconds: Int,
     easing: Easing = Easings.NONE,
-    crossinline action: T.() -> Unit
+    crossinline action: T.() -> Unit,
 ): AnimationPipeline<T> = animate(seconds.toDouble(), easing, action)
 
 inline fun <T : AbstractElement> T.animate(
     seconds: Float,
     easing: Easing = Easings.NONE,
-    crossinline action: T.() -> Unit
+    crossinline action: T.() -> Unit,
 ): AnimationPipeline<T> = animate(seconds.toDouble(), easing, action)
 
 inline fun <T : AbstractElement> T.animate(
     seconds: Number,
     easing: Easing = Easings.NONE,
-    crossinline action: T.() -> Unit
+    crossinline action: T.() -> Unit,
 ): AnimationPipeline<T> = animate(seconds.toDouble(), easing, action)
 
 inline fun <T : AbstractElement> AnimationPipeline<T>.thenAnimate(
     seconds: Double,
     easing: Easing = Easings.NONE,
-    crossinline action: T.() -> Unit
+    crossinline action: T.() -> Unit,
 ): AnimationPipeline<T> = also {
     UIEngine.schedule(currentDelay / 1000.0) {
         animateImpl(seconds, easing) { action(element) }
@@ -105,31 +109,31 @@ inline fun <T : AbstractElement> AnimationPipeline<T>.thenAnimate(
 inline fun <T : AbstractElement> AnimationPipeline<T>.thenAnimate(
     seconds: Long,
     easing: Easing = Easings.NONE,
-    crossinline action: T.() -> Unit
+    crossinline action: T.() -> Unit,
 ): AnimationPipeline<T> = thenAnimate(seconds.toDouble(), easing, action)
 
 inline fun <T : AbstractElement> AnimationPipeline<T>.thenAnimate(
     seconds: Int,
     easing: Easing = Easings.NONE,
-    crossinline action: T.() -> Unit
+    crossinline action: T.() -> Unit,
 ): AnimationPipeline<T> = thenAnimate(seconds.toDouble(), easing, action)
 
 inline fun <T : AbstractElement> AnimationPipeline<T>.thenAnimate(
     seconds: Float,
     easing: Easing = Easings.NONE,
-    crossinline action: T.() -> Unit
+    crossinline action: T.() -> Unit,
 ): AnimationPipeline<T> = thenAnimate(seconds.toDouble(), easing, action)
 
 inline fun <T : AbstractElement> AnimationPipeline<T>.thenAnimate(
     seconds: Number,
     easing: Easing = Easings.NONE,
-    crossinline action: T.() -> Unit
+    crossinline action: T.() -> Unit,
 ): AnimationPipeline<T> = thenAnimate(seconds.toDouble(), easing, action)
 
 inline fun animateImpl(
     seconds: Double,
     easing: Easing = Easings.NONE,
-    action: () -> Unit
+    action: () -> Unit,
 ) {
     val engine = UIEngine
     val previous = engine.animationContext
@@ -146,25 +150,25 @@ inline fun animateImpl(
 inline fun animateImpl(
     seconds: Long,
     easing: Easing = Easings.NONE,
-    action: () -> Unit
+    action: () -> Unit,
 ) = animateImpl(seconds.toDouble(), easing, action)
 
 inline fun animateImpl(
     seconds: Int,
     easing: Easing = Easings.NONE,
-    action: () -> Unit
+    action: () -> Unit,
 ) = animateImpl(seconds.toDouble(), easing, action)
 
 inline fun animateImpl(
     seconds: Float,
     easing: Easing = Easings.NONE,
-    action: () -> Unit
+    action: () -> Unit,
 ) = animateImpl(seconds.toDouble(), easing, action)
 
 inline fun animateImpl(
     seconds: Number,
     easing: Easing = Easings.NONE,
-    action: () -> Unit
+    action: () -> Unit,
 ) = animateImpl(seconds.toDouble(), easing, action)
 
 fun <T : AbstractElement> AnimationPipeline<T>.thenWait(seconds: Double): AnimationPipeline<T> =

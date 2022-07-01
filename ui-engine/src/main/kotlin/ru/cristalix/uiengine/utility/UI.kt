@@ -1,6 +1,11 @@
 package ru.cristalix.uiengine.utility
 
-import ru.cristalix.uiengine.element.*
+import ru.cristalix.uiengine.element.CarvedRectangle
+import ru.cristalix.uiengine.element.CuboidElement
+import ru.cristalix.uiengine.element.ItemElement
+import ru.cristalix.uiengine.element.RectangleElement
+import ru.cristalix.uiengine.element.SphereElement
+import ru.cristalix.uiengine.element.TextElement
 
 inline fun rectangle(setup: RectangleElement.() -> Unit) = RectangleElement().also(setup)
 

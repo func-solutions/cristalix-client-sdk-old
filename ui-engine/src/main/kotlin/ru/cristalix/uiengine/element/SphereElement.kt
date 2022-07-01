@@ -9,7 +9,6 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 open class SphereElement : AbstractElement() {
-
     override fun render() {
         // GL начало
         GlStateManager.disableLighting()
@@ -19,7 +18,12 @@ open class SphereElement : AbstractElement() {
         GlStateManager.shadeModel(GL11.GL_SMOOTH)
         GlStateManager.enableBlend()
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
-        GlStateManager.color(color.red.toFloat() / 255f, color.green.toFloat()  / 255f, color.blue.toFloat()  / 255f, color.alpha.toFloat())
+        GlStateManager.color(
+            color.red.toFloat() / 255f,
+            color.green.toFloat() / 255f,
+            color.blue.toFloat() / 255f,
+            color.alpha.toFloat()
+        )
 
         // Количество вершин на срезе (можно разбить на два измерения)
         val accuracy = 20.0

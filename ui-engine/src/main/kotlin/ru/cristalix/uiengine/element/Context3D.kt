@@ -5,7 +5,6 @@ import org.lwjgl.util.vector.Matrix4f
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.utility.V2
 import ru.cristalix.uiengine.utility.V3
-import java.util.*
 
 class Context3D(offset: V3) : Context() {
 
@@ -14,6 +13,7 @@ class Context3D(offset: V3) : Context() {
         this.scale = V3(1.0 / 16, 1.0 / 16, 1.0 / 16)
     }
 
+    @JvmField
     var renderDistance: Double = 64.0
     private val mouse = V2()
 
@@ -61,5 +61,4 @@ class Context3D(offset: V3) : Context() {
          */
         return mouse
     }
-
 }

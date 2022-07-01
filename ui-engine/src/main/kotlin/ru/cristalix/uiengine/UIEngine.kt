@@ -6,51 +6,54 @@ import dev.xdark.clientapi.event.lifecycle.GameLoop
 import dev.xdark.clientapi.event.render.*
 import dev.xdark.clientapi.event.window.WindowResize
 import dev.xdark.clientapi.opengl.GLAllocation
-import dev.xdark.clientapi.opengl.GlStateManager
 import org.lwjgl.input.Mouse
 import ru.cristalix.clientapi.JavaMod
 import ru.cristalix.clientapi.registerHandler
-import ru.cristalix.clientapi.theMod
 import ru.cristalix.uiengine.element.*
 import ru.cristalix.uiengine.eventloop.EventLoop
 import ru.cristalix.uiengine.eventloop.EventLoopImpl
 import ru.cristalix.uiengine.utility.MouseButton
 import ru.cristalix.uiengine.utility.V3
 import java.nio.FloatBuffer
+import kotlin.properties.Delegates.notNull
 
-object UIEngine: EventLoop by EventLoopImpl() {
+object UIEngine : EventLoop by EventLoopImpl() {
 
-    @JvmField val matrixBuffer: FloatBuffer = GLAllocation.createDirectFloatBuffer(16)
+    @JvmField
+    val matrixBuffer: FloatBuffer = GLAllocation.createDirectFloatBuffer(16)
 
     /**
      * Instance of ClientApi.
      * You can reference that for any purposes.
      */
-    lateinit var clientApi: ClientApi
+    var clientApi: ClientApi by notNull()
 
     /**
      * This mod's listener.
      * Cristalix client is known to have some problems when registering mutiple listeners from a single mod.
      * Please, do not create your own listeners and stick to using this one.
      */
-    lateinit var listener: Listener
+    var listener: Listener by notNull()
 
     /**
      * Ingame HUD context that renders like chat, hotbar, etc.
      */
-    @JvmField val overlayContext: Context2D = Context2D(size = V3())
+    @JvmField
+    val overlayContext: Context2D = Context2D(size = V3())
 
     /**
      * Ingame HUD context that renders after chests, pause menu and everything else
      */
-    @JvmField val postOverlayContext: Context2D = Context2D(size = V3())
+    @JvmField
+    val postOverlayContext: Context2D = Context2D(size = V3())
 
     /**
      * World contexts for stuff like holograms.
      * You can add your own Context3D here.
      * Please note that worldContexts is being cleared on respawns / world changes
      */
-    @JvmField val worldContexts: MutableList<Context3D> = ArrayList()
+    @JvmField
+    val worldContexts: MutableList<Context3D> = ArrayList()
 
     private var lastMouseState: BooleanArray = booleanArrayOf(false, false, false)
 
@@ -133,7 +136,7 @@ object UIEngine: EventLoop by EventLoopImpl() {
     private fun gameLoop() {
         update()
         val lastMouseState = lastMouseState
-        for (button in MouseButton.VALUES) {
+        for (button in MouseButton.values()) {
             val idx = button.ordinal
             val oldState = lastMouseState[idx]
             val newState = Mouse.isButtonDown(idx)

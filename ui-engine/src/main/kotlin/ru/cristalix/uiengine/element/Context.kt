@@ -2,10 +2,8 @@ package ru.cristalix.uiengine.element
 
 import org.lwjgl.input.Mouse
 import org.lwjgl.util.vector.Matrix4f
-import org.lwjgl.util.vector.Vector2f
 import org.lwjgl.util.vector.Vector4f
 import ru.cristalix.uiengine.UIEngine
-import ru.cristalix.uiengine.utility.Property
 import ru.cristalix.uiengine.utility.V2
 import ru.cristalix.uiengine.utility.V3
 
@@ -39,6 +37,4 @@ abstract class Context : RectangleElement() {
     }
 
     abstract fun transformViewportAndMouse(): V2?
-
-
 }

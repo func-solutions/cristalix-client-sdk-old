@@ -8,17 +8,66 @@ import ru.cristalix.uiengine.HoverHandler
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.UIEngine.matrixBuffer
 import ru.cristalix.uiengine.eventloop.Animation
-import ru.cristalix.uiengine.utility.*
-import ru.cristalix.uiengine.utility.Property.*
+import ru.cristalix.uiengine.utility.Color
+import ru.cristalix.uiengine.utility.MATRIX_COUNT
+import ru.cristalix.uiengine.utility.MATRIX_OFFSET
+import ru.cristalix.uiengine.utility.MouseButton
+import ru.cristalix.uiengine.utility.Property
+import ru.cristalix.uiengine.utility.Property.AlignX
+import ru.cristalix.uiengine.utility.Property.AlignY
+import ru.cristalix.uiengine.utility.Property.AlignZ
+import ru.cristalix.uiengine.utility.Property.ColorA
+import ru.cristalix.uiengine.utility.Property.ColorB
+import ru.cristalix.uiengine.utility.Property.ColorG
+import ru.cristalix.uiengine.utility.Property.ColorR
+import ru.cristalix.uiengine.utility.Property.OffsetX
+import ru.cristalix.uiengine.utility.Property.OffsetY
+import ru.cristalix.uiengine.utility.Property.OffsetZ
+import ru.cristalix.uiengine.utility.Property.OriginX
+import ru.cristalix.uiengine.utility.Property.OriginY
+import ru.cristalix.uiengine.utility.Property.OriginZ
+import ru.cristalix.uiengine.utility.Property.ParentSizeX
+import ru.cristalix.uiengine.utility.Property.ParentSizeY
+import ru.cristalix.uiengine.utility.Property.ParentSizeZ
+import ru.cristalix.uiengine.utility.Property.RotationAngle
+import ru.cristalix.uiengine.utility.Property.RotationX
+import ru.cristalix.uiengine.utility.Property.RotationY
+import ru.cristalix.uiengine.utility.Property.RotationZ
+import ru.cristalix.uiengine.utility.Property.ScaleX
+import ru.cristalix.uiengine.utility.Property.ScaleY
+import ru.cristalix.uiengine.utility.Property.ScaleZ
+import ru.cristalix.uiengine.utility.Property.SizeX
+import ru.cristalix.uiengine.utility.Property.SizeY
+import ru.cristalix.uiengine.utility.Property.SizeZ
+import ru.cristalix.uiengine.utility.ProxiedColor
+import ru.cristalix.uiengine.utility.ProxiedRotation
+import ru.cristalix.uiengine.utility.ProxiedV3
+import ru.cristalix.uiengine.utility.Rotation
+import ru.cristalix.uiengine.utility.V2
+import ru.cristalix.uiengine.utility.V3
+import ru.cristalix.uiengine.utility.alignMatrix
+import ru.cristalix.uiengine.utility.colorMatrix
+import ru.cristalix.uiengine.utility.get
+import ru.cristalix.uiengine.utility.matrixFields
+import ru.cristalix.uiengine.utility.offsetMatrix
+import ru.cristalix.uiengine.utility.originMatrix
+import ru.cristalix.uiengine.utility.rotate
+import ru.cristalix.uiengine.utility.rotationMatrix
+import ru.cristalix.uiengine.utility.scale
+import ru.cristalix.uiengine.utility.scaleMatrix
+import ru.cristalix.uiengine.utility.sizeMatrix
+import ru.cristalix.uiengine.utility.translate
 
 @Suppress("LeakingThis")
-abstract class AbstractElement(): IElement {
-
-    @JvmField val properties: DoubleArray = DoubleArray(Property.VALUES.size)
-    @JvmField val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
+abstract class AbstractElement() : IElement {
+    @JvmField
+    val properties: DoubleArray = DoubleArray(Property.values().size)
+    @JvmField
+    val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
 
     private var dirtyMatrices = BooleanArray(MATRIX_COUNT)
-    @JvmField protected var cachedHexColor: Int = 0
+    @JvmField
+    protected var cachedHexColor: Int = 0
 
     var hovered: Boolean = false
         internal set
@@ -67,10 +116,14 @@ abstract class AbstractElement(): IElement {
             }
         }
 
-    @JvmField var enabled: Boolean = true
-    @JvmField var onClick: ClickHandler? = null
-    @JvmField var onHover: HoverHandler? = null
-    @JvmField var lastParent: AbstractElement? = null
+    @JvmField
+    var enabled: Boolean = true
+    @JvmField
+    var onClick: ClickHandler? = null
+    @JvmField
+    var onHover: HoverHandler? = null
+    @JvmField
+    var lastParent: AbstractElement? = null
 
     var offset: V3 = ProxiedV3(OffsetX.ordinal, this)
         set(value) = value.write(field)
@@ -122,7 +175,7 @@ abstract class AbstractElement(): IElement {
         }
     }
 
-    @Deprecated("Use onLeftClick()")
+    @Deprecated("use onLeftClick(action", replaceWith = ReplaceWith("onLeftClick(action)"))
     fun onClick(action: ClickHandler) = onMouseStateChange(action)
 
     fun onMouseStateChange(action: ClickHandler) {
@@ -182,7 +235,7 @@ abstract class AbstractElement(): IElement {
         val properties = properties
         if (properties[index] != value) {
             properties[index] = value
-            for (matrix in Property.VALUES[index].matrixInfluence) {
+            for (matrix in Property.values()[index].matrixInfluence) {
                 this.markDirty(matrix)
             }
         }
@@ -236,7 +289,6 @@ abstract class AbstractElement(): IElement {
             this.hovered = hovered
             this.onHover?.invoke(this)
         }
-
     }
 
     open fun getForemostHovered(): AbstractElement? {
@@ -293,22 +345,26 @@ abstract class AbstractElement(): IElement {
                     properties[AlignY] * properties[ParentSizeY],
                     properties[AlignZ] * properties[ParentSizeZ]
                 )
+
                 rotationMatrix -> matrix.rotate(
                     properties[RotationAngle].toFloat(),
                     properties[RotationX],
                     properties[RotationY],
                     properties[RotationZ]
                 )
+
                 offsetMatrix -> matrix.translate(
                     properties[OffsetX],
                     properties[OffsetY],
                     properties[OffsetZ]
                 )
+
                 scaleMatrix -> matrix.scale(
                     properties[ScaleX],
                     properties[ScaleY],
                     properties[ScaleZ]
                 )
+
                 originMatrix -> matrix.translate(
                     -properties[OriginX] * properties[SizeX],
                     -properties[OriginY] * properties[SizeY],

@@ -7,7 +7,7 @@ class DragHandler(
     val element: AbstractElement,
     var stickToAligns: Boolean = false,
     var snapToResolution: Boolean = false,
-    var allowOverflow: Boolean = false
+    var allowOverflow: Boolean = false,
 ) {
 
     var draggingPosition: V2? = null

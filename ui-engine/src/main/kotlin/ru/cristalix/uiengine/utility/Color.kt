@@ -8,7 +8,7 @@ open class Color(
     open var red: Int = 0,
     open var green: Int = 0,
     open var blue: Int = 0,
-    open var alpha: Double = 1.0
+    open var alpha: Double = 1.0,
 ) {
     open fun write(another: Color) {
         another.red = this.red
@@ -38,5 +38,4 @@ fun hex(hex: String, alpha: Double = 1.0): Color {
     }
 
     return BLACK
-
 }

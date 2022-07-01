@@ -5,11 +5,10 @@ import ru.cristalix.uiengine.element.AbstractElement
 import ru.cristalix.uiengine.eventloop.animate
 
 fun AbstractElement.initScroll() {
-
 }
 
 class ScrollHandler(
-    val element: AbstractElement
+    val element: AbstractElement,
 ) {
 
     var scrollPosition: Double = 0.0
@@ -34,5 +33,4 @@ class ScrollHandler(
             }
         }
     }
-
 }

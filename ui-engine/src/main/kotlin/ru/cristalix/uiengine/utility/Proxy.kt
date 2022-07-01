@@ -1,16 +1,18 @@
 package ru.cristalix.uiengine.utility
 
 import ru.cristalix.uiengine.element.AbstractElement
-import ru.cristalix.uiengine.utility.Property.*
-import ru.cristalix.uiengine.utility.Color
-import ru.cristalix.uiengine.utility.Rotation
-import ru.cristalix.uiengine.utility.V2
-import ru.cristalix.uiengine.utility.V3
-
+import ru.cristalix.uiengine.utility.Property.ColorA
+import ru.cristalix.uiengine.utility.Property.ColorB
+import ru.cristalix.uiengine.utility.Property.ColorG
+import ru.cristalix.uiengine.utility.Property.ColorR
+import ru.cristalix.uiengine.utility.Property.RotationAngle
+import ru.cristalix.uiengine.utility.Property.RotationX
+import ru.cristalix.uiengine.utility.Property.RotationY
+import ru.cristalix.uiengine.utility.Property.RotationZ
 
 open class ProxiedV2(
     private val offset: Int,
-    private val element: AbstractElement
+    private val element: AbstractElement,
 ) : V2() {
     private val properties = element.properties
 
@@ -24,7 +26,7 @@ open class ProxiedV2(
 
 class ProxiedV3(
     private val offset: Int,
-    private val element: AbstractElement
+    private val element: AbstractElement,
 ) : V3() {
     private val properties = element.properties
 
@@ -40,7 +42,7 @@ class ProxiedV3(
 }
 
 class ProxiedRotation(
-    private val element: AbstractElement
+    private val element: AbstractElement,
 ) : Rotation() {
 
     private val properties = element.properties
@@ -60,8 +62,8 @@ class ProxiedRotation(
 }
 
 open class ProxiedColor(
-   private val element: AbstractElement
-): Color() {
+    private val element: AbstractElement,
+) : Color() {
 
     private val properties = element.properties
 

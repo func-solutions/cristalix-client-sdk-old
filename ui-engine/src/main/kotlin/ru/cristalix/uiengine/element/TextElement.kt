@@ -1,12 +1,11 @@
 package ru.cristalix.uiengine.element
 
-import ru.cristalix.uiengine.UIEngine
-import ru.cristalix.uiengine.utility.*
 import dev.xdark.clientapi.opengl.GlStateManager
-
+import ru.cristalix.uiengine.UIEngine
+import ru.cristalix.uiengine.utility.V3
+import ru.cristalix.uiengine.utility.WHITE
 
 open class TextElement() : AbstractElement() {
-
     var content: String = ""
         set(value) {
             field = value
@@ -36,13 +35,15 @@ open class TextElement() : AbstractElement() {
             content = content
         }
 
-    @JvmField var emptyLineHeight = 9.0
+    @JvmField
+    var emptyLineHeight = 9.0
 
     private var lines: Array<String> = arrayOf()
 
     private var lineWidthCache: IntArray = intArrayOf()
 
-    @JvmField var shadow = false
+    @JvmField
+    var shadow = false
 
     init {
         color = WHITE
@@ -53,7 +54,6 @@ open class TextElement() : AbstractElement() {
     }
 
     override fun render() {
-
         val cachedHexColor = cachedHexColor
         val alpha: Int = cachedHexColor ushr 24
 
@@ -95,5 +95,4 @@ open class TextElement() : AbstractElement() {
         }
         return max
     }
-
 }

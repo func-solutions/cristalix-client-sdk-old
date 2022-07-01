@@ -5,11 +5,19 @@ import dev.xdark.clientapi.render.DefaultVertexFormats
 import dev.xdark.clientapi.resource.ResourceLocation
 import org.lwjgl.opengl.GL11
 import ru.cristalix.uiengine.UIEngine.clientApi
-import ru.cristalix.uiengine.utility.*
+import ru.cristalix.uiengine.utility.Property
+import ru.cristalix.uiengine.utility.ProxiedV2
+import ru.cristalix.uiengine.utility.V2
+import ru.cristalix.uiengine.utility.WHITE
+import ru.cristalix.uiengine.utility.alignMatrix
+import ru.cristalix.uiengine.utility.get
+import ru.cristalix.uiengine.utility.set
+import ru.cristalix.uiengine.utility.sizeMatrix
 
 class CuboidElement : AbstractElement(), Parent {
 
-    @JvmField var textureLocation: ResourceLocation? = null
+    @JvmField
+    var textureLocation: ResourceLocation? = null
 
     var textureFrom: V2 = ProxiedV2(Property.TextureX.ordinal, this)
         set(value) = value.write(field)
@@ -103,7 +111,7 @@ class CuboidElement : AbstractElement(), Parent {
         val textureLocation = textureLocation
         if (textureLocation != null) {
             val textureSize = textureSize
-            val textureFrom =  textureFrom
+            val textureFrom = textureFrom
             val uSize = textureSize.x
             val vSize = textureSize.y
             val u1 = textureFrom.x / uSize

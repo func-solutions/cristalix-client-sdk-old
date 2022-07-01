@@ -2,32 +2,41 @@ package ru.cristalix.uiengine.element
 
 import dev.xdark.clientapi.opengl.GlStateManager
 import dev.xdark.clientapi.render.BufferBuilder
+import dev.xdark.clientapi.render.DefaultVertexFormats
+import dev.xdark.clientapi.render.Tessellator
 import dev.xdark.clientapi.resource.ResourceLocation
 import org.lwjgl.opengl.GL11
 import org.lwjgl.util.vector.Matrix4f
 import org.lwjgl.util.vector.Vector4f
 import ru.cristalix.uiengine.UIEngine
-import ru.cristalix.uiengine.utility.*
-
-import dev.xdark.clientapi.render.DefaultVertexFormats
-
-import dev.xdark.clientapi.render.Tessellator
+import ru.cristalix.uiengine.utility.Property
+import ru.cristalix.uiengine.utility.ProxiedV2
+import ru.cristalix.uiengine.utility.V2
+import ru.cristalix.uiengine.utility.V3
+import ru.cristalix.uiengine.utility.alignMatrix
+import ru.cristalix.uiengine.utility.get
+import ru.cristalix.uiengine.utility.set
+import ru.cristalix.uiengine.utility.sizeMatrix
 import kotlin.math.abs
 
-@JvmField var depth = 0
-@JvmField var debug = false
+@JvmField
+var depth = 0
+@JvmField
+var debug = false
 
-@JvmField val debugColors = arrayOf(
-        floatArrayOf(1.0f, 0.1f, 0.1f, 1.0f),
-        floatArrayOf(1.0f, 1.0f, 0.1f, 1.0f),
-        floatArrayOf(0.1f, 1.0f, 0.1f, 1.0f),
-        floatArrayOf(0.1f, 1.0f, 1.0f, 1.0f),
-        floatArrayOf(0.1f, 0.1f, 1.0f, 1.0f),
-        floatArrayOf(1.0f, 0.1f, 1.0f, 1.0f),
+@JvmField
+val debugColors = arrayOf(
+    floatArrayOf(1.0f, 0.1f, 0.1f, 1.0f),
+    floatArrayOf(1.0f, 1.0f, 0.1f, 1.0f),
+    floatArrayOf(0.1f, 1.0f, 0.1f, 1.0f),
+    floatArrayOf(0.1f, 1.0f, 1.0f, 1.0f),
+    floatArrayOf(0.1f, 0.1f, 1.0f, 1.0f),
+    floatArrayOf(1.0f, 0.1f, 1.0f, 1.0f),
 )
 
 open class RectangleElement : AbstractElement(), Parent {
 
+    @JvmField
     var textureLocation: ResourceLocation? = null
 
     var textureFrom: V2 = ProxiedV2(Property.TextureX.ordinal, this)
@@ -88,13 +97,11 @@ open class RectangleElement : AbstractElement(), Parent {
             element.changeProperty(Property.ParentSizeX.ordinal, x)
             element.changeProperty(Property.ParentSizeY.ordinal, y)
 //            if (element is RectangleElement) {
-                // ToDo: Abstract contextful parents
+            // ToDo: Abstract contextful parents
 //            }
             element.lastParent = this
             this.children.add(element)
         }
-
-
     }
 
     override fun updateInteractiveState() {
@@ -177,7 +184,6 @@ open class RectangleElement : AbstractElement(), Parent {
         }
 
         super.updateMatrix(matrixId)
-
     }
 
     override fun render() {
@@ -194,7 +200,6 @@ open class RectangleElement : AbstractElement(), Parent {
             GlStateManager.enableDepth()
             GlStateManager.translate(0f, 0f, 0.97f)
         }
-
 
         val color = color
 
@@ -224,7 +229,6 @@ open class RectangleElement : AbstractElement(), Parent {
                 )
 
                 GlStateManager.color(1f, 1f, 1f, 1f)
-
             } else {
                 val tessellator: Tessellator = engine.clientApi.tessellator()
                 val worldrenderer: BufferBuilder = tessellator.bufferBuilder

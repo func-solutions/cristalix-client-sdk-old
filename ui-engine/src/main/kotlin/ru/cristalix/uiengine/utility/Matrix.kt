@@ -10,7 +10,7 @@ fun Matrix4f.translate(x: Float, y: Float, z: Float) {
     m33 += m03 * x + m13 * y + m23 * z
 }
 
-inline fun Matrix4f.translate(x: Double, y: Double, z: Double) {
+fun Matrix4f.translate(x: Double, y: Double, z: Double) {
     translate(x.toFloat(), y.toFloat(), z.toFloat())
 }
 
@@ -57,11 +57,11 @@ fun Matrix4f.rotate(angle: Float, x: Float, y: Float, z: Float) {
     m13 = t13
 }
 
-inline fun Matrix4f.rotate(angle: Double, x: Double, y: Double, z: Double) {
+fun Matrix4f.rotate(angle: Double, x: Double, y: Double, z: Double) {
     rotate(angle.toFloat(), x.toFloat(), y.toFloat(), z.toFloat())
 }
 
-inline fun Matrix4f.rotate(angle: Float, x: Double, y: Double, z: Double) {
+fun Matrix4f.rotate(angle: Float, x: Double, y: Double, z: Double) {
     rotate(angle, x.toFloat(), y.toFloat(), z.toFloat())
 }
 
@@ -80,6 +80,6 @@ fun Matrix4f.scale(x: Float, y: Float, z: Float) {
     m23 *= z
 }
 
-inline fun Matrix4f.scale(x: Double, y: Double, z: Double) {
+fun Matrix4f.scale(x: Double, y: Double, z: Double) {
     scale(x.toFloat(), y.toFloat(), z.toFloat())
 }

@@ -4,7 +4,6 @@ package ru.cristalix.uiengine
 
 import ru.cristalix.uiengine.element.AbstractElement
 import ru.cristalix.uiengine.utility.MouseButton
-import ru.cristalix.uiengine.utility.V2
 
 typealias ClickHandler = ClickEvent.() -> Unit
 typealias HoverHandler = AbstractElement.() -> Unit
@@ -21,7 +20,7 @@ inline fun AbstractElement.onMouseUp(crossinline action: ClickHandler) {
     }
 }
 
-data class ClickEvent(
+class ClickEvent(
     val down: Boolean,
-    val button: MouseButton
+    val button: MouseButton,
 )

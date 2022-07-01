@@ -6,7 +6,7 @@ import ru.cristalix.uiengine.utility.rectangle
 
 open class CarvedRectangle(
     var carveSize: Double = 1.0,
-): RectangleElement() {
+) : RectangleElement() {
     val main = +rectangle {}
     val left = +rectangle {
         origin = LEFT

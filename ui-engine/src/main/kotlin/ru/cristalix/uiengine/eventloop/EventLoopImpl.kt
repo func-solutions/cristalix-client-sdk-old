@@ -1,6 +1,6 @@
 package ru.cristalix.uiengine.eventloop
 
-class EventLoopImpl: EventLoop {
+class EventLoopImpl : EventLoop {
 
     private val runningTasks: MutableList<Task> = ArrayList()
     private var eventLoopBuffer: MutableList<Task>? = null
@@ -20,7 +20,6 @@ class EventLoopImpl: EventLoop {
     }
 
     override fun update() {
-
         val time = System.currentTimeMillis()
 
         val runningTasks = runningTasks

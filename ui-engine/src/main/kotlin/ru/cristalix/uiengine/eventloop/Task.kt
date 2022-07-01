@@ -1,7 +1,7 @@
 package ru.cristalix.uiengine.eventloop
 
-data class Task(
+class Task(
     val scheduledTo: Long,
     val action: () -> Unit,
-    var cancelled: Boolean = false
+    var cancelled: Boolean = false,
 )

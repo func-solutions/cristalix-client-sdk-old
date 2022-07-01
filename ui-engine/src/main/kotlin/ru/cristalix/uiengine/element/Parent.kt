@@ -2,7 +2,7 @@ package ru.cristalix.uiengine.element
 
 import ru.cristalix.uiengine.utility.V3
 
-interface Parent: IElement {
+interface Parent : IElement {
 
     val children: List<AbstractElement>
 
@@ -21,7 +21,7 @@ interface Parent: IElement {
         return this
     }
 
-    operator fun <T: AbstractElement> plus(element: T): T {
+    operator fun <T : AbstractElement> plus(element: T): T {
         this@Parent.addChild(element)
         return element
     }
@@ -31,8 +31,6 @@ interface Parent: IElement {
      * Does not account for the rotation.
      */
     fun adjustSizeToChildren(padding: V3) {
-
-        
 
         val children = children
         val count = children.size
@@ -58,7 +56,5 @@ interface Parent: IElement {
         size.x = xmax
         size.y = ymax
         size.z = zmax
-
     }
-
 }

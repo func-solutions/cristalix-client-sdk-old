@@ -1,26 +1,24 @@
 package ru.cristalix.uiengine.utility
 
-import ru.cristalix.uiengine.element.Parent
 import ru.cristalix.uiengine.element.RectangleElement
 import kotlin.math.abs
 
 inline fun flex(setup: Flex.() -> Unit) = Flex().also(setup)
 
 enum class FlexDirection(
-        val kx: Int,
-        val ky: Int,
-        val rowWidthProperty: Int,
-        val align: Double,
+    val kx: Int,
+    val ky: Int,
+    val rowWidthProperty: Int,
+    val align: Double,
 ) {
 
     UP(0, 1, Property.ParentSizeY.ordinal, 1.0),
     DOWN(0, -1, Property.ParentSizeY.ordinal, 0.0),
     LEFT(-1, 0, Property.ParentSizeX.ordinal, 1.0),
     RIGHT(1, 0, Property.ParentSizeX.ordinal, 0.0)
-
 }
 
-open class Flex: RectangleElement() {
+open class Flex : RectangleElement() {
 
     var flexDirection = FlexDirection.RIGHT
 
@@ -85,7 +83,6 @@ open class Flex: RectangleElement() {
 
                     rowWidth = 0.0
                     rowStartIndex = currentChildIndex + 1
-
                 }
             }
 
@@ -105,7 +102,5 @@ open class Flex: RectangleElement() {
             if (kx != 0) size.x = rowLength
             else size.y = rowLength
         }
-
     }
-
 }

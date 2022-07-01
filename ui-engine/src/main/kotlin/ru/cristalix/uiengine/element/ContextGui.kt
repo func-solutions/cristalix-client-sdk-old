@@ -2,9 +2,6 @@ package ru.cristalix.uiengine.element
 
 import dev.xdark.clientapi.gui.Screen
 import org.lwjgl.input.Keyboard
-import org.lwjgl.input.Mouse
-import org.lwjgl.util.vector.Matrix4f
-import org.lwjgl.util.vector.Vector2f
 import ru.cristalix.uiengine.ClickEvent
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.utility.MouseButton
@@ -20,6 +17,7 @@ inline fun safe(action: () -> Unit) {
 
 open class ContextGui(builder: Screen.Builder = Screen.Builder.builder()) : Context2D(V3()) {
 
+    @JvmField
     val keyTypedHandlers = ArrayList<(char: Char, code: Int) -> Unit>()
 
     init {
@@ -57,5 +55,4 @@ open class ContextGui(builder: Screen.Builder = Screen.Builder.builder()) : Cont
 
     fun onKeyTyped(action: (char: Char, code: Int) -> Unit) =
         keyTypedHandlers.add(action)
-
 }
