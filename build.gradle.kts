@@ -8,7 +8,7 @@ plugins {
 
 allprojects {
     group = "ru.cristalix"
-    version = "8.0-SNAPSHOT"
+    version = "9.0-SNAPSHOT"
 }
 
 subprojects {
@@ -34,7 +34,6 @@ subprojects {
                     "-Xno-receiver-assertions",
                     "-Xno-call-assertions",
                     "-Xbackend-threads=0",
-                    "-Xuse-k2",
                     "-Xassertions=always-disable",
                     "-Xuse-fast-jar-file-system",
                     "-Xsam-conversions=indy"
