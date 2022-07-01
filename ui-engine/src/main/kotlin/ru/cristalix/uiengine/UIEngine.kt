@@ -76,27 +76,19 @@ object UIEngine : EventLoop by EventLoopImpl() {
 
         registerHandler<GuiOverlayRender>(listener) { renderOverlay() }
 
-        if (!JavaMod.isClientMod()) {
-            registerHandler<RenderTickPost>(listener) { renderPost() }
-        }
+        registerHandler<RenderTickPost>(listener) { renderPost() }
 
         registerHandler<GameLoop>(listener) { gameLoop() }
         updateResolution()
         registerHandler<WindowResize>(listener) { updateResolution() }
         registerHandler<ScaleChange>(listener) { updateResolution() }
-        if (!JavaMod.isClientMod()) {
-            registerHandler<RenderPass>(listener) { renderWorld() }
-        }
+        registerHandler<RenderPass>(listener) { renderWorld() }
     }
 
     fun uninitialize() {
-
-        if (!JavaMod.isClientMod()) {
-            // Close any GUIs before disabling
-            if (clientApi.minecraft().currentScreen() is ContextGui)
-                clientApi.minecraft().displayScreen(null)
-        }
-
+        // Close any GUIs before disabling
+        if (clientApi.minecraft().currentScreen() is ContextGui)
+            clientApi.minecraft().displayScreen(null)
         GLAllocation.freeBuffer(matrixBuffer)
     }
 
