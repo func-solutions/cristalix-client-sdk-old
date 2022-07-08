@@ -36,14 +36,14 @@ open class ContextGui(builder: Screen.Builder = Screen.Builder.builder()) : Cont
         .mouseClick { _, _, _, button ->
             safe {
                 getForemostHovered()?.run {
-                    this.onClick?.invoke(ClickEvent(true, MouseButton.values()[button]))
+                    this.onClick?.invoke(ClickEvent(true, MouseButton.VALUES[button]))
                 }
             }
         }
         .mouseRelease { _, _, _, button ->
             safe {
                 getForemostHovered()?.run {
-                    this.onClick?.invoke(ClickEvent(false, MouseButton.values()[button]))
+                    this.onClick?.invoke(ClickEvent(false, MouseButton.VALUES[button]))
                 }
             }
         }

@@ -43,7 +43,6 @@ operator fun DoubleArray.set(property: Property, value: Number): Double =
 enum class Property(
     vararg val matrixInfluence: Int,
 ) {
-
     OffsetX(offsetMatrix),
     OffsetY(offsetMatrix),
     OffsetZ(offsetMatrix),
@@ -83,4 +82,8 @@ enum class Property(
     TextureWidth(uvMatrix),
     TextureHeight(uvMatrix),
     ;
+
+    companion object {
+        val VALUES: Array<Property> = values()
+    }
 }

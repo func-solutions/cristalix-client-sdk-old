@@ -5,4 +5,8 @@ enum class MouseButton {
     RIGHT,
     MIDDLE,
     ;
+
+    companion object {
+        val VALUES: Array<MouseButton> = values()
+    }
 }

@@ -61,7 +61,7 @@ import ru.cristalix.uiengine.utility.translate
 @Suppress("LeakingThis")
 abstract class AbstractElement() : IElement {
     @JvmField
-    val properties: DoubleArray = DoubleArray(Property.values().size)
+    val properties: DoubleArray = DoubleArray(Property.VALUES.size)
     @JvmField
     val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
 
@@ -235,7 +235,7 @@ abstract class AbstractElement() : IElement {
         val properties = properties
         if (properties[index] != value) {
             properties[index] = value
-            for (matrix in Property.values()[index].matrixInfluence) {
+            for (matrix in Property.VALUES[index].matrixInfluence) {
                 this.markDirty(matrix)
             }
         }
