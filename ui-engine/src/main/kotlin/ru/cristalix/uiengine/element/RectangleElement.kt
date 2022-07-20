@@ -12,7 +12,9 @@ import ru.cristalix.uiengine.utility.*
 import dev.xdark.clientapi.render.DefaultVertexFormats
 
 import dev.xdark.clientapi.render.Tessellator
+import ru.cristalix.clientapi.JavaMod
 import kotlin.math.abs
+import kotlin.math.sqrt
 
 @JvmField var depth = 0
 @JvmField var debug = false
@@ -25,7 +27,6 @@ import kotlin.math.abs
         floatArrayOf(0.1f, 0.1f, 1.0f, 1.0f),
         floatArrayOf(1.0f, 0.1f, 1.0f, 1.0f),
 )
-
 open class RectangleElement : AbstractElement(), Parent {
 
     var textureLocation: ResourceLocation? = null
@@ -179,7 +180,6 @@ open class RectangleElement : AbstractElement(), Parent {
         super.updateMatrix(matrixId)
 
     }
-
     override fun render() {
         val engine = UIEngine
         val api = engine.clientApi
@@ -194,6 +194,9 @@ open class RectangleElement : AbstractElement(), Parent {
             GlStateManager.enableDepth()
             GlStateManager.translate(0f, 0f, 0.97f)
         }
+
+        size.y = size.y * UIEngine.dpi
+        size.x = size.x * UIEngine.dpi
 
 
         val color = color

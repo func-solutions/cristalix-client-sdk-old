@@ -17,9 +17,10 @@ import ru.cristalix.uiengine.eventloop.EventLoopImpl
 import ru.cristalix.uiengine.utility.MouseButton
 import ru.cristalix.uiengine.utility.V3
 import java.nio.FloatBuffer
+import kotlin.math.sqrt
 
 object UIEngine: EventLoop by EventLoopImpl() {
-
+    @JvmField var dpi = 1.0
     @JvmField val matrixBuffer: FloatBuffer = GLAllocation.createDirectFloatBuffer(16)
 
     /**
@@ -107,6 +108,24 @@ object UIEngine: EventLoop by EventLoopImpl() {
         val resolution = clientApi.resolution()
         overlayContext.size = V3(resolution.scaledWidth_double, resolution.scaledHeight_double)
         postOverlayContext.size = V3(resolution.scaledWidth_double, resolution.scaledHeight_double)
+
+
+        val height = UIEngine.clientApi.minecraft().displayHeight
+        val width = UIEngine.clientApi.minecraft().displayWidth
+        val diagonal = sqrt((height*height + width * width).toDouble())
+        var multiplier = 1.0
+        val scaledFactor = JavaMod.clientApi.resolution().scaleFactor
+        if(scaledFactor == 3){
+            multiplier = 1.75
+        }else if(scaledFactor == 2){
+            multiplier = 1.0
+        }else if(scaledFactor == 4){
+            multiplier = 1.9
+        }else if(scaledFactor == 1){
+            multiplier = 0.5
+        }
+        //pixel per pixel?
+        dpi = multiplier *  2.3 * (height * width / diagonal)
     }
 
     private fun renderOverlay() {
