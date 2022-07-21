@@ -8,7 +8,7 @@ plugins {
 
 allprojects {
     group = "ru.cristalix"
-    version = "10.2-SNAPSHOT"
+    version = "isClientMod-SNAPSHOT"
 }
 
 subprojects {
