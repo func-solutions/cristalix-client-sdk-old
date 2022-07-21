@@ -24,6 +24,10 @@ public class JavaMod implements ModMain {
     public List<Runnable> onDisable = new ArrayList<>();
     public Listener listener;
 
+    public static boolean isClientMod() {
+        return false;
+    }
+
     public static ResourceLocation loadTextureFromJar(
         ClientApi clientApi,
         String namespace,
