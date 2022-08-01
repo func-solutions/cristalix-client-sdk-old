@@ -9,8 +9,13 @@ import ru.cristalix.uiengine.ClickEvent
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.utility.MouseButton
 import ru.cristalix.uiengine.utility.V3
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 inline fun safe(action: () -> Unit) {
+    contract {
+        callsInPlace(action, InvocationKind.EXACTLY_ONCE)
+    }
     try {
         action()
     } catch (e: Exception) {
