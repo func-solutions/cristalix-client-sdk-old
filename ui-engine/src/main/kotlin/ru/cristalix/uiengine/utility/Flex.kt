@@ -2,9 +2,16 @@ package ru.cristalix.uiengine.utility
 
 import ru.cristalix.uiengine.element.Parent
 import ru.cristalix.uiengine.element.RectangleElement
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.math.abs
 
-inline fun flex(setup: Flex.() -> Unit) = Flex().also(setup)
+inline fun flex(setup: Flex.() -> Unit): Flex {
+    contract {
+        callsInPlace(setup, InvocationKind.EXACTLY_ONCE)
+    }
+    return Flex().also(setup)
+}
 
 enum class FlexDirection(
         val kx: Int,
