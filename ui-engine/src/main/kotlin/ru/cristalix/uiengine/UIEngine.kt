@@ -18,6 +18,7 @@ import ru.cristalix.uiengine.utility.MouseButton
 import ru.cristalix.uiengine.utility.V3
 import java.nio.FloatBuffer
 
+
 object UIEngine: EventLoop by EventLoopImpl() {
 
     @JvmField val matrixBuffer: FloatBuffer = GLAllocation.createDirectFloatBuffer(16)

@@ -6,6 +6,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.math.abs
 
+@OptIn(kotlin.contracts.ExperimentalContracts::class)
 inline fun flex(setup: Flex.() -> Unit): Flex {
     contract {
         callsInPlace(setup, InvocationKind.EXACTLY_ONCE)

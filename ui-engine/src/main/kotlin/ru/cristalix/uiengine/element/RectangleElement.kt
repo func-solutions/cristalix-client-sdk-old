@@ -12,18 +12,24 @@ import ru.cristalix.uiengine.utility.*
 import dev.xdark.clientapi.render.DefaultVertexFormats
 
 import dev.xdark.clientapi.render.Tessellator
+import org.lwjgl.opengl.GL11.*
 import kotlin.math.abs
+import kotlin.math.floor
 
-@JvmField var depth = 0
-@JvmField var debug = false
+@JvmField
+var depth = 0
 
-@JvmField val debugColors = arrayOf(
-        floatArrayOf(1.0f, 0.1f, 0.1f, 1.0f),
-        floatArrayOf(1.0f, 1.0f, 0.1f, 1.0f),
-        floatArrayOf(0.1f, 1.0f, 0.1f, 1.0f),
-        floatArrayOf(0.1f, 1.0f, 1.0f, 1.0f),
-        floatArrayOf(0.1f, 0.1f, 1.0f, 1.0f),
-        floatArrayOf(1.0f, 0.1f, 1.0f, 1.0f),
+@JvmField
+var debug = false
+
+@JvmField
+val debugColors = arrayOf(
+    floatArrayOf(1.0f, 0.1f, 0.1f, 1.0f),
+    floatArrayOf(1.0f, 1.0f, 0.1f, 1.0f),
+    floatArrayOf(0.1f, 1.0f, 0.1f, 1.0f),
+    floatArrayOf(0.1f, 1.0f, 1.0f, 1.0f),
+    floatArrayOf(0.1f, 0.1f, 1.0f, 1.0f),
+    floatArrayOf(1.0f, 0.1f, 1.0f, 1.0f),
 )
 
 open class RectangleElement : AbstractElement(), Parent {
@@ -88,7 +94,7 @@ open class RectangleElement : AbstractElement(), Parent {
             element.changeProperty(Property.ParentSizeX.ordinal, x)
             element.changeProperty(Property.ParentSizeY.ordinal, y)
 //            if (element is RectangleElement) {
-                // ToDo: Abstract contextful parents
+            // ToDo: Abstract contextful parents
 //            }
             element.lastParent = this
             this.children.add(element)
@@ -202,7 +208,7 @@ open class RectangleElement : AbstractElement(), Parent {
             depth++
         }
 
-        if (color.alpha > 0 || mask) {
+        if (color.alpha >= 0 || mask) {
             val textureLocation = textureLocation
             if (textureLocation != null) {
                 api.renderEngine().bindTexture(textureLocation)
@@ -228,11 +234,11 @@ open class RectangleElement : AbstractElement(), Parent {
             } else {
                 val tessellator: Tessellator = engine.clientApi.tessellator()
                 val worldrenderer: BufferBuilder = tessellator.bufferBuilder
+
+                GlStateManager.color(color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha.toFloat())
                 GlStateManager.enableBlend()
                 GlStateManager.disableTexture2D()
                 GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0)
-
-                GlStateManager.color(color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha.toFloat())
 
                 val size = size
                 worldrenderer.begin(7, DefaultVertexFormats.POSITION)
@@ -279,9 +285,12 @@ open class RectangleElement : AbstractElement(), Parent {
             GlStateManager.disableBlend()
         }
 
+
         if (childrenAmount > 0) {
             if (mask) {
 //                GlStateManager.translate(0f, 0f, -1f)
+                glEnable(GL_SCISSOR_TEST)
+                glScissor(0, 0, floor(size.x).toInt(), floor(size.y).toInt())
                 GlStateManager.depthFunc(GL11.GL_EQUAL)
                 GlStateManager.depthMask(false)
             }
@@ -294,8 +303,9 @@ open class RectangleElement : AbstractElement(), Parent {
                 child.transformAndRender()
             }
             if (mask) {
+                glDisable(GL_SCISSOR_TEST)
                 GlStateManager.depthMask(true)
-                GlStateManager.depthFunc(GL11.GL_LEQUAL)
+                GlStateManager.depthFunc(GL_LEQUAL)
             }
         }
 

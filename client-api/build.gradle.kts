@@ -24,7 +24,7 @@ publishing {
         create<MavenPublication>("clientApi") {
             groupId = "ru.cristalix"
             artifactId = "client-api"
-            version = "1.0.0"
+            version = "6.0.0"
             from(components["java"])
         }
     }

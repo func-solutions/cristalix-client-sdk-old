@@ -12,6 +12,7 @@ import ru.cristalix.uiengine.utility.V3
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+@OptIn(kotlin.contracts.ExperimentalContracts::class)
 inline fun safe(action: () -> Unit) {
     contract {
         callsInPlace(action, InvocationKind.EXACTLY_ONCE)

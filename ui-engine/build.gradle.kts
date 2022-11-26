@@ -16,9 +16,9 @@ tasks.compileJava.get().run {
     sourceCompatibility = "1.8"
     targetCompatibility = "1.8"
 }
+
 tasks.compileKotlin.get().kotlinOptions.run {
     jvmTarget = "1.8"
-    freeCompilerArgs += listOf("-opt-in=kotlin.contracts.ExperimentalContracts")
 }
 
 publishing {
@@ -26,7 +26,7 @@ publishing {
         create<MavenPublication>("uiengine") {
             groupId = "ru.cristalix"
             artifactId = "uiengine"
-            version = "1.0.1"
+            version = "6.0.20"
             from(components["java"])
         }
     }

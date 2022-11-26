@@ -5,9 +5,10 @@ plugins {
     `java-library`
 }
 
-//allprojects {
-//    group = "ru.cristalix"
-//}
+allprojects {
+    group = "ru.cristalix"
+    version = "6.0.0"
+}
 
 subprojects {
 
