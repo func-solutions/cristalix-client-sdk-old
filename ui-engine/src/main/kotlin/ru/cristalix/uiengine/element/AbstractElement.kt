@@ -211,6 +211,9 @@ abstract class AbstractElement() : IElement {
         this.interactive = enabled && (onHover != null || onClick != null)
     }
 
+    protected val invertedMouseMatrix = Matrix4f()
+    protected val normalizedMouseVector = Vector4f()
+
     open fun updateHoverState(mouseMatrix: Matrix4f) {
         val matrices = matrices
         val count = matrices.size
@@ -243,6 +246,43 @@ abstract class AbstractElement() : IElement {
             this.onHover?.invoke(this)
         }
 
+    }
+
+    open fun updateHoverState(mouseMatrix: Matrix4f, mouseVector: Vector4f) {
+        val matrices = matrices
+        val count = matrices.size
+        for (i in 0 until count) {
+            val m = matrices[i]
+            if (m != null) {
+                Matrix4f.mul(mouseMatrix, m, mouseMatrix)
+            }
+        }
+
+        //this hasn't been safe for hover detection
+        if (mouseMatrix.m22 == 0f) {
+            mouseMatrix.m22 = 1f
+        }
+
+        val hoverPosition = hoverPosition
+        if (Matrix4f.invert(mouseMatrix, invertedMouseMatrix) == null) {
+            hoverPosition.x = 0.0
+            hoverPosition.y = 0.0
+            return
+        }
+
+        Matrix4f.transform(invertedMouseMatrix, mouseVector, normalizedMouseVector)
+
+        val hoverX = normalizedMouseVector.x.toDouble()
+        val hoverY = normalizedMouseVector.y.toDouble()
+        hoverPosition.x = hoverX
+        hoverPosition.y = hoverY
+
+        val hovered = hoverX >= 0 && hoverY >= 0 && hoverX < size.x && hoverY < size.y
+
+        if (this.hovered != hovered) {
+            this.hovered = hovered
+            this.onHover?.invoke(this)
+        }
     }
 
     open fun getForemostHovered(): AbstractElement? {

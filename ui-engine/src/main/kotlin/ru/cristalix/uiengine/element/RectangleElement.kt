@@ -129,6 +129,21 @@ open class RectangleElement : AbstractElement(), Parent {
         }
     }
 
+    override fun updateHoverState(mouseMatrix: Matrix4f, mouseVector: Vector4f) {
+        super.updateHoverState(mouseMatrix, mouseVector)
+
+        val children = children
+        if (children.isEmpty()) return
+
+        for (child in children) {
+            if (!child.interactive) continue
+
+            val matrix = Matrix4f()
+            matrix.load(mouseMatrix)
+            child.updateHoverState(matrix, mouseVector)
+        }
+    }
+
     override fun getForemostHovered(): AbstractElement? {
         val children = children
         if (interactive) {

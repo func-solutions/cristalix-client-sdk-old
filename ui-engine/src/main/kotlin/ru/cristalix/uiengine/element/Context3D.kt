@@ -5,7 +5,6 @@ import org.lwjgl.util.vector.Matrix4f
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.utility.V2
 import ru.cristalix.uiengine.utility.V3
-
 class Context3D(offset: V3) : Context() {
 
     init {
@@ -13,6 +12,7 @@ class Context3D(offset: V3) : Context() {
         this.scale = V3(1.0 / 16, 1.0 / 16, 1.0 / 16)
     }
 
+    @JvmField
     var renderDistance: Double = 64.0
     private val mouse = V2()
 
@@ -51,14 +51,11 @@ class Context3D(offset: V3) : Context() {
     override fun transformViewportAndMouse(): V2 {
         /*
         val entity = UIEngine.clientApi.minecraft().renderViewEntity
-
         if (V3(entity.x, entity.y, entity.z).distanceSquared3(offset) > renderDistance * renderDistance)
             return null
-
 //        GlStateManager.translate()
         //return V2()
          */
         return mouse
     }
-
 }
