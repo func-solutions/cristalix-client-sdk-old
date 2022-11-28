@@ -70,7 +70,24 @@ open class InputElement(gui: ContextGui) : CarvedRectangle() {
                 return@onKeyTyped
             removeSuffix()
             if (code == Keyboard.KEY_BACK) {
-                back()
+                if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
+                    if (!contentText.content.contains(" ")) {
+                        contentText.content = ""
+                        return@onKeyTyped
+                    }
+
+                    val split = contentText.content.split(" ")
+                    val splitSize = split.size
+
+                    var newContent = ""
+
+                    for (x in 0 until splitSize - 1) {
+                        newContent += split[x] + if (x == splitSize - 2) "" else " "
+                    }
+
+                    contentText.content = newContent
+                    return@onKeyTyped
+                } else back()
             } else if (allowSymbols.contains(char.lowercaseChar())) {
                 val out = clientApi.fontRenderer().getStringWidth(contentText.content.split("\n").last()) * contentText.scale.x * scale.x + 12 >= size.x
                 if (out && allowMultiline) {
@@ -91,6 +108,9 @@ open class InputElement(gui: ContextGui) : CarvedRectangle() {
             } else if (code == Keyboard.KEY_RETURN) {
                 nextLine()
             }
+//            } else if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && code == Keyboard.KEY_V) {
+//                clientApi.clipboard().
+//            }
         }
 
         gui.onMouseDown {
