@@ -157,6 +157,11 @@ abstract class AbstractElement(): IElement {
         afterTransform = action
     }
 
+    fun stopAnimate() {
+        val runningAnimations = UIEngine.runningAnimations
+        runningAnimations.removeIf { it.element === this }
+    }
+
     internal fun changeProperty(index: Int, value: Double) {
         val engine = UIEngine
         val animationContext = engine.animationContext

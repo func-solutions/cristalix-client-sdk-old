@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.4.21"
+    kotlin("jvm") version "1.7.10"
 }
 
 apply("plugin" to "kotlin")
@@ -26,7 +26,7 @@ publishing {
         create<MavenPublication>("uiengine") {
             groupId = "ru.cristalix"
             artifactId = "uiengine"
-            version = "1.0.1"
+            version = "anelfer-edition-1.0.3"
             from(components["java"])
         }
     }

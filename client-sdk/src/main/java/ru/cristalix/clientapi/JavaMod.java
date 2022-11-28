@@ -40,12 +40,7 @@ public class JavaMod implements ModMain {
 
         listener = clientApi.eventBus().createListener();
 
-        onDisable.add(new Runnable() {
-            @Override
-            public void run() {
-                clientApi.eventBus().unregisterAll(listener);
-            }
-        });
+        onDisable.add(() -> clientApi.eventBus().unregisterAll(listener));
 
         if (!isClientMod()) {
             String modClass = this.getClass().getName();
