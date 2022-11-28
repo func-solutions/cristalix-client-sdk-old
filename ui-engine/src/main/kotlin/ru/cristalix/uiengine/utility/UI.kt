@@ -25,6 +25,13 @@ inline fun item(setup: ItemElement.() -> Unit): ItemElement {
     return ItemElement().also(setup)
 }
 
+inline fun input(gui: ContextGui, setup: InputElement.() -> Unit): InputElement {
+    contract {
+        callsInPlace(setup, InvocationKind.EXACTLY_ONCE)
+    }
+    return InputElement(gui).also(setup)
+}
+
 inline fun cube(setup: CuboidElement.() -> Unit): CuboidElement {
     contract {
         callsInPlace(setup, InvocationKind.EXACTLY_ONCE)

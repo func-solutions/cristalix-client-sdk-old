@@ -1,9 +1,9 @@
 package ru.cristalix.uiengine.eventloop
 
-import ru.cristalix.uiengine.utility.Easing
-import ru.cristalix.uiengine.utility.Easings
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.element.AbstractElement
+import ru.cristalix.uiengine.utility.Easing
+import ru.cristalix.uiengine.utility.Easings
 
 class AnimationContext(
     @JvmField val durationMillis: Long,

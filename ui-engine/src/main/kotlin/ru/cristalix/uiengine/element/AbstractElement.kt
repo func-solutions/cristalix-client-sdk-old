@@ -12,13 +12,16 @@ import ru.cristalix.uiengine.utility.*
 import ru.cristalix.uiengine.utility.Property.*
 
 @Suppress("LeakingThis")
-abstract class AbstractElement(): IElement {
+abstract class AbstractElement() : IElement {
 
-    @JvmField val properties: DoubleArray = DoubleArray(Property.VALUES.size)
-    @JvmField val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
+    @JvmField
+    val properties: DoubleArray = DoubleArray(Property.VALUES.size)
+    @JvmField
+    val matrices: Array<Matrix4f?> = arrayOfNulls(matrixFields)
 
     private var dirtyMatrices = BooleanArray(MATRIX_COUNT)
-    @JvmField protected var cachedHexColor: Int = 0
+    @JvmField
+    protected var cachedHexColor: Int = 0
 
     var hovered: Boolean = false
         internal set
@@ -67,10 +70,14 @@ abstract class AbstractElement(): IElement {
             }
         }
 
-    @JvmField var enabled: Boolean = true
-    @JvmField var onClick: ClickHandler? = null
-    @JvmField var onHover: HoverHandler? = null
-    @JvmField var lastParent: AbstractElement? = null
+    @JvmField
+    var enabled: Boolean = true
+    @JvmField
+    var onClick: ClickHandler? = null
+    @JvmField
+    var onHover: HoverHandler? = null
+    @JvmField
+    var lastParent: AbstractElement? = null
 
     var offset: V3 = ProxiedV3(OffsetX.ordinal, this)
         set(value) = value.write(field)
@@ -157,11 +164,6 @@ abstract class AbstractElement(): IElement {
         afterTransform = action
     }
 
-    fun stopAnimate() {
-        val runningAnimations = UIEngine.runningAnimations
-        runningAnimations.removeIf { it.element === this }
-    }
-
     internal fun changeProperty(index: Int, value: Double) {
         val engine = UIEngine
         val animationContext = engine.animationContext
@@ -209,9 +211,7 @@ abstract class AbstractElement(): IElement {
         this.interactive = enabled && (onHover != null || onClick != null)
     }
 
-    protected val invertedMouseMatrix = Matrix4f()
-    protected val normalizedMouseVector = Vector4f()
-    open fun updateHoverState(mouseMatrix: Matrix4f, mouseVector: Vector4f) {
+    open fun updateHoverState(mouseMatrix: Matrix4f) {
         val matrices = matrices
         val count = matrices.size
         for (i in 0 until count) {
@@ -220,22 +220,23 @@ abstract class AbstractElement(): IElement {
                 Matrix4f.mul(mouseMatrix, m, mouseMatrix)
             }
         }
+        val size = size
+        val hitbox = arrayOf(
+            Vector4f(0f, 0f, 0f, 1f),
+            Vector4f(0f, size.y.toFloat(), 0f, 1f),
+            Vector4f(size.x.toFloat(), size.y.toFloat(), 0f, 1f),
+            Vector4f(size.x.toFloat(), 0f, 0f, 1f),
+        )
 
-        val hoverPosition = hoverPosition
-        if (Matrix4f.invert(mouseMatrix, invertedMouseMatrix) == null) {
-            hoverPosition.x = 0.0
-            hoverPosition.y = 0.0
-            return
+        for (vertex in hitbox) {
+            Matrix4f.transform(mouseMatrix, vertex, vertex)
         }
 
-        Matrix4f.transform(invertedMouseMatrix, mouseVector, normalizedMouseVector)
+        val hovered = containsZero(hitbox)
 
-        val hoverX = normalizedMouseVector.x.toDouble()
-        val hoverY = normalizedMouseVector.y.toDouble()
-        hoverPosition.x = hoverX
-        hoverPosition.y = hoverY
-
-        val hovered = hoverX >= 0 && hoverY >= 0 && hoverX < size.x && hoverY < size.y
+        val hoverPosition = hoverPosition
+        hoverPosition.x = (-hitbox[0].x).toDouble()
+        hoverPosition.y = (-hitbox[0].x).toDouble()
 
         if (this.hovered != hovered) {
             this.hovered = hovered
@@ -245,7 +246,7 @@ abstract class AbstractElement(): IElement {
     }
 
     open fun getForemostHovered(): AbstractElement? {
-        return if (enabled && interactive && hovered) this else null
+        return if (interactive && hovered) this else null
     }
 
     fun containsZero(convex: Array<Vector4f>): Boolean {
@@ -298,22 +299,26 @@ abstract class AbstractElement(): IElement {
                     properties[AlignY] * properties[ParentSizeY],
                     properties[AlignZ] * properties[ParentSizeZ]
                 )
+
                 rotationMatrix -> matrix.rotate(
                     properties[RotationAngle].toFloat(),
                     properties[RotationX],
                     properties[RotationY],
                     properties[RotationZ]
                 )
+
                 offsetMatrix -> matrix.translate(
                     properties[OffsetX],
                     properties[OffsetY],
                     properties[OffsetZ]
                 )
+
                 scaleMatrix -> matrix.scale(
                     properties[ScaleX],
                     properties[ScaleY],
                     properties[ScaleZ]
                 )
+
                 originMatrix -> matrix.translate(
                     -properties[OriginX] * properties[SizeX],
                     -properties[OriginY] * properties[SizeY],

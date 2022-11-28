@@ -2,9 +2,6 @@ package ru.cristalix.uiengine.element
 
 import dev.xdark.clientapi.gui.Screen
 import org.lwjgl.input.Keyboard
-import org.lwjgl.input.Mouse
-import org.lwjgl.util.vector.Matrix4f
-import org.lwjgl.util.vector.Vector2f
 import ru.cristalix.uiengine.ClickEvent
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.utility.MouseButton

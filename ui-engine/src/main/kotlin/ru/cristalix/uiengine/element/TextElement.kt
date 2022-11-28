@@ -1,8 +1,9 @@
 package ru.cristalix.uiengine.element
 
-import ru.cristalix.uiengine.UIEngine
-import ru.cristalix.uiengine.utility.*
 import dev.xdark.clientapi.opengl.GlStateManager
+import ru.cristalix.uiengine.UIEngine
+import ru.cristalix.uiengine.utility.V3
+import ru.cristalix.uiengine.utility.WHITE
 
 
 open class TextElement() : AbstractElement() {

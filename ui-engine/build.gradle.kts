@@ -21,12 +21,17 @@ tasks.compileKotlin.get().kotlinOptions.run {
     freeCompilerArgs += listOf("-opt-in=kotlin.contracts.ExperimentalContracts")
 }
 
+tasks.jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+}
+
 publishing {
     publications {
         create<MavenPublication>("uiengine") {
             groupId = "ru.cristalix"
             artifactId = "uiengine"
-            version = "anelfer-edition-1.0.3"
+            version = "anelfer-edition-1.0.4.8"
             from(components["java"])
         }
     }

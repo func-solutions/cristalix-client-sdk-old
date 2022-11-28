@@ -5,7 +5,6 @@ import org.lwjgl.util.vector.Matrix4f
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.utility.V2
 import ru.cristalix.uiengine.utility.V3
-import java.util.*
 
 class Context3D(offset: V3) : Context() {
 

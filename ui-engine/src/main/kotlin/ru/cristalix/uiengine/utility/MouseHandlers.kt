@@ -4,7 +4,6 @@ package ru.cristalix.uiengine
 
 import ru.cristalix.uiengine.element.AbstractElement
 import ru.cristalix.uiengine.utility.MouseButton
-import ru.cristalix.uiengine.utility.V2
 
 typealias ClickHandler = ClickEvent.() -> Unit
 typealias HoverHandler = AbstractElement.() -> Unit

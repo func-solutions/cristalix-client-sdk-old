@@ -3,7 +3,8 @@ package ru.cristalix.uiengine.element
 import dev.xdark.clientapi.item.ItemStack
 import dev.xdark.clientapi.opengl.RenderHelper
 import ru.cristalix.uiengine.UIEngine
-import ru.cristalix.uiengine.utility.*
+import ru.cristalix.uiengine.utility.V3
+import ru.cristalix.uiengine.utility.WHITE
 
 open class ItemElement() : AbstractElement() {
 

@@ -2,10 +2,6 @@ package ru.cristalix.uiengine.utility
 
 import ru.cristalix.uiengine.element.AbstractElement
 import ru.cristalix.uiengine.utility.Property.*
-import ru.cristalix.uiengine.utility.Color
-import ru.cristalix.uiengine.utility.Rotation
-import ru.cristalix.uiengine.utility.V2
-import ru.cristalix.uiengine.utility.V3
 
 
 open class ProxiedV2(

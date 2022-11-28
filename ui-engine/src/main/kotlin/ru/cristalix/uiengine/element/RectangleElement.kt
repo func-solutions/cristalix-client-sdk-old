@@ -2,28 +2,29 @@ package ru.cristalix.uiengine.element
 
 import dev.xdark.clientapi.opengl.GlStateManager
 import dev.xdark.clientapi.render.BufferBuilder
+import dev.xdark.clientapi.render.DefaultVertexFormats
+import dev.xdark.clientapi.render.Tessellator
 import dev.xdark.clientapi.resource.ResourceLocation
 import org.lwjgl.opengl.GL11
 import org.lwjgl.util.vector.Matrix4f
 import org.lwjgl.util.vector.Vector4f
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.utility.*
-
-import dev.xdark.clientapi.render.DefaultVertexFormats
-
-import dev.xdark.clientapi.render.Tessellator
 import kotlin.math.abs
 
-@JvmField var depth = 0
-@JvmField var debug = false
+@JvmField
+var depth = 0
+@JvmField
+var debug = false
 
-@JvmField val debugColors = arrayOf(
-        floatArrayOf(1.0f, 0.1f, 0.1f, 1.0f),
-        floatArrayOf(1.0f, 1.0f, 0.1f, 1.0f),
-        floatArrayOf(0.1f, 1.0f, 0.1f, 1.0f),
-        floatArrayOf(0.1f, 1.0f, 1.0f, 1.0f),
-        floatArrayOf(0.1f, 0.1f, 1.0f, 1.0f),
-        floatArrayOf(1.0f, 0.1f, 1.0f, 1.0f),
+@JvmField
+val debugColors = arrayOf(
+    floatArrayOf(1.0f, 0.1f, 0.1f, 1.0f),
+    floatArrayOf(1.0f, 1.0f, 0.1f, 1.0f),
+    floatArrayOf(0.1f, 1.0f, 0.1f, 1.0f),
+    floatArrayOf(0.1f, 1.0f, 1.0f, 1.0f),
+    floatArrayOf(0.1f, 0.1f, 1.0f, 1.0f),
+    floatArrayOf(1.0f, 0.1f, 1.0f, 1.0f),
 )
 
 open class RectangleElement : AbstractElement(), Parent {
@@ -38,6 +39,9 @@ open class RectangleElement : AbstractElement(), Parent {
 
     @JvmField
     var mask: Boolean = false
+
+    @JvmField
+    var colorMask: Boolean = true
 
     @JvmField
     var layering: Boolean = false
@@ -88,13 +92,11 @@ open class RectangleElement : AbstractElement(), Parent {
             element.changeProperty(Property.ParentSizeX.ordinal, x)
             element.changeProperty(Property.ParentSizeY.ordinal, y)
 //            if (element is RectangleElement) {
-                // ToDo: Abstract contextful parents
+            // ToDo: Abstract contextful parents
 //            }
             element.lastParent = this
             this.children.add(element)
         }
-
-
     }
 
     override fun updateInteractiveState() {
@@ -112,8 +114,8 @@ open class RectangleElement : AbstractElement(), Parent {
         }
     }
 
-    override fun updateHoverState(mouseMatrix: Matrix4f, mouseVector: Vector4f) {
-        super.updateHoverState(mouseMatrix, mouseVector)
+    override fun updateHoverState(mouseMatrix: Matrix4f) {
+        super.updateHoverState(mouseMatrix)
 
         val children = children
         if (children.isEmpty()) return
@@ -123,13 +125,13 @@ open class RectangleElement : AbstractElement(), Parent {
 
             val matrix = Matrix4f()
             matrix.load(mouseMatrix)
-            child.updateHoverState(matrix, mouseVector)
+            child.updateHoverState(matrix)
         }
     }
 
     override fun getForemostHovered(): AbstractElement? {
         val children = children
-        if (enabled && interactive) {
+        if (interactive) {
             for (i in children.size - 1 downTo 0) {
                 children[i].getForemostHovered()?.let { return it }
             }
@@ -195,8 +197,10 @@ open class RectangleElement : AbstractElement(), Parent {
             GlStateManager.translate(0f, 0f, 0.97f)
         }
 
-
         val color = color
+        if (!colorMask) {
+            GlStateManager.colorMask(false, false, false, false)
+        }
 
         if (debug) {
             depth++
@@ -279,6 +283,10 @@ open class RectangleElement : AbstractElement(), Parent {
             GlStateManager.disableBlend()
         }
 
+        if (!colorMask) {
+            GlStateManager.colorMask(true, true, true, true)
+        }
+
         if (childrenAmount > 0) {
             if (mask) {
 //                GlStateManager.translate(0f, 0f, -1f)
@@ -307,4 +315,5 @@ open class RectangleElement : AbstractElement(), Parent {
             GlStateManager.disableDepth()
         }
     }
+
 }

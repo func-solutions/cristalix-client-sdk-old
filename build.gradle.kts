@@ -1,5 +1,3 @@
-import org.gradle.internal.impldep.org.bouncycastle.cms.RecipientId.password
-
 plugins {
     `maven-publish`
     `java-library`
@@ -27,7 +25,8 @@ subprojects {
 
     afterEvaluate {
         tasks.jar {
-            from(sourceSets.main.get().allSource)
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+            from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
         }
         publishing {
             repositories {
