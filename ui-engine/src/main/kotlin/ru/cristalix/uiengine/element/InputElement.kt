@@ -12,11 +12,11 @@ import kotlin.math.pow
 
 open class InputElement(gui: ContextGui) : CarvedRectangle() {
     var typing = false
-    lateinit var contentText: TextElement
+    var contentText: TextElement
 
     var hint = ""
         set(value) {
-            hintText.content = "§7$value"
+            hintText.content = value
             field = value
         }
     var content = ""
@@ -25,10 +25,12 @@ open class InputElement(gui: ContextGui) : CarvedRectangle() {
             field = value
         }
 
-    var allowSymbols = "qwertyuiopasdfghjklzxcvbnmйцукенгшщзхъфывапролджэячсмитьбюё -0123456789"
+    var allowSymbols = "qwertyuiopasdfghjklzxcvbnmйцукенгшщзхъфывапролджэячсмитьбюё0123456789_-"
     var allowMultiline = false
 
+    private var maxSymbol = 16
     private var lastUpdate = 0L
+
     var container = +flex {
         align = CENTER
         origin = CENTER
@@ -43,13 +45,15 @@ open class InputElement(gui: ContextGui) : CarvedRectangle() {
     }
 
     init {
-        onMouseDown {
+        onLeftClick {
             typing = true
         }
+
         onHover {
             if (!typing)
                 removeSuffix()
         }
+
         beforeRender {
             val now = System.currentTimeMillis()
             if (now - lastUpdate > 500 && typing) {
@@ -59,6 +63,7 @@ open class InputElement(gui: ContextGui) : CarvedRectangle() {
             }
             hintText.enabled = !typing && contentText.content.isEmpty()
         }
+
         beforeTransform {
             container.size = size
         }
@@ -89,7 +94,8 @@ open class InputElement(gui: ContextGui) : CarvedRectangle() {
                     return@onKeyTyped
                 } else back()
             } else if (allowSymbols.contains(char.lowercaseChar())) {
-                val out = clientApi.fontRenderer().getStringWidth(contentText.content.split("\n").last()) * contentText.scale.x * scale.x + 12 >= size.x
+                val out = contentText.content.count() >= maxSymbol
+//                val out = clientApi.fontRenderer().getStringWidth(contentText.content.split("\n").last()) * contentText.scale.x * scale.x + 12 >= size.x
                 if (out && allowMultiline) {
                     nextLine()
                 } else if (out) {
